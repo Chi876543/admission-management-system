@@ -41,11 +41,15 @@ public class ToHopMonThiDAO {
     public void updateToHopMonThi(int id, ToHopMonThi newToHopMonThi) {
         Session session = factory.openSession();
         Transaction tx = null;
-        ToHopMonThi ToHopMonThi = session.get(ToHopMonThi.class, id);
+        ToHopMonThi toHopMonThi = session.get(ToHopMonThi.class, id);
         try {
             tx = session.beginTransaction();
-            if(ToHopMonThi != null) {
-
+            if(toHopMonThi != null) {
+               toHopMonThi.setMaToHop(newToHopMonThi.getMaToHop());
+               toHopMonThi.setMon1(newToHopMonThi.getMon1());
+               toHopMonThi.setMon2(newToHopMonThi.getMon2());
+               toHopMonThi.setMon3(newToHopMonThi.getMon3());
+               toHopMonThi.setTenToHop(newToHopMonThi.getTenToHop());
             }
                 tx.commit();
         } catch (Exception e) {

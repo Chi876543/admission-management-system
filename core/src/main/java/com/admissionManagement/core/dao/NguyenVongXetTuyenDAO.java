@@ -45,7 +45,17 @@ public class NguyenVongXetTuyenDAO {
         try {
             tx = session.beginTransaction();
             if(nguyenVongXetTuyen != null) {
-                //
+                nguyenVongXetTuyen.setCccd(newNguyenVongXetTuyen.getCccd());
+                nguyenVongXetTuyen.setMaNganh(newNguyenVongXetTuyen.getMaNganh());
+                nguyenVongXetTuyen.setThuTu(newNguyenVongXetTuyen.getThuTu());
+                nguyenVongXetTuyen.setDiemThxt(newNguyenVongXetTuyen.getDiemThxt());
+                nguyenVongXetTuyen.setDiemUtqd(newNguyenVongXetTuyen.getDiemUtqd());
+                nguyenVongXetTuyen.setDiemCong(newNguyenVongXetTuyen.getDiemCong());
+                nguyenVongXetTuyen.setDiemXetTuyen(newNguyenVongXetTuyen.getDiemXetTuyen());
+                nguyenVongXetTuyen.setKetQua(newNguyenVongXetTuyen.getKetQua());
+                nguyenVongXetTuyen.setNvKeys(newNguyenVongXetTuyen.getNvKeys());
+                nguyenVongXetTuyen.setPhuongThuc(newNguyenVongXetTuyen.getPhuongThuc());
+                nguyenVongXetTuyen.setThm(newNguyenVongXetTuyen.getThm());
             }
                 tx.commit();
         } catch (Exception e) {
