@@ -1,9 +1,10 @@
 module desktop.app {
     requires javafx.controls;
     requires javafx.fxml;
-    // 1. Cho phép JavaFX FXML truy cập vào package để gán sự kiện giao diện
+    // Cấp quyền cho JavaFX khởi chạy App từ thư mục gốc
+    exports com.admissionManagement.desktop;
     opens com.admissionManagement.desktop to javafx.fxml;
 
-    // 2. Cho phép lõi JavaFX (javafx.graphics) truy cập để khởi chạy ứng dụng
-    exports com.admissionManagement.desktop;
+    // THÊM DÒNG NÀY: Cấp quyền cho FXML truy cập vào thư mục controllers để xử lý giao diện
+    opens com.admissionManagement.desktop.controllers to javafx.fxml;
 }

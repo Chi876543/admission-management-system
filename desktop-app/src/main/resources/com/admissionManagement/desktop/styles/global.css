@@ -1,0 +1,40 @@
+/* =========================================
+   GLOBAL.CSS - THÀNH PHẦN UI DÙNG CHUNG
+   ========================================= */
+
+/* Kiểu dáng ô nhập liệu (Text Field, Password Field) */
+.input-field {
+    -fx-pref-height: 40px;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #bdc3c7;
+    -fx-background-color: white;
+}
+
+.input-field:focused {
+    -fx-border-color: #3498db; /* Đổi viền xanh khi nhấp chuột vào */
+    -fx-border-width: 2px;
+}
+
+/* Kiểu dáng nút bấm chính (Xác nhận, Lưu, Thêm mới) */
+.btn-primary {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 45px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* Kiểu dáng thông báo lỗi chuẩn */
+.error-label {
+    -fx-text-fill: #e74c3c;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}

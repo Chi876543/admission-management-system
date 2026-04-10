@@ -1,0 +1,76 @@
+/* =========================================
+   LAYOUT.CSS - MAIN LAYOUT & MENU SIDEBAR
+   ========================================= */
+
+/* --- Header Bar --- */
+.header-bar {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0; /* Chỉ có viền dưới */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2);
+}
+
+.header-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.header-user-info {
+    -fx-font-size: 14px;
+    -fx-text-fill: #34495e;
+}
+
+.btn-logout {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e74c3c;
+    -fx-border-color: #e74c3c;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.btn-logout:hover {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+}
+
+/* --- Sidebar Menu --- */
+.sidebar {
+    -fx-background-color: #2c3e50;
+}
+
+.sidebar-section-title {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* Nút bấm Menu bình thường */
+.menu-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #bdc3c7;
+    -fx-font-size: 14px;
+    -fx-alignment: center-left;
+    -fx-padding: 12 20 12 20;
+    -fx-background-radius: 0;
+    -fx-cursor: hand;
+}
+
+.menu-btn:hover {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+}
+
+/* Nút Menu đang được chọn (Active) */
+.menu-btn-active {
+    -fx-background-color: #3498db !important;
+    -fx-text-fill: white !important;
+    -fx-font-weight: bold;
+    -fx-border-color: #2980b9;
+    -fx-border-width: 0 0 0 4;
+}
+
+/* --- Vùng chứa nội dung chính --- */
+.content-area {
+    -fx-background-color: #f4f6f8;
+}
