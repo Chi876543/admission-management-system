@@ -17,7 +17,6 @@
 
     <modules>
         <module>core</module>
-        <module>web-app</module>
         <module>desktop-app</module>
     </modules>
 
