@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.ToHopController"
+      styleClass="screen-root" spacing="12">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <VBox styleClass="inline-form-card" spacing="10">
+        <Label fx:id="lblFormTitle" text="Thêm tổ hợp mới" styleClass="inline-form-title"/>
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Mã tổ hợp *" styleClass="field-label"/>
+                <TextField fx:id="tfMaToHop" promptText="VD: A00" styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Tên tổ hợp *" styleClass="field-label"/>
+                <TextField fx:id="tfTenToHop" promptText="VD: Toán - Lý - Hóa" styleClass="field-input"/>
+            </VBox>
+        </HBox>
+        <VBox spacing="4">
+            <Label text="Danh sách môn (phân cách dấu phẩy) *" styleClass="field-label"/>
+            <TextField fx:id="tfMonHoc" promptText="VD: Toán, Vật lý, Hóa học" styleClass="field-input"/>
+        </VBox>
+        <Label fx:id="lblError" text="" styleClass="error-label"/>
+        <HBox spacing="8">
+            <Button text="Lưu"         styleClass="btn-primary" onAction="#onSave"/>
+            <Button text="Hủy / Mới"   styleClass="btn-default" onAction="#onReset"/>
+            <Button text="⬆ Import CSV" styleClass="btn-primary" onAction="#onImport"/>
+        </HBox>
+    </VBox>
+
+    <VBox VBox.vgrow="ALWAYS" styleClass="table-card">
+        <TableView fx:id="tblToHop" VBox.vgrow="ALWAYS" styleClass="main-table"
+                   onMouseClicked="#onTableClick">
+            <columns>
+                <TableColumn fx:id="colMa"    text="Mã TH"     prefWidth="90"/>
+                <TableColumn fx:id="colTen"   text="Tên tổ hợp" prefWidth="180"/>
+                <TableColumn fx:id="colMon"   text="Môn thi"    prefWidth="320"/>
+                <TableColumn fx:id="colAction" text="Thao tác"  prefWidth="120" style="-fx-alignment:CENTER;"/>
+            </columns>
+            <placeholder><Label text="Không có dữ liệu" styleClass="table-placeholder"/></placeholder>
+        </TableView>
+        <HBox styleClass="pagination-bar" alignment="CENTER_RIGHT">
+            <Label fx:id="lblCount" text="0 tổ hợp" styleClass="record-count"/>
+        </HBox>
+    </VBox>
+</VBox>

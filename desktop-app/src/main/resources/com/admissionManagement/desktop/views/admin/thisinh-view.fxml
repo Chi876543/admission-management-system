@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.ThiSinhController"
+      styleClass="screen-root" spacing="12">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
+        <Button text="+ Thêm mới"   styleClass="btn-success"  onAction="#onAdd"/>
+        <Button text="⬆ Import CSV" styleClass="btn-primary"  onAction="#onImport"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="tfSearch" promptText="Tìm theo CCCD, họ tên..."
+                   styleClass="search-box" prefWidth="240" onKeyReleased="#onSearch"/>
+    </HBox>
+
+    <VBox VBox.vgrow="ALWAYS" styleClass="table-card">
+        <TableView fx:id="tblThiSinh" VBox.vgrow="ALWAYS" styleClass="main-table">
+            <columns>
+                <TableColumn fx:id="colStt"      text="#"           prefWidth="44"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colCccd"     text="CCCD"        prefWidth="135"/>
+                <TableColumn fx:id="colHoTen"    text="Họ tên"      prefWidth="175"/>
+                <TableColumn fx:id="colNgaySinh" text="Ngày sinh"   prefWidth="100" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colGioiTinh" text="Giới tính"   prefWidth="85"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colSdt"      text="Điện thoại"  prefWidth="115"/>
+                <TableColumn fx:id="colEmail"    text="Email"       prefWidth="175"/>
+                <TableColumn fx:id="colAction"   text="Thao tác"    prefWidth="130" style="-fx-alignment:CENTER;"/>
+            </columns>
+            <placeholder><Label text="Không có dữ liệu" styleClass="table-placeholder"/></placeholder>
+        </TableView>
+        <HBox styleClass="pagination-bar" alignment="CENTER_RIGHT" spacing="8">
+            <Label fx:id="lblCount" text="0 thí sinh" styleClass="record-count"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Pagination fx:id="pagination" pageCount="1" maxPageIndicatorCount="7"
+                        styleClass="table-pagination"/>
+        </HBox>
+    </VBox>
+</VBox>

@@ -1,0 +1,437 @@
+/* ═══════════════════════════════════════════
+   app.css  —  Admission Management Desktop
+   ═══════════════════════════════════════════ */
+
+/* ── Root & reset ───────────────────────── */
+.root {
+    -fx-font-family: "Segoe UI", "SansSerif";
+    -fx-font-size: 13px;
+    -fx-background-color: #F4F5F7;
+}
+
+/* ══════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════ */
+.sidebar {
+    -fx-background-color: #1a2340;
+    -fx-pref-width: 210px;
+    -fx-min-width: 210px;
+}
+
+.sidebar-logo {
+    -fx-padding: 18 16 14 16;
+    -fx-border-color: rgba(255,255,255,0.1);
+    -fx-border-width: 0 0 1 0;
+}
+
+.sidebar-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-sub {
+    -fx-text-fill: rgba(255,255,255,0.45);
+    -fx-font-size: 11px;
+}
+
+.sidebar-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-padding: 0;
+}
+.sidebar-scroll .viewport {
+    -fx-background-color: transparent;
+}
+.sidebar-scroll .scroll-bar {
+    -fx-pref-width: 4px;
+}
+
+.nav-list {
+    -fx-padding: 10 6 10 6;
+    -fx-background-color: transparent;
+}
+
+.nav-section-label {
+    -fx-text-fill: rgba(255,255,255,0.3);
+    -fx-font-size: 10px;
+    -fx-padding: 12 10 4 10;
+    -fx-font-weight: bold;
+}
+
+.nav-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255,255,255,0.6);
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 9 12 9 12;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 0 3;
+    -fx-border-radius: 0;
+    -fx-background-radius: 6;
+    -fx-min-height: 36px;
+}
+
+.nav-item:hover {
+    -fx-background-color: rgba(255,255,255,0.07);
+    -fx-text-fill: rgba(255,255,255,0.9);
+}
+
+.nav-item-active,
+.nav-item:pressed {
+    -fx-background-color: rgba(99,153,34,0.2);
+    -fx-text-fill: #97C459;
+    -fx-border-color: #639922;
+}
+
+.sidebar-footer {
+    -fx-padding: 12 14 14 14;
+    -fx-border-color: rgba(255,255,255,0.1);
+    -fx-border-width: 1 0 0 0;
+}
+
+.footer-user {
+    -fx-text-fill: rgba(255,255,255,0.65);
+    -fx-font-size: 12px;
+}
+
+.btn-logout {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255,255,255,0.4);
+    -fx-border-color: rgba(255,255,255,0.15);
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-font-size: 12px;
+    -fx-padding: 5 10;
+    -fx-cursor: hand;
+}
+.btn-logout:hover {
+    -fx-text-fill: rgba(255,255,255,0.7);
+    -fx-border-color: rgba(255,255,255,0.3);
+}
+
+/* ══════════════════════════════════════════
+   TOP BAR
+══════════════════════════════════════════ */
+.topbar {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 10 20 10 20;
+    -fx-border-color: #E5E7EB;
+    -fx-border-width: 0 0 1 0;
+    -fx-min-height: 56px;
+}
+
+.page-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
+.page-sub {
+    -fx-font-size: 11px;
+    -fx-text-fill: #6B7280;
+}
+
+.user-badge {
+    -fx-text-fill: #6B7280;
+    -fx-font-size: 12px;
+    -fx-background-color: #F3F4F6;
+    -fx-padding: 4 12;
+    -fx-background-radius: 20;
+}
+
+/* ══════════════════════════════════════════
+   CONTENT AREA
+══════════════════════════════════════════ */
+.content-area {
+    -fx-background-color: #F4F5F7;
+    -fx-padding: 0;
+}
+
+.screen-root {
+    -fx-background-color: #F4F5F7;
+}
+
+/* ══════════════════════════════════════════
+   TOOLBAR
+══════════════════════════════════════════ */
+.toolbar {
+    -fx-background-color: transparent;
+}
+
+.search-box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D1D5DB;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 12;
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: #9CA3AF;
+}
+.search-box:focused {
+    -fx-border-color: #3B6D11;
+}
+
+.combo-box-filter {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D1D5DB;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-size: 13px;
+}
+.combo-box-filter .list-cell {
+    -fx-font-size: 13px;
+    -fx-padding: 4 10;
+}
+
+/* ══════════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════════ */
+.btn-primary {
+    -fx-background-color: #1a2340;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 7 16;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+}
+.btn-primary:hover { -fx-background-color: #243060; }
+
+.btn-success {
+    -fx-background-color: #3B6D11;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 7 16;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+}
+.btn-success:hover { -fx-background-color: #4d8a16; }
+
+.btn-danger {
+    -fx-background-color: #DC2626;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 4 10;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+.btn-danger:hover { -fx-background-color: #EF4444; }
+
+.btn-warning {
+    -fx-background-color: #854F0B;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 4 10;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+.btn-warning:hover { -fx-background-color: #B45309; }
+
+.btn-default {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #374151;
+    -fx-border-color: #D1D5DB;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 7 16;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+}
+.btn-default:hover { -fx-background-color: #F9FAFB; }
+
+.btn-sm {
+    -fx-padding: 4 10;
+    -fx-font-size: 12px;
+}
+
+/* ══════════════════════════════════════════
+   TABLE
+══════════════════════════════════════════ */
+.table-card {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E5E7EB;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 4, 0, 0, 1);
+}
+
+.main-table {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: #F3F4F6;
+}
+
+.main-table .column-header-background {
+    -fx-background-color: #F9FAFB;
+}
+
+.main-table .column-header .label {
+    -fx-text-fill: #6B7280;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 10;
+}
+
+.main-table .table-row-cell {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent transparent #F3F4F6 transparent;
+}
+
+.main-table .table-row-cell:hover {
+    -fx-background-color: #F9FAFB;
+}
+
+.main-table .table-row-cell:selected {
+    -fx-background-color: #EAF3DE;
+}
+
+.main-table .table-cell {
+    -fx-padding: 8 10;
+    -fx-text-fill: #111827;
+    -fx-font-size: 13px;
+}
+
+.table-placeholder {
+    -fx-text-fill: #9CA3AF;
+    -fx-font-size: 13px;
+}
+
+/* Pagination bar dưới table */
+.pagination-bar {
+    -fx-padding: 8 14;
+    -fx-border-color: #F3F4F6;
+    -fx-border-width: 1 0 0 0;
+}
+
+.record-count {
+    -fx-text-fill: #9CA3AF;
+    -fx-font-size: 12px;
+}
+
+.table-pagination {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+.table-pagination .page-button {
+    -fx-pref-width: 30px;
+    -fx-pref-height: 28px;
+    -fx-background-color: transparent;
+    -fx-border-color: #E5E7EB;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-font-size: 12px;
+}
+.table-pagination .page-button:selected {
+    -fx-background-color: #1a2340;
+    -fx-text-fill: white;
+}
+
+/* ══════════════════════════════════════════
+   BADGE (dùng trong TableCell bằng code)
+   — Tạo Label rồi thêm styleClass
+══════════════════════════════════════════ */
+.badge {
+    -fx-padding: 2 10;
+    -fx-background-radius: 20;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+.badge-green  { -fx-background-color: #EAF3DE; -fx-text-fill: #27500A; }
+.badge-red    { -fx-background-color: #FCEBEB; -fx-text-fill: #791F1F; }
+.badge-blue   { -fx-background-color: #E6F1FB; -fx-text-fill: #0C447C; }
+.badge-amber  { -fx-background-color: #FAEEDA; -fx-text-fill: #633806; }
+.badge-gray   { -fx-background-color: #F1F0E8; -fx-text-fill: #444441; }
+
+/* ══════════════════════════════════════════
+   DIALOG / FORM
+══════════════════════════════════════════ */
+.dialog-root {
+    -fx-background-color: #FFFFFF;
+}
+
+.dialog-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
+.field-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #374151;
+    -fx-font-weight: bold;
+}
+
+.field-input {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D1D5DB;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 7 12;
+    -fx-font-size: 13px;
+}
+.field-input:focused {
+    -fx-border-color: #3B6D11;
+}
+
+.error-label {
+    -fx-text-fill: #DC2626;
+    -fx-font-size: 12px;
+}
+
+/* ══════════════════════════════════════════
+   INLINE FORM SECTION (Ngành, Tổ hợp, ...)
+══════════════════════════════════════════ */
+.inline-form-card {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E5E7EB;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 14 16;
+}
+
+.inline-form-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+}
+
+/* ══════════════════════════════════════════
+   STAT CARDS (Điểm, Nguyện vọng)
+══════════════════════════════════════════ */
+.stat-card {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E5E7EB;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 14 16;
+}
+
+.stat-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #6B7280;
+}
+
+.stat-value {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
+.stat-sub {
+    -fx-font-size: 10px;
+    -fx-text-fill: #9CA3AF;
+}

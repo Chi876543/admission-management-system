@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.NguyenVongController"
+      styleClass="screen-root" spacing="12">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <!-- Stat cards -->
+    <HBox spacing="12">
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4">
+            <Label text="Tổng NV đã nộp" styleClass="stat-label"/>
+            <Label fx:id="lblTongNV" text="0" styleClass="stat-value"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4">
+            <Label text="Đã trúng tuyển" styleClass="stat-label"/>
+            <Label fx:id="lblTrung" text="0" styleClass="stat-value" style="-fx-text-fill:#27500A;"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4">
+            <Label text="Chưa xét" styleClass="stat-label"/>
+            <Label fx:id="lblChuaXet" text="0" styleClass="stat-value" style="-fx-text-fill:#854F0B;"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4">
+            <Label text="Không đủ điều kiện" styleClass="stat-label"/>
+            <Label fx:id="lblKhongDu" text="0" styleClass="stat-value" style="-fx-text-fill:#791F1F;"/>
+        </VBox>
+    </HBox>
+
+    <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
+        <Button fx:id="btnXetTuyen" text="▶ Chạy xét tuyển"
+                styleClass="btn-primary" onAction="#onXetTuyen"/>
+        <Button text="+ Thêm NV" styleClass="btn-success" onAction="#onAdd"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="tfSearch" promptText="Tìm theo CCCD, họ tên..."
+                   styleClass="search-box" prefWidth="220" onKeyReleased="#onSearch"/>
+        <ComboBox fx:id="cbNganh"   promptText="Lọc ngành"     styleClass="combo-box-filter" prefWidth="160" onAction="#onFilter"/>
+        <ComboBox fx:id="cbKetQua"  promptText="Trạng thái"    styleClass="combo-box-filter" prefWidth="140" onAction="#onFilter"/>
+    </HBox>
+
+    <VBox VBox.vgrow="ALWAYS" styleClass="table-card">
+        <TableView fx:id="tblNguyenVong" VBox.vgrow="ALWAYS" styleClass="main-table">
+            <columns>
+                <TableColumn fx:id="colCccd"    text="CCCD"       prefWidth="130"/>
+                <TableColumn fx:id="colHoTen"   text="Họ tên"     prefWidth="160"/>
+                <TableColumn fx:id="colNV1"     text="NV1"        prefWidth="150"/>
+                <TableColumn fx:id="colNV2"     text="NV2"        prefWidth="150"/>
+                <TableColumn fx:id="colNV3"     text="NV3"        prefWidth="150"/>
+                <TableColumn fx:id="colDiemXet" text="Điểm xét"   prefWidth="90"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colKetQua"  text="Kết quả"    prefWidth="120" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colAction"  text="Thao tác"   prefWidth="100" style="-fx-alignment:CENTER;"/>
+            </columns>
+            <placeholder><Label text="Không có dữ liệu" styleClass="table-placeholder"/></placeholder>
+        </TableView>
+        <HBox styleClass="pagination-bar" alignment="CENTER_RIGHT" spacing="8">
+            <Label fx:id="lblCount" text="0 bản ghi" styleClass="record-count"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Pagination fx:id="pagination" pageCount="1" maxPageIndicatorCount="7"
+                        styleClass="table-pagination"/>
+        </HBox>
+    </VBox>
+</VBox>

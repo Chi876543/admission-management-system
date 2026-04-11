@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/MainApp.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/MainController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/BaseController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/DiemCongController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/DiemController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/NganhController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/NganhToHopController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/NguyenVongController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/QuyDoiController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/ThiSinhController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/ToHopController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/UserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/styles/app.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/diem-view.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/diemcong-view.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/nganh-tohop-view.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/nganh-view.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/nguyenvong-view.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/quydoi-view.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/thisinh-dialog.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/thisinh-view.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/tohop-view.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/user-dialog.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/user-view.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/main.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/LoginController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/login.fxml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="3CCNhT5AeGeQKbOBgDBIDECcWYN" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "thanhpham",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/Projects/admission-management-system/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Projects\admission-management-system\desktop-app\src\main\java\com\admissionManagement\desktop\controllers\admin" />
+      <recent name="D:\Projects\admission-management-system\desktop-app\src\main\java" />
+      <recent name="D:\Projects\admission-management-system\desktop-app\src\main\resources\com\admissionManagement\desktop\views\admin" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="" />
+      <created>1775885712525</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1775885712525</updated>
+    </task>
+    <servers />
+  </component>
+</project>
