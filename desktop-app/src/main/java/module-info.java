@@ -7,5 +7,5 @@ module desktop.app {
 
     opens com.admissionManagement.desktop to javafx.fxml;
     opens com.admissionManagement.desktop.controllers to javafx.fxml;
-    opens com.admissionManagement.desktop.controllers.admin to javafx.fxml;
+    opens com.admissionManagement.desktop.controllers.admin to javafx.fxml, javafx.base;
 }

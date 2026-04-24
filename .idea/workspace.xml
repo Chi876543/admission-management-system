@@ -5,40 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/MainApp.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/MainController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/BaseController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/DiemCongController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/DiemController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/NganhController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/NganhToHopController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/NguyenVongController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/QuyDoiController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/ThiSinhController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/ToHopController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/UserController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/styles/app.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/diem-view.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/diemcong-view.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/nganh-tohop-view.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/nganh-view.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/nguyenvong-view.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/quydoi-view.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/thisinh-dialog.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/thisinh-view.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/tohop-view.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/user-dialog.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/user-view.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/main.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/LoginController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/NganhController.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/NganhController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/login.fxml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +17,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -62,11 +35,12 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.MainApp.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "thanhpham",
+    "git-widget-placeholder": "tuan",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/Projects/admission-management-system/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin"
