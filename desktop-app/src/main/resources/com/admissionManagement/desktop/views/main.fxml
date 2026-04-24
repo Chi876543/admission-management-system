@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.admissionManagement.desktop.controllers.MainController"
+            stylesheets="@../styles/app.css"
+            prefWidth="1100" prefHeight="680">
+
+    <!-- ═══════════════ SIDEBAR LEFT ═══════════════ -->
+    <left>
+        <VBox fx:id="sidebar" styleClass="sidebar" prefWidth="210">
+
+            <!-- Logo / App name -->
+            <VBox styleClass="sidebar-logo" spacing="2">
+                <Label text="Tuyển Sinh 2025" styleClass="sidebar-title"/>
+                <Label text="Hệ thống quản lý" styleClass="sidebar-sub"/>
+            </VBox>
+
+            <!-- Nav items -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="sidebar-scroll">
+                <VBox styleClass="nav-list" spacing="2" fillWidth="true">
+
+                    <Label text="QUẢN LÝ HỆ THỐNG" styleClass="nav-section-label"/>
+                    <Button fx:id="btnUsers"       text="👤  Người dùng"         styleClass="nav-item" maxWidth="Infinity" onAction="#onNavUsers"/>
+                    
+                    <Label text="DỮ LIỆU TUYỂN SINH" styleClass="nav-section-label"/>
+                    <Button fx:id="btnThiSinh"     text="📋  Thí sinh"           styleClass="nav-item" maxWidth="Infinity" onAction="#onNavThiSinh"/>
+                    <Button fx:id="btnNganh"        text="🏫  Ngành tuyển sinh"  styleClass="nav-item" maxWidth="Infinity" onAction="#onNavNganh"/>
+                    <Button fx:id="btnToHop"        text="📐  Tổ hợp môn"        styleClass="nav-item" maxWidth="Infinity" onAction="#onNavToHop"/>
+                    <Button fx:id="btnNganhToHop"   text="🔗  Ngành - Tổ hợp"   styleClass="nav-item" maxWidth="Infinity" onAction="#onNavNganhToHop"/>
+
+                    <Label text="ĐIỂM &amp; XÉT TUYỂN" styleClass="nav-section-label"/>
+                    <Button fx:id="btnDiem"         text="📊  Điểm thí sinh"     styleClass="nav-item" maxWidth="Infinity" onAction="#onNavDiem"/>
+                    <Button fx:id="btnDiemCong"     text="➕  Điểm cộng"         styleClass="nav-item" maxWidth="Infinity" onAction="#onNavDiemCong"/>
+                    <Button fx:id="btnNguyenVong"   text="📝  Nguyện vọng"       styleClass="nav-item" maxWidth="Infinity" onAction="#onNavNguyenVong"/>
+                    <Button fx:id="btnQuyDoi"       text="🔄  Bảng quy đổi"      styleClass="nav-item" maxWidth="Infinity" onAction="#onNavQuyDoi"/>
+
+                </VBox>
+            </ScrollPane>
+
+            <!-- Bottom user info -->
+            <VBox styleClass="sidebar-footer" spacing="4">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label fx:id="lblAdminName" text="admin" styleClass="footer-user"/>
+                </HBox>
+                <Button text="Đăng xuất" styleClass="btn-logout" maxWidth="Infinity" onAction="#onLogout"/>
+            </VBox>
+
+        </VBox>
+    </left>
+
+    <!-- ═══════════════ MAIN AREA RIGHT ═══════════════ -->
+    <center>
+        <VBox>
+            <!-- Top bar -->
+            <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="2">
+                    <Label fx:id="lblPageTitle" text="Quản lý người dùng" styleClass="page-title"/>
+                    <Label fx:id="lblPageSub"   text="Danh sách tài khoản hệ thống" styleClass="page-sub"/>
+                </VBox>
+                <Label fx:id="lblUserBadge" text="● admin" styleClass="user-badge"/>
+            </HBox>
+
+            <!-- Content switcher — mỗi screen load vào đây -->
+            <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS" styleClass="content-area"/>
+        </VBox>
+    </center>
+
+</BorderPane>

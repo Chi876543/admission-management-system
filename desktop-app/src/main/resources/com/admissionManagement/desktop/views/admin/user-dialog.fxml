@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<!--
+    Load bằng: FXMLLoader.load(getClass().getResource(".../user-dialog.fxml"))
+    Đặt vào DialogPane hoặc Stage phụ trong UserController
+-->
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.UserController"
+      styleClass="dialog-root"
+      spacing="14" prefWidth="420">
+
+    <padding><Insets top="20" right="24" bottom="8" left="24"/></padding>
+
+    <Label fx:id="lblDialogTitle" text="Thêm người dùng" styleClass="dialog-title"/>
+
+    <!-- Username -->
+    <VBox spacing="4">
+        <Label text="Username *" styleClass="field-label"/>
+        <TextField fx:id="tfUsername" promptText="Nhập username..." styleClass="field-input"/>
+    </VBox>
+
+    <!-- Họ tên -->
+    <VBox spacing="4">
+        <Label text="Họ và tên *" styleClass="field-label"/>
+        <TextField fx:id="tfHoTen" promptText="Nhập họ tên đầy đủ..." styleClass="field-input"/>
+    </VBox>
+
+    <!-- Email -->
+    <VBox spacing="4">
+        <Label text="Email *" styleClass="field-label"/>
+        <TextField fx:id="tfEmail" promptText="example@edu.vn" styleClass="field-input"/>
+    </VBox>
+
+    <!-- Password (chỉ hiện khi Thêm mới) -->
+    <VBox fx:id="vboxPassword" spacing="4">
+        <Label text="Mật khẩu *" styleClass="field-label"/>
+        <PasswordField fx:id="tfPassword" promptText="Nhập mật khẩu..." styleClass="field-input"/>
+    </VBox>
+
+    <!-- Quyền + Trạng thái cùng hàng -->
+    <HBox spacing="12">
+        <VBox HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="Quyền *" styleClass="field-label"/>
+            <ComboBox fx:id="cbRole" maxWidth="Infinity" styleClass="field-input"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="Trạng thái" styleClass="field-label"/>
+            <ComboBox fx:id="cbStatusDialog" maxWidth="Infinity" styleClass="field-input"/>
+        </VBox>
+    </HBox>
+
+    <!-- Label lỗi -->
+    <Label fx:id="lblError" text="" styleClass="error-label" wrapText="true"/>
+
+    <!-- Buttons -->
+    <HBox spacing="8" alignment="CENTER_RIGHT">
+        <padding><Insets top="4" bottom="8"/></padding>
+        <Button text="Hủy"    styleClass="btn-default"  onAction="#onDialogCancel"/>
+        <Button text="Lưu"    styleClass="btn-primary"  onAction="#onDialogSave" defaultButton="true"/>
+    </HBox>
+
+</VBox>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.DiemCongController"
+      styleClass="screen-root" spacing="12">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <VBox styleClass="inline-form-card" spacing="10">
+        <Label fx:id="lblFormTitle" text="Thêm điểm cộng" styleClass="inline-form-title"/>
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="CCCD thí sinh *" styleClass="field-label"/>
+                <TextField fx:id="tfCccd" promptText="Nhập CCCD..." styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Loại ưu tiên *" styleClass="field-label"/>
+                <ComboBox fx:id="cbLoaiUuTien" maxWidth="Infinity" styleClass="field-input"/>
+            </VBox>
+        </HBox>
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm cộng *" styleClass="field-label"/>
+                <TextField fx:id="tfDiemCong" promptText="VD: 1.5" styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Ghi chú" styleClass="field-label"/>
+                <TextField fx:id="tfGhiChu" promptText="Lý do..." styleClass="field-input"/>
+            </VBox>
+        </HBox>
+        <Label fx:id="lblError" text="" styleClass="error-label"/>
+        <HBox spacing="8">
+            <Button text="Lưu"         styleClass="btn-primary" onAction="#onSave"/>
+            <Button text="Hủy / Mới"   styleClass="btn-default" onAction="#onReset"/>
+            <Button text="⬆ Import CSV" styleClass="btn-primary" onAction="#onImport"/>
+        </HBox>
+    </VBox>
+
+    <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
+        <TextField fx:id="tfSearch" promptText="Tìm theo CCCD, họ tên..."
+                   styleClass="search-box" prefWidth="240" onKeyReleased="#onSearch"/>
+        <ComboBox fx:id="cbFilter" promptText="Tất cả loại ưu tiên"
+                  styleClass="combo-box-filter" prefWidth="180" onAction="#onFilter"/>
+    </HBox>
+
+    <VBox VBox.vgrow="ALWAYS" styleClass="table-card">
+        <TableView fx:id="tblDiemCong" VBox.vgrow="ALWAYS" styleClass="main-table"
+                   onMouseClicked="#onTableClick">
+            <columns>
+                <TableColumn fx:id="colCccd"      text="CCCD"         prefWidth="130"/>
+                <TableColumn fx:id="colHoTen"     text="Họ tên"       prefWidth="175"/>
+                <TableColumn fx:id="colLoai"      text="Loại ưu tiên" prefWidth="130" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colDiemCong"  text="Điểm cộng"    prefWidth="100" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colGhiChu"    text="Ghi chú"      prefWidth="200"/>
+                <TableColumn fx:id="colAction"    text="Thao tác"     prefWidth="120" style="-fx-alignment:CENTER;"/>
+            </columns>
+            <placeholder><Label text="Không có dữ liệu" styleClass="table-placeholder"/></placeholder>
+        </TableView>
+        <HBox styleClass="pagination-bar" alignment="CENTER_RIGHT">
+            <Label fx:id="lblCount" text="0 bản ghi" styleClass="record-count"/>
+        </HBox>
+    </VBox>
+</VBox>

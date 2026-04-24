@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.DiemController"
+      styleClass="screen-root" spacing="12">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <!-- Stat cards -->
+    <HBox spacing="12">
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4">
+            <Label text="Điểm TB THPT" styleClass="stat-label"/>
+            <Label fx:id="lblTbThpt" text="--" styleClass="stat-value"/>
+            <Label text="toàn bộ thí sinh" styleClass="stat-sub"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4">
+            <Label text="Điểm TB VSAT" styleClass="stat-label"/>
+            <Label fx:id="lblTbVsat" text="--" styleClass="stat-value"/>
+            <Label text="thang điểm 1000" styleClass="stat-sub"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4">
+            <Label text="Điểm TB ĐGNL" styleClass="stat-label"/>
+            <Label fx:id="lblTbDgnl" text="--" styleClass="stat-value"/>
+            <Label text="thang điểm 1200" styleClass="stat-sub"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4">
+            <Label text="Đã nhập điểm" styleClass="stat-label"/>
+            <Label fx:id="lblDaNhap" text="--" styleClass="stat-value"/>
+            <Label fx:id="lblDaNhapSub" text="/ 0 thí sinh" styleClass="stat-sub"/>
+        </VBox>
+    </HBox>
+
+    <!-- Chart -->
+    <VBox styleClass="inline-form-card" spacing="6">
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <Label text="Phân bố điểm" styleClass="inline-form-title"/>
+            <ComboBox fx:id="cbLoaiDiem" prefWidth="130" onAction="#onChartFilter"/>
+            <ComboBox fx:id="cbToHopChart" prefWidth="150" onAction="#onChartFilter"/>
+        </HBox>
+        <BarChart fx:id="barChart" prefHeight="160" legendVisible="false"
+                  animated="false" styleClass="chart-main">
+            <xAxis><CategoryAxis fx:id="xAxis" label=""/></xAxis>
+            <yAxis><NumberAxis fx:id="yAxis" label="Số TS"/></yAxis>
+        </BarChart>
+    </VBox>
+
+    <!-- Toolbar + Table -->
+    <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
+        <Button text="+ Thêm"      styleClass="btn-success" onAction="#onAdd"/>
+        <Button text="⬆ Import CSV" styleClass="btn-primary" onAction="#onImport"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="tfSearch" promptText="Tìm theo CCCD, họ tên..."
+                   styleClass="search-box" prefWidth="220" onKeyReleased="#onSearch"/>
+        <ComboBox fx:id="cbLoaiDiemFilter" promptText="Tất cả loại điểm"
+                  styleClass="combo-box-filter" prefWidth="150" onAction="#onFilter"/>
+    </HBox>
+
+    <VBox VBox.vgrow="ALWAYS" styleClass="table-card">
+        <TableView fx:id="tblDiem" VBox.vgrow="ALWAYS" styleClass="main-table">
+            <columns>
+                <TableColumn fx:id="colCccd"     text="CCCD"        prefWidth="130"/>
+                <TableColumn fx:id="colHoTen"    text="Họ tên"      prefWidth="160"/>
+                <TableColumn fx:id="colLoai"     text="Loại điểm"   prefWidth="100" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colMon1"     text="Môn 1"       prefWidth="75"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colMon2"     text="Môn 2"       prefWidth="75"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colMon3"     text="Môn 3"       prefWidth="75"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colTong"     text="Tổng"        prefWidth="80"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colAction"   text="Thao tác"    prefWidth="130" style="-fx-alignment:CENTER;"/>
+            </columns>
+            <placeholder><Label text="Không có dữ liệu" styleClass="table-placeholder"/></placeholder>
+        </TableView>
+        <HBox styleClass="pagination-bar" alignment="CENTER_RIGHT" spacing="8">
+            <Label fx:id="lblCount" text="0 bản ghi" styleClass="record-count"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Pagination fx:id="pagination" pageCount="1" maxPageIndicatorCount="7"
+                        styleClass="table-pagination"/>
+        </HBox>
+    </VBox>
+</VBox>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.QuyDoiController"
+      styleClass="screen-root" spacing="12">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <VBox styleClass="inline-form-card" spacing="10">
+        <Label fx:id="lblFormTitle" text="Thêm bảng quy đổi" styleClass="inline-form-title"/>
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Loại điểm gốc *" styleClass="field-label"/>
+                <ComboBox fx:id="cbLoai" maxWidth="Infinity" styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm gốc từ *" styleClass="field-label"/>
+                <TextField fx:id="tfTu" promptText="VD: 700" styleClass="field-input"/>
+            </VBox>
+        </HBox>
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm gốc đến *" styleClass="field-label"/>
+                <TextField fx:id="tfDen" promptText="VD: 720" styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm quy đổi (thang 30) *" styleClass="field-label"/>
+                <TextField fx:id="tfQuyDoi" promptText="VD: 24.5" styleClass="field-input"/>
+            </VBox>
+        </HBox>
+        <Label fx:id="lblError" text="" styleClass="error-label"/>
+        <HBox spacing="8">
+            <Button text="Lưu"         styleClass="btn-primary" onAction="#onSave"/>
+            <Button text="Hủy / Mới"   styleClass="btn-default" onAction="#onReset"/>
+            <Button text="⬆ Import CSV" styleClass="btn-primary" onAction="#onImport"/>
+        </HBox>
+    </VBox>
+
+    <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
+        <TextField fx:id="tfSearch" promptText="Tìm theo điểm gốc..."
+                   styleClass="search-box" prefWidth="220" onKeyReleased="#onSearch"/>
+        <ComboBox fx:id="cbFilter" promptText="Tất cả loại điểm"
+                  styleClass="combo-box-filter" prefWidth="160" onAction="#onFilter"/>
+    </HBox>
+
+    <VBox VBox.vgrow="ALWAYS" styleClass="table-card">
+        <TableView fx:id="tblQuyDoi" VBox.vgrow="ALWAYS" styleClass="main-table"
+                   onMouseClicked="#onTableClick">
+            <columns>
+                <TableColumn fx:id="colLoai"    text="Loại điểm"       prefWidth="120" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colTu"      text="Điểm gốc (từ)"   prefWidth="130" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colDen"     text="Điểm gốc (đến)"  prefWidth="130" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colQuyDoi"  text="Điểm quy đổi"    prefWidth="140" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colAction"  text="Thao tác"         prefWidth="120" style="-fx-alignment:CENTER;"/>
+            </columns>
+            <placeholder><Label text="Không có dữ liệu" styleClass="table-placeholder"/></placeholder>
+        </TableView>
+        <HBox styleClass="pagination-bar" alignment="CENTER_RIGHT">
+            <Label fx:id="lblCount" text="0 bản ghi" styleClass="record-count"/>
+        </HBox>
+    </VBox>
+</VBox>

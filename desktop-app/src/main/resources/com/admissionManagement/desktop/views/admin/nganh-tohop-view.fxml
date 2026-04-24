@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.NganhToHopController"
+      styleClass="screen-root" spacing="12">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
+        <Button text="⬆ Import CSV" styleClass="btn-primary" onAction="#onImport"/>
+        <Label text="← Click chọn ngành bên trái để quản lý tổ hợp"
+               styleClass="record-count"/>
+    </HBox>
+
+    <!-- 2 panel song song -->
+    <HBox VBox.vgrow="ALWAYS" spacing="12">
+
+        <!-- Panel trái: danh sách ngành -->
+        <VBox HBox.hgrow="ALWAYS" styleClass="table-card" spacing="0">
+            <HBox styleClass="pagination-bar" alignment="CENTER_LEFT">
+                <Label text="Danh sách ngành" styleClass="inline-form-title"/>
+            </HBox>
+            <TableView fx:id="tblNganh" VBox.vgrow="ALWAYS" styleClass="main-table"
+                       onMouseClicked="#onNganhClick">
+                <columns>
+                    <TableColumn fx:id="colMaNganh"  text="Mã ngành" prefWidth="110"/>
+                    <TableColumn fx:id="colTenNganh" text="Tên ngành" prefWidth="200"/>
+                </columns>
+                <placeholder><Label text="Không có ngành" styleClass="table-placeholder"/></placeholder>
+            </TableView>
+        </VBox>
+
+        <!-- Panel phải: tổ hợp của ngành đang chọn -->
+        <VBox HBox.hgrow="ALWAYS" styleClass="table-card" spacing="0">
+            <HBox styleClass="pagination-bar" alignment="CENTER_LEFT" spacing="8">
+                <Label fx:id="lblSelectedNganh" text="Chọn một ngành để xem tổ hợp"
+                       styleClass="inline-form-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="cbToHopGan" promptText="Chọn tổ hợp..." prefWidth="160"/>
+                <Button text="+ Gán" styleClass="btn-success" onAction="#onGanToHop"/>
+            </HBox>
+            <TableView fx:id="tblToHopCuaNganh" VBox.vgrow="ALWAYS" styleClass="main-table">
+                <columns>
+                    <TableColumn fx:id="colMaTH"  text="Mã TH"     prefWidth="80"/>
+                    <TableColumn fx:id="colTenTH" text="Tên tổ hợp" prefWidth="160"/>
+                    <TableColumn fx:id="colMon"   text="Môn thi"    prefWidth="200"/>
+                    <TableColumn fx:id="colXoa"   text="Gỡ"         prefWidth="60" style="-fx-alignment:CENTER;"/>
+                </columns>
+                <placeholder><Label text="Chưa có tổ hợp nào" styleClass="table-placeholder"/></placeholder>
+            </TableView>
+        </VBox>
+
+    </HBox>
+</VBox>

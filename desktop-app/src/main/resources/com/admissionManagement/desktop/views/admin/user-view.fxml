@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.UserController"
+      styleClass="screen-root"
+      spacing="12">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <!-- ═══ TOOLBAR ═══ -->
+    <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
+        <Button text="+ Thêm mới"    styleClass="btn-success"  onAction="#onAdd"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="tfSearch"  promptText="Tìm theo tên, username..."
+                   styleClass="search-box" prefWidth="220" onKeyReleased="#onSearch"/>
+        <ComboBox  fx:id="cbRole"    promptText="Tất cả quyền"
+                   styleClass="combo-box-filter" prefWidth="130"/>
+        <ComboBox  fx:id="cbStatus"  promptText="Trạng thái"
+                   styleClass="combo-box-filter" prefWidth="140"/>
+    </HBox>
+
+    <!-- ═══ TABLE ═══ -->
+    <VBox VBox.vgrow="ALWAYS" styleClass="table-card" spacing="0">
+
+        <TableView fx:id="tblUsers" VBox.vgrow="ALWAYS" styleClass="main-table">
+            <columns>
+                <TableColumn fx:id="colStt"      text="#"            prefWidth="44"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colUsername"  text="Username"     prefWidth="120"/>
+                <TableColumn fx:id="colHoTen"     text="Họ tên"       prefWidth="180"/>
+                <TableColumn fx:id="colEmail"     text="Email"        prefWidth="200"/>
+                <TableColumn fx:id="colRole"      text="Quyền"        prefWidth="90"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colStatus"    text="Trạng thái"   prefWidth="110" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colAction"    text="Thao tác"     prefWidth="160" style="-fx-alignment:CENTER;"/>
+            </columns>
+            <placeholder>
+                <Label text="Không có dữ liệu" styleClass="table-placeholder"/>
+            </placeholder>
+        </TableView>
+
+        <!-- Pagination bar -->
+        <HBox styleClass="pagination-bar" alignment="CENTER_RIGHT" spacing="6">
+            <Label fx:id="lblRecordCount" text="0 bản ghi" styleClass="record-count"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Pagination fx:id="pagination" pageCount="1" maxPageIndicatorCount="5"
+                        styleClass="table-pagination"/>
+        </HBox>
+
+    </VBox>
+
+    <!-- ═══ DIALOG THÊM / SỬA (ẩn mặc định, hiện bằng code) ═══ -->
+    <!-- Dùng Dialog hoặc Stage phụ — xem UserController.java -->
+
+</VBox>
