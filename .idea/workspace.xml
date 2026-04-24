@@ -4,14 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/BangQuyDoiBUS.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/DiemCongXetTuyenBUS.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="4 file cuoi">
+      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/NganhToHopBUS.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/NguyenVongXetTuyenBUS.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/ThiSinhBUS.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/ToHopMonThiBUS.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/BangQuyDoiDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/BangQuyDoiDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemCongXetTuyenDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemCongXetTuyenDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/NganhToHopDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/NganhToHopDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/NguyenVongXetTuyenDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/NguyenVongXetTuyenDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/ThiSinhDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/ThiSinhDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/ToHopMonThiDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/ToHopMonThiDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/BangQuyDoiBUS.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/BangQuyDoiBUS.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +32,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "DucThanh2925"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Chi876543/admission-management-system.git",
+    "accountId": "187a1435-0843-4da5-946c-a6ac9e0186cb"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 6
@@ -46,11 +62,18 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "core",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "ma",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Projects/admission-management-system/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin"
+    "last_opened_file_path": "D:/Projects/admission-management-system/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -74,7 +97,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1775885712525</updated>
+      <workItem from="1777033907078" duration="5177000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="4 file cuoi" />
+    <option name="LAST_COMMIT_MESSAGE" value="4 file cuoi" />
   </component>
 </project>
