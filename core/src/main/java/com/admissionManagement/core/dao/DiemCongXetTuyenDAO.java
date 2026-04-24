@@ -1,12 +1,7 @@
 package com.admissionManagement.core.dao;
 
-import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.DiemCongXetTuyen;
-import com.admissionManagement.core.entity.DiemCongXetTuyen;
-import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 
 import java.util.List;
 

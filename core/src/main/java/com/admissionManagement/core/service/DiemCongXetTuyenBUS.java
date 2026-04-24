@@ -1,7 +1,6 @@
 package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.DiemCongXetTuyenDAO;
-import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.DiemCongXetTuyen;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;

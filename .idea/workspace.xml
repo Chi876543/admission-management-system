@@ -4,14 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/BangQuyDoiBUS.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/DiemCongXetTuyenBUS.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="refactor(core): add BangQuyDoiBUS, DiemCongXetTuyenBUS">
+      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/DiemThiXetTuyenBUS.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/NganhBUS.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/BangQuyDoiDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/BangQuyDoiDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemCongXetTuyenDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemCongXetTuyenDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemThiXetTuyenDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemThiXetTuyenDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/NganhDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/NganhDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/DiemCongXetTuyenBUS.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/DiemCongXetTuyenBUS.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,6 +75,19 @@
       <option name="presentableId" value="Default" />
       <updated>1775885712525</updated>
     </task>
+    <task id="LOCAL-00001" summary="refactor(core): add BangQuyDoiBUS, DiemCongXetTuyenBUS">
+      <option name="closed" value="true" />
+      <created>1777017833408</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1777017833408</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="refactor(core): add BangQuyDoiBUS, DiemCongXetTuyenBUS" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(core): add BangQuyDoiBUS, DiemCongXetTuyenBUS" />
   </component>
 </project>
