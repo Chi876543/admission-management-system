@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="refactor(core): add BangQuyDoiBUS, DiemCongXetTuyenBUS">
-      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/DiemThiXetTuyenBUS.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/NganhBUS.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemCongXetTuyenDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemCongXetTuyenDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemThiXetTuyenDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemThiXetTuyenDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/NganhDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/NganhDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/DiemCongXetTuyenBUS.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/DiemCongXetTuyenBUS.java" afterDir="false" />
-    </list>
+    <list default="true" id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="refactor(core): add BangQuyDoiBUS, DiemCongXetTuyenBUS" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -47,7 +39,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "core",
+    "git-widget-placeholder": "tuan",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/Projects/admission-management-system/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin"
