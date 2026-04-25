@@ -4,19 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dto/ThiSinhDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/src/main/java/module-info.java" afterDir="false" />
+    <list default="true" id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="refactor(core): add BangQuyDoiBUS, DiemCongXetTuyenBUS">
+      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/DiemThiXetTuyenBUS.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/NganhBUS.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/CandidateController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/MainLayoutController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/MajorController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/ThiSinhController.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/ThiSinhController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/CandidateView.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/MainLayout.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/MajorView.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/thisinh-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/thisinh-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemCongXetTuyenDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemCongXetTuyenDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemThiXetTuyenDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/DiemThiXetTuyenDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/NganhDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dao/NganhDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/DiemCongXetTuyenBUS.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/service/DiemCongXetTuyenBUS.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,15 +22,11 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
-        <option value="module-info" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -51,21 +42,15 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.MainApp.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "tuan",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "core",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Projects/admission-management-system/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "vue.rearranger.settings.migration": "true"
+    "last_opened_file_path": "D:/Projects/admission-management-system/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -89,26 +74,20 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1775885712525</updated>
-      <workItem from="1777080369134" duration="3242000" />
     </task>
+    <task id="LOCAL-00001" summary="refactor(core): add BangQuyDoiBUS, DiemCongXetTuyenBUS">
+      <option name="closed" value="true" />
+      <created>1777017833408</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1777017833408</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/ThiSinhController.java</url>
-          <line>47</line>
-          <properties class="com.admissionManagement.desktop.controllers.admin.ThiSinhController" method="initialize">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="refactor(core): add BangQuyDoiBUS, DiemCongXetTuyenBUS" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(core): add BangQuyDoiBUS, DiemCongXetTuyenBUS" />
   </component>
 </project>
