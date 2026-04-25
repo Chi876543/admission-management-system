@@ -1,5 +1,7 @@
 package com.admissionManagement.core.dao;
 
+
+import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.NguyenVongXetTuyen;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
@@ -15,69 +17,27 @@ public class NguyenVongXetTuyenDAO {
         this.factory = HibernateUtil.getSessionFactory();
     }
 
-    public void addNguyenVongXetTuyen(NguyenVongXetTuyen nguyenVongXetTuyen) {
-        Session session = factory.openSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-            session.save(nguyenVongXetTuyen);
-            tx.commit();
-        } catch (Exception e) {
-            if(tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
+    public void addWithSession(Session session, NguyenVongXetTuyen nguyenVongXetTuyen) {
+        session.save(nguyenVongXetTuyen);
     }
 
-    public List<NguyenVongXetTuyen> getAllNguyenVongXetTuyen(){
-        Session session = factory.openSession();
-        String query = "FROM NguyenVongXetTuyen";
+
+    public NguyenVongXetTuyen getWithSession(Session session, int id){
+        NguyenVongXetTuyen nguyenVongXetTuyen = session.get(NguyenVongXetTuyen.class, id);
+        return nguyenVongXetTuyen;
+    }
+
+    public List<NguyenVongXetTuyen> getAllWithSession(Session session){
+        String query = "FROM NguyenVongXetTuyen ";
         List listNguyenVongXetTuyen = session.createQuery(query).list();
-        session.close();
         return listNguyenVongXetTuyen;
     }
 
-    public void updateNguyenVongXetTuyen(int id, NguyenVongXetTuyen newNguyenVongXetTuyen) {
-        Session session = factory.openSession();
-        Transaction tx = null;
-        NguyenVongXetTuyen nguyenVongXetTuyen= session.get(NguyenVongXetTuyen.class, id);
-        try {
-            tx = session.beginTransaction();
-            if(nguyenVongXetTuyen != null) {
-                nguyenVongXetTuyen.setCccd(newNguyenVongXetTuyen.getCccd());
-                nguyenVongXetTuyen.setMaNganh(newNguyenVongXetTuyen.getMaNganh());
-                nguyenVongXetTuyen.setThuTu(newNguyenVongXetTuyen.getThuTu());
-                nguyenVongXetTuyen.setDiemThxt(newNguyenVongXetTuyen.getDiemThxt());
-                nguyenVongXetTuyen.setDiemUtqd(newNguyenVongXetTuyen.getDiemUtqd());
-                nguyenVongXetTuyen.setDiemCong(newNguyenVongXetTuyen.getDiemCong());
-                nguyenVongXetTuyen.setDiemXetTuyen(newNguyenVongXetTuyen.getDiemXetTuyen());
-                nguyenVongXetTuyen.setKetQua(newNguyenVongXetTuyen.getKetQua());
-                nguyenVongXetTuyen.setNvKeys(newNguyenVongXetTuyen.getNvKeys());
-                nguyenVongXetTuyen.setPhuongThuc(newNguyenVongXetTuyen.getPhuongThuc());
-                nguyenVongXetTuyen.setThm(newNguyenVongXetTuyen.getThm());
-            }
-                tx.commit();
-        } catch (Exception e) {
-            if(tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
+    public void updateWithSession(Session session, NguyenVongXetTuyen newNguyenVongXetTuyen) {
+        session.merge(newNguyenVongXetTuyen);
     }
 
-    public void deleteNguyenVongXetTuyen(int id) {
-        Session session = factory.openSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-            NguyenVongXetTuyen nguyenVongXetTuyen = session.get(NguyenVongXetTuyen.class,id);
-            if (nguyenVongXetTuyen != null) session.delete(nguyenVongXetTuyen);
-            tx.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
+    public void deleteWithSession(Session session, NguyenVongXetTuyen nguyenVongXetTuyen) {
+        session.detach(nguyenVongXetTuyen);
     }
 }

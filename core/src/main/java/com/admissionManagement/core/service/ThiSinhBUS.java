@@ -1,31 +1,33 @@
 package com.admissionManagement.core.service;
 
-import com.admissionManagement.core.dao.BangQuyDoiDAO;
-import com.admissionManagement.core.entity.BangQuyDoi;
+
+import com.admissionManagement.core.dao.ThiSinhDAO;
+
 import com.admissionManagement.core.entity.ThiSinh;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import java.time.LocalDate;
 import java.util.List;
 
-public class BangQuyDoiBUS {
-    private final BangQuyDoiDAO dao;
+public class ThiSinhBUS {
+    private final ThiSinhDAO dao;
     private final SessionFactory factory;
 
-    public BangQuyDoiBUS() {
-        this.dao = new BangQuyDoiDAO();
+    public ThiSinhBUS() {
+        this.dao = new ThiSinhDAO();
         this.factory = HibernateUtil.getSessionFactory();
     }
 
-    public String addBangQuyDoi(BangQuyDoi bangQuyDoi){
+    public String addThiSinh(ThiSinh thiSinh){
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
 
-            dao.addWithSession(session, bangQuyDoi);
+            dao.addWithSession(session, thiSinh);
 
             tx.commit();
             return "Added successfully";
@@ -38,40 +40,44 @@ public class BangQuyDoiBUS {
         }
     }
 
-    public BangQuyDoi getBangQuyDoi(int id){
+    public ThiSinh getThiSinh(int id){
         Session session = factory.openSession();
-        BangQuyDoi bangQuyDoi = dao.getWithSession(session, id);
+        ThiSinh thiSinh = dao.getWithSession(session, id);
         session.close();
-        return bangQuyDoi;
+        return thiSinh;
     }
 
-    public List<BangQuyDoi> getAllBangQuyDoi(){
+    public List<ThiSinh> getAllThiSinh(){
         Session session = factory.openSession();
-        List<BangQuyDoi> listBangQuyDoi = dao.getAllWithSession(session);
+        List<ThiSinh> listThiSinh = dao.getAllWithSession(session);
         session.close();
-        return listBangQuyDoi;
+        return listThiSinh;
     }
 
-    public String updateBangQuyDoi(int id, BangQuyDoi newBangQuyDoi){
+    public String updateThiSinh(int id, ThiSinh newThiSinh){
         Session session = factory.openSession();
         Transaction tx = null;
-        BangQuyDoi bangQuyDoi = dao.getWithSession(session, id);
+        ThiSinh thiSinh = dao.getWithSession(session, id);
         try {
             tx = session.beginTransaction();
 
-            if (bangQuyDoi != null) {
-                bangQuyDoi.setPhuongThuc(newBangQuyDoi.getPhuongThuc());
-                bangQuyDoi.setToHop(newBangQuyDoi.getToHop());
-                bangQuyDoi.setMon(newBangQuyDoi.getMon());
-                bangQuyDoi.setDiemA(newBangQuyDoi.getDiemA());
-                bangQuyDoi.setDiemB(newBangQuyDoi.getDiemB());
-                bangQuyDoi.setDiemC(newBangQuyDoi.getDiemC());
-                bangQuyDoi.setDiemD(newBangQuyDoi.getDiemD());
-                bangQuyDoi.setMaQuyDoi(newBangQuyDoi.getMaQuyDoi());
-                bangQuyDoi.setPhanVi(newBangQuyDoi.getPhanVi());
+            if(thiSinh != null){
+                thiSinh.setGioiTinh(newThiSinh.getGioiTinh());
+                thiSinh.setCccd(newThiSinh.getCccd());
+                thiSinh.setSoBaoDanh(newThiSinh.getSoBaoDanh());
+                thiSinh.setHo(newThiSinh.getHo());
+                thiSinh.setTen(newThiSinh.getTen());
+                thiSinh.setDienThoai(newThiSinh.getDienThoai());
+                thiSinh.setEmail(newThiSinh.getEmail());
+                thiSinh.setPassword(newThiSinh.getPassword());
+                thiSinh.setNgaySinh(newThiSinh.getNgaySinh());
+                thiSinh.setNoiSinh(newThiSinh.getNoiSinh());
+                thiSinh.setDoiTuong(newThiSinh.getDoiTuong());
+                thiSinh.setKhuVuc(newThiSinh.getKhuVuc());
+                thiSinh.setUpdatedAt(LocalDate.now());
             }
 
-            dao.updateWithSession(session, bangQuyDoi);
+            dao.updateWithSession(session, thiSinh);
 
             tx.commit();
             return "Updated successfully";
@@ -84,14 +90,14 @@ public class BangQuyDoiBUS {
         }
     }
 
-    public String deletetBangQuyDoi(int id){
+    public String deletetThiSinh(int id){
         Session session = factory.openSession();
         Transaction tx = null;
-        BangQuyDoi bangQuyDoi = dao.getWithSession(session, id);
+        ThiSinh thiSinh = dao.getWithSession(session, id);
         try {
             tx = session.beginTransaction();
 
-            dao.deleteWithSession(session, bangQuyDoi);
+            dao.deleteWithSession(session, thiSinh);
 
             tx.commit();
             return "Deleted successfully";

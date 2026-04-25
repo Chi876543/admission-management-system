@@ -1,8 +1,10 @@
 package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.BangQuyDoiDAO;
+import com.admissionManagement.core.dao.ToHopMonThiDAO;
 import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.ThiSinh;
+import com.admissionManagement.core.entity.ToHopMonThi;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,22 +12,23 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 
-public class BangQuyDoiBUS {
-    private final BangQuyDoiDAO dao;
+public class ToHopMonThiBUS {
+
+    private final ToHopMonThiDAO dao;
     private final SessionFactory factory;
 
-    public BangQuyDoiBUS() {
-        this.dao = new BangQuyDoiDAO();
+    public ToHopMonThiBUS() {
+        this.dao = new ToHopMonThiDAO();
         this.factory = HibernateUtil.getSessionFactory();
     }
 
-    public String addBangQuyDoi(BangQuyDoi bangQuyDoi){
+    public String addToHopMonThi(ToHopMonThi toHopMonThi){
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
 
-            dao.addWithSession(session, bangQuyDoi);
+            dao.addWithSession(session, toHopMonThi);
 
             tx.commit();
             return "Added successfully";
@@ -38,40 +41,36 @@ public class BangQuyDoiBUS {
         }
     }
 
-    public BangQuyDoi getBangQuyDoi(int id){
+    public ToHopMonThi getToHopMonThi(int id){
         Session session = factory.openSession();
-        BangQuyDoi bangQuyDoi = dao.getWithSession(session, id);
+        ToHopMonThi toHopMonThi = dao.getWithSession(session, id);
         session.close();
-        return bangQuyDoi;
+        return toHopMonThi;
     }
 
-    public List<BangQuyDoi> getAllBangQuyDoi(){
+    public List<ToHopMonThi> getAllToHopMonThi(){
         Session session = factory.openSession();
-        List<BangQuyDoi> listBangQuyDoi = dao.getAllWithSession(session);
+        List<ToHopMonThi> listToHopMonThi = dao.getAllWithSession(session);
         session.close();
-        return listBangQuyDoi;
+        return listToHopMonThi;
     }
 
-    public String updateBangQuyDoi(int id, BangQuyDoi newBangQuyDoi){
+    public String updateToHopMonThi(int id, ToHopMonThi newToHopMonThi){
         Session session = factory.openSession();
         Transaction tx = null;
-        BangQuyDoi bangQuyDoi = dao.getWithSession(session, id);
+        ToHopMonThi toHopMonThi = dao.getWithSession(session, id);
         try {
             tx = session.beginTransaction();
 
-            if (bangQuyDoi != null) {
-                bangQuyDoi.setPhuongThuc(newBangQuyDoi.getPhuongThuc());
-                bangQuyDoi.setToHop(newBangQuyDoi.getToHop());
-                bangQuyDoi.setMon(newBangQuyDoi.getMon());
-                bangQuyDoi.setDiemA(newBangQuyDoi.getDiemA());
-                bangQuyDoi.setDiemB(newBangQuyDoi.getDiemB());
-                bangQuyDoi.setDiemC(newBangQuyDoi.getDiemC());
-                bangQuyDoi.setDiemD(newBangQuyDoi.getDiemD());
-                bangQuyDoi.setMaQuyDoi(newBangQuyDoi.getMaQuyDoi());
-                bangQuyDoi.setPhanVi(newBangQuyDoi.getPhanVi());
+            if(toHopMonThi != null) {
+                toHopMonThi.setMaToHop(newToHopMonThi.getMaToHop());
+                toHopMonThi.setMon1(newToHopMonThi.getMon1());
+                toHopMonThi.setMon2(newToHopMonThi.getMon2());
+                toHopMonThi.setMon3(newToHopMonThi.getMon3());
+                toHopMonThi.setTenToHop(newToHopMonThi.getTenToHop());
             }
 
-            dao.updateWithSession(session, bangQuyDoi);
+            dao.updateWithSession(session, toHopMonThi);
 
             tx.commit();
             return "Updated successfully";
@@ -84,14 +83,14 @@ public class BangQuyDoiBUS {
         }
     }
 
-    public String deletetBangQuyDoi(int id){
+    public String deletetToHopMonThi(int id){
         Session session = factory.openSession();
         Transaction tx = null;
-        BangQuyDoi bangQuyDoi = dao.getWithSession(session, id);
+        ToHopMonThi toHopMonThi = dao.getWithSession(session, id);
         try {
             tx = session.beginTransaction();
 
-            dao.deleteWithSession(session, bangQuyDoi);
+            dao.deleteWithSession(session, toHopMonThi);
 
             tx.commit();
             return "Deleted successfully";
