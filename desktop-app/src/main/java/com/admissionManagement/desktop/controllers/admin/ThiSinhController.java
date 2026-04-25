@@ -1,6 +1,9 @@
 package com.admissionManagement.desktop.controllers.admin;
 
 import com.admissionManagement.core.dto.ThiSinhDTO;
+import com.admissionManagement.core.service.ThiSinhBUS;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,9 +14,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.Reader;
+import java.nio.file.Files;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,12 +30,18 @@ import java.util.stream.Collectors;
 
 public class ThiSinhController extends BaseController implements Initializable {
 
+    // Khởi tạo tầng BUS để giao tiếp với DB
+    private final ThiSinhBUS thiSinhBUS = new ThiSinhBUS();
+
     // ── Giao diện TableView ──
     @FXML private TextField tfSearch;
     @FXML private TableView<ThiSinhDTO> tblThiSinh;
-    @FXML private TableColumn<ThiSinhDTO, String> colId, colSbd, colCccd, colHo, colTen,
+    @FXML private TableColumn<ThiSinhDTO, Integer> colId;
+    @FXML
+    private TableColumn<ThiSinhDTO, String> colSbd, colCccd, colHo, colTen,
             colNgaySinh, colGioiTinh, colSdt, colEmail, colNoiSinh, colDoiTuong, colKhuVuc;
     @FXML private TableColumn<ThiSinhDTO, Void> colAction;
+
     @FXML private Label lblCount;
     @FXML private Pagination pagination;
 
@@ -51,7 +64,7 @@ public class ThiSinhController extends BaseController implements Initializable {
             loadData();
         }
         if (cbGioiTinh != null) {
-            cbGioiTinh.setItems(FXCollections.observableArrayList("Nam", "Nữ"));
+            cbGioiTinh.setItems(FXCollections.observableArrayList("Nam", "Nữ", "Khác"));
             cbDoiTuong.setItems(FXCollections.observableArrayList("01", "02", "03", "04", "05", "06", "07", "Không"));
             cbKhuVuc.setItems(FXCollections.observableArrayList("KV1", "KV2", "KV2-NT", "KV3"));
         }
@@ -59,21 +72,19 @@ public class ThiSinhController extends BaseController implements Initializable {
 
     // ── Cấu hình TableView ──────────────────────────────────
     private void setupTable() {
-        // Ánh xạ các cột chuẩn xác với DTO
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colSbd.setCellValueFactory(new PropertyValueFactory<>("sbd"));
+        colId.setCellValueFactory(new PropertyValueFactory<>("idThiSinh"));
+        colSbd.setCellValueFactory(new PropertyValueFactory<>("soBaoDanh"));
         colCccd.setCellValueFactory(new PropertyValueFactory<>("cccd"));
         colHo.setCellValueFactory(new PropertyValueFactory<>("ho"));
         colTen.setCellValueFactory(new PropertyValueFactory<>("ten"));
         colNgaySinh.setCellValueFactory(new PropertyValueFactory<>("ngaySinh"));
         colGioiTinh.setCellValueFactory(new PropertyValueFactory<>("gioiTinh"));
-        colSdt.setCellValueFactory(new PropertyValueFactory<>("sdt"));
+        colSdt.setCellValueFactory(new PropertyValueFactory<>("dienThoai"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colNoiSinh.setCellValueFactory(new PropertyValueFactory<>("noiSinh"));
         colDoiTuong.setCellValueFactory(new PropertyValueFactory<>("doiTuong"));
         colKhuVuc.setCellValueFactory(new PropertyValueFactory<>("khuVuc"));
 
-        // Cột thao tác (Sửa / Xóa)
         colAction.setCellFactory(col -> new TableCell<>() {
             private final HBox box = makeActionCell(
                     () -> openDialog(getTableView().getItems().get(getIndex())),
@@ -94,12 +105,8 @@ public class ThiSinhController extends BaseController implements Initializable {
 
     // ── Dữ liệu & Tìm kiếm ─────────────────────────────────
     private void loadData() {
-        // ID là TS001, SBD là chuỗi số thực tế
-        allData.setAll(
-                new ThiSinhDTO("TS001", "02001542", "001234567890", "Nguyễn Văn", "An", "15/03/2006", "Nam", "0901234567", "an@gmail.com", null, "Hà Nội", "Không", "KV3", null),
-                new ThiSinhDTO("TS002", "02001543", "001234567891", "Trần Thị", "Bình", "22/07/2006", "Nữ", "0912345678", "binh@gmail.com", null, "Hải Phòng", "01", "KV1", null),
-                new ThiSinhDTO("TS003", "02001544", "001234567892", "Lê Minh", "Châu", "10/11/2005", "Nam", "0923456789", "chau@gmail.com", null, "Đà Nẵng", "06", "KV2", null)
-        );
+        List<ThiSinhDTO> dataTuDB = thiSinhBUS.getAllThiSinh();
+        allData.setAll(dataTuDB);
         applyFilter();
     }
 
@@ -124,15 +131,18 @@ public class ThiSinhController extends BaseController implements Initializable {
 
     @FXML private void onSearch() { applyFilter(); }
     @FXML private void onAdd() { openDialog(null); }
-    @FXML private void onImport() {
-        showInfo("Import CSV", "Tính năng import sẽ hoạt động qua Service Layer.");
-    }
 
     private void onDelete(ThiSinhDTO row) {
         if (confirmDelete(row.getHo() + " " + row.getTen())) {
-            // TODO: Gọi API Delete truyền vào row.getId()
-            allData.remove(row);
-            applyFilter();
+            String result = thiSinhBUS.deleteThiSinh(row.getIdThiSinh());
+
+            if (result.contains("successfully")) {
+                allData.remove(row);
+                applyFilter();
+                showInfo("Thành công", "Đã xóa thí sinh!");
+            } else {
+                showError("Lỗi xóa: " + result);
+            }
         }
     }
 
@@ -151,7 +161,8 @@ public class ThiSinhController extends BaseController implements Initializable {
 
             ctrl.initDialog(dialogStage, row, allData, this);
             dialogStage.showAndWait();
-            applyFilter();
+
+            loadData();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -162,12 +173,12 @@ public class ThiSinhController extends BaseController implements Initializable {
         this.editingRow = row;
 
         if (row != null) {
-            lblDialogTitle.setText("Sửa hồ sơ thí sinh: " + row.getId());
-            tfSbd.setText(row.getSbd());
+            lblDialogTitle.setText("Sửa hồ sơ thí sinh ID: " + row.getIdThiSinh());
+            tfSbd.setText(row.getSoBaoDanh());
             tfCccd.setText(row.getCccd()); tfCccd.setDisable(true);
             tfHo.setText(row.getHo());
             tfTen.setText(row.getTen());
-            tfSdt.setText(row.getSdt());
+            tfSdt.setText(row.getDienThoai());
             tfEmail.setText(row.getEmail());
             tfNoiSinh.setText(row.getNoiSinh());
             cbGioiTinh.setValue(row.getGioiTinh());
@@ -185,11 +196,8 @@ public class ThiSinhController extends BaseController implements Initializable {
         }
 
         if (editingRow == null) {
-            // Tạm thời tự sinh ID mẫu cho màn hình Desktop (Thực tế Spring Boot sẽ làm việc này)
-            String generatedId = "TS" + String.format("%03d", allData.size() + 1);
-
             ThiSinhDTO r = new ThiSinhDTO(
-                    generatedId,
+                    0,
                     tfSbd.getText().trim(),
                     tfCccd.getText().trim(),
                     tfHo.getText().trim(),
@@ -204,21 +212,75 @@ public class ThiSinhController extends BaseController implements Initializable {
                     cbKhuVuc.getValue(),
                     null
             );
-            allData.add(r);
+            String result = thiSinhBUS.addThiSinh(r);
+            if (!result.contains("successfully")) {
+                lblError.setText(result);
+                return;
+            }
         } else {
-            // Khi cập nhật, ID giữ nguyên
-            editingRow.setSbd(tfSbd.getText().trim());
+            editingRow.setSoBaoDanh(tfSbd.getText().trim());
             editingRow.setHo(tfHo.getText().trim());
             editingRow.setTen(tfTen.getText().trim());
-            editingRow.setSdt(tfSdt.getText().trim());
+            editingRow.setDienThoai(tfSdt.getText().trim());
             editingRow.setEmail(tfEmail.getText().trim());
             editingRow.setNoiSinh(tfNoiSinh.getText().trim());
             editingRow.setGioiTinh(cbGioiTinh.getValue());
             editingRow.setDoiTuong(cbDoiTuong.getValue());
             editingRow.setKhuVuc(cbKhuVuc.getValue());
+
+            String result = thiSinhBUS.updateThiSinh(editingRow.getIdThiSinh(), editingRow);
+            if (!result.contains("successfully")) {
+                lblError.setText(result);
+                return;
+            }
         }
         dialogStage.close();
     }
 
     @FXML private void onDialogCancel() { dialogStage.close(); }
+
+    // ── Xử lý Import CSV qua Batch ─────────────────────────
+    private void processImport(File file) {
+        List<ThiSinhDTO> listImport = new ArrayList<>();
+
+        try (Reader reader = Files.newBufferedReader(file.toPath());
+             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build()) {
+
+            String[] line;
+            while ((line = csvReader.readNext()) != null) {
+                try {
+                    ThiSinhDTO dto = new ThiSinhDTO(
+                            0,
+                            line[0].trim(), line[1].trim(), line[2].trim(), line[3].trim(),
+                            line[4].trim(), line[5].trim(), line[6].trim(), line[7].trim(),
+                            "123456",
+                            line[8].trim(), line[9].trim(), line[10].trim(), null
+                    );
+                    listImport.add(dto);
+                } catch (Exception e) {
+                    System.out.println("Bỏ qua 1 dòng lỗi cấu trúc.");
+                }
+            }
+
+            String result = thiSinhBUS.addListThiSinh(listImport);
+
+            showInfo("Kết quả Import", result);
+            loadData();
+
+        } catch (Exception e) {
+            showError("Lỗi không thể đọc file: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onImport() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Chọn file CSV thí sinh");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        File selectedFile = fileChooser.showOpenDialog(tblThiSinh.getScene().getWindow());
+
+        if (selectedFile != null) {
+            processImport(selectedFile);
+        }
+    }
 }

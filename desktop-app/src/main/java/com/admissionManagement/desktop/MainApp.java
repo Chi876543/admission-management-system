@@ -1,5 +1,6 @@
 package com.admissionManagement.desktop;
 
+import com.admissionManagement.core.util.HibernateUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,6 +25,12 @@ public class MainApp extends Application {
         primaryStage.setMinWidth(900);
         primaryStage.setMinHeight(600);
         primaryStage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        HibernateUtil.shutdown();
+        super.stop();
     }
 
     public static void main(String[] args) {

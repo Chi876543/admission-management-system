@@ -25,7 +25,7 @@ public class DiemThiXetTuyen {
     private String phuongThuc;
 
     // Map các môn thi
-    @Column(name = "TO", precision = 8, scale = 2) private BigDecimal diemToan;
+    @Column(name = "`TO`", precision = 8, scale = 2) private BigDecimal diemToan;
     @Column(name = "LI", precision = 8, scale = 2) private BigDecimal diemLy;
     @Column(name = "HO", precision = 8, scale = 2) private BigDecimal diemHoa;
     @Column(name = "SI", precision = 8, scale = 2) private BigDecimal diemSinh;

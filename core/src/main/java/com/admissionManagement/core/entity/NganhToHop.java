@@ -34,7 +34,7 @@ public class NganhToHop {
 
     // boolean
     @Column(name = "N1") private Boolean n1;
-    @Column(name = "TO") private Boolean toan;
+    @Column(name = "`TO`") private Boolean toan;
     @Column(name = "LI") private Boolean ly;
     @Column(name = "HO") private Boolean hoa;
     @Column(name = "SI") private Boolean sinh;

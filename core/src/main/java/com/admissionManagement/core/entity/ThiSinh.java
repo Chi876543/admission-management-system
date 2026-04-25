@@ -43,6 +43,7 @@ public class ThiSinh {
     @Column(name = "password", length = 100)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "gioi_tinh", length = 10)
     private GioiTinh gioiTinh;
 
