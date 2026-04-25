@@ -16,20 +16,27 @@
         <Button text="⬆ Import CSV" styleClass="btn-primary"  onAction="#onImport"/>
         <Region HBox.hgrow="ALWAYS"/>
         <TextField fx:id="tfSearch" promptText="Tìm theo CCCD, họ tên..."
-                   styleClass="search-box" prefWidth="240" onKeyReleased="#onSearch"/>
+                   styleClass="search-box" prefWidth="260" onKeyReleased="#onSearch"/>
     </HBox>
 
     <VBox VBox.vgrow="ALWAYS" styleClass="table-card">
         <TableView fx:id="tblThiSinh" VBox.vgrow="ALWAYS" styleClass="main-table">
             <columns>
-                <TableColumn fx:id="colStt"      text="#"           prefWidth="44"  style="-fx-alignment:CENTER;"/>
-                <TableColumn fx:id="colCccd"     text="CCCD"        prefWidth="135"/>
-                <TableColumn fx:id="colHoTen"    text="Họ tên"      prefWidth="175"/>
-                <TableColumn fx:id="colNgaySinh" text="Ngày sinh"   prefWidth="100" style="-fx-alignment:CENTER;"/>
-                <TableColumn fx:id="colGioiTinh" text="Giới tính"   prefWidth="85"  style="-fx-alignment:CENTER;"/>
-                <TableColumn fx:id="colSdt"      text="Điện thoại"  prefWidth="115"/>
-                <TableColumn fx:id="colEmail"    text="Email"       prefWidth="175"/>
-                <TableColumn fx:id="colAction"   text="Thao tác"    prefWidth="130" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colId"       text="ID"          prefWidth="60"  style="-fx-alignment:CENTER;"/>
+
+                <TableColumn fx:id="colSbd"      text="SBD"         prefWidth="100"/>
+                <TableColumn fx:id="colCccd"     text="CCCD"        prefWidth="120"/>
+                <TableColumn fx:id="colHo"       text="Họ và đệm"   prefWidth="140"/>
+                <TableColumn fx:id="colTen"      text="Tên"/>
+                <TableColumn fx:id="colNgaySinh" text="Ngày sinh"   prefWidth="90"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colGioiTinh" text="Giới tính"   prefWidth="70"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colSdt"      text="Điện thoại"  prefWidth="100"/>
+                <TableColumn fx:id="colEmail"    text="Email"       prefWidth="160"/>
+                <TableColumn fx:id="colNoiSinh"  text="Nơi sinh"    prefWidth="100"/>
+                <TableColumn fx:id="colDoiTuong" text="Đối tượng" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colKhuVuc"   text="Khu vực"     prefWidth="70"  style="-fx-alignment:CENTER;"/>
+
+                <TableColumn fx:id="colAction"   text="Thao tác"    prefWidth="110" style="-fx-alignment:CENTER;"/>
             </columns>
             <placeholder><Label text="Không có dữ liệu" styleClass="table-placeholder"/></placeholder>
         </TableView>

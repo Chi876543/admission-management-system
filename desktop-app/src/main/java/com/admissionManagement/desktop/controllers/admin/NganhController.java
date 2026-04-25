@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 // ═══════════════════════════════════════════════════════════════
 //  NganhController
 // ═══════════════════════════════════════════════════════════════
-class NganhController extends BaseController implements Initializable {
+public class NganhController extends BaseController implements Initializable {
 
     @FXML private Label    lblFormTitle, lblError, lblCount;
     @FXML private TextField tfMaNganh, tfTenNganh, tfChiTieu, tfKhoa, tfSearch;

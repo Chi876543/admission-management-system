@@ -1,0 +1,21 @@
+/* =========================================
+   LOGIN.CSS - MÀN HÌNH ĐĂNG NHẬP
+   ========================================= */
+
+/* Màu nền tổng thể Form đăng nhập */
+.login-container {
+    -fx-background-color: #f4f6f8;
+}
+
+/* Typography riêng cho Form đăng nhập */
+.title-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.subtitle-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7f8c8d;
+    -fx-padding: 0 0 20 0; /* Cách lề dưới 20px */
+}

@@ -17,8 +17,8 @@
         </property>
 
         <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
 
-        // Entity mapping
         <mapping class="com.admissionManagement.core.entity.BangQuyDoi"/>
         <mapping class="com.admissionManagement.core.entity.DiemCongXetTuyen"/>
         <mapping class="com.admissionManagement.core.entity.DiemThiXetTuyen"/>

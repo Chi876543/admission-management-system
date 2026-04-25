@@ -7,54 +7,74 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.admissionManagement.desktop.controllers.admin.ThiSinhController"
-      styleClass="dialog-root" spacing="12" prefWidth="460">
+      styleClass="dialog-root" spacing="12" prefWidth="550">
 
-    <padding><Insets top="20" right="24" bottom="8" left="24"/></padding>
+    <padding><Insets top="20" right="24" bottom="16" left="24"/></padding>
 
     <Label fx:id="lblDialogTitle" text="Thêm thí sinh" styleClass="dialog-title"/>
 
     <HBox spacing="12">
         <VBox HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="Số báo danh *" styleClass="field-label"/>
+            <TextField fx:id="tfSbd" promptText="SBD" styleClass="field-input"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" spacing="4">
             <Label text="CCCD *" styleClass="field-label"/>
             <TextField fx:id="tfCccd" promptText="12 chữ số" styleClass="field-input"/>
         </VBox>
+    </HBox>
+
+    <HBox spacing="12">
+        <VBox HBox.hgrow="ALWAYS" spacing="4" prefWidth="300">
+            <Label text="Họ và tên đệm *" styleClass="field-label"/>
+            <TextField fx:id="tfHo" promptText="Nguyễn Văn" styleClass="field-input"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="Tên *" styleClass="field-label"/>
+            <TextField fx:id="tfTen" promptText="A" styleClass="field-input"/>
+        </VBox>
+    </HBox>
+
+    <HBox spacing="12">
         <VBox HBox.hgrow="ALWAYS" spacing="4">
             <Label text="Ngày sinh *" styleClass="field-label"/>
             <DatePicker fx:id="dpNgaySinh" styleClass="field-input" maxWidth="Infinity"/>
         </VBox>
-    </HBox>
-
-    <VBox spacing="4">
-        <Label text="Họ và tên *" styleClass="field-label"/>
-        <TextField fx:id="tfHoTen" promptText="Nhập họ tên đầy đủ" styleClass="field-input"/>
-    </VBox>
-
-    <HBox spacing="12">
         <VBox HBox.hgrow="ALWAYS" spacing="4">
             <Label text="Giới tính" styleClass="field-label"/>
             <ComboBox fx:id="cbGioiTinh" maxWidth="Infinity" styleClass="field-input"/>
         </VBox>
+    </HBox>
+
+    <HBox spacing="12">
         <VBox HBox.hgrow="ALWAYS" spacing="4">
             <Label text="Điện thoại" styleClass="field-label"/>
             <TextField fx:id="tfSdt" promptText="0xxxxxxxxx" styleClass="field-input"/>
         </VBox>
+        <VBox HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="Email" styleClass="field-label"/>
+            <TextField fx:id="tfEmail" promptText="example@gmail.com" styleClass="field-input"/>
+        </VBox>
     </HBox>
 
-    <VBox spacing="4">
-        <Label text="Email" styleClass="field-label"/>
-        <TextField fx:id="tfEmail" promptText="example@gmail.com" styleClass="field-input"/>
-    </VBox>
+    <HBox spacing="12">
+        <VBox HBox.hgrow="ALWAYS" spacing="4" prefWidth="250">
+            <Label text="Nơi sinh" styleClass="field-label"/>
+            <TextField fx:id="tfNoiSinh" promptText="Tỉnh/TP" styleClass="field-input"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="Đối tượng" styleClass="field-label"/>
+            <ComboBox fx:id="cbDoiTuong" maxWidth="Infinity" styleClass="field-input"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="Khu vực" styleClass="field-label"/>
+            <ComboBox fx:id="cbKhuVuc" maxWidth="Infinity" styleClass="field-input"/>
+        </VBox>
+    </HBox>
 
-    <VBox spacing="4">
-        <Label text="Địa chỉ" styleClass="field-label"/>
-        <TextArea fx:id="tadiaChi" promptText="Địa chỉ thường trú..." styleClass="field-input"
-                  prefRowCount="2" wrapText="true"/>
-    </VBox>
+    <Label fx:id="lblError" styleClass="error-label" wrapText="true" textFill="red"/>
 
-    <Label fx:id="lblError" text="" styleClass="error-label" wrapText="true"/>
-
-    <HBox spacing="8" alignment="CENTER_RIGHT">
-        <padding><Insets top="4" bottom="8"/></padding>
+    <HBox spacing="8" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
         <Button text="Hủy" styleClass="btn-default" onAction="#onDialogCancel"/>
         <Button text="Lưu" styleClass="btn-primary" onAction="#onDialogSave" defaultButton="true"/>
     </HBox>
