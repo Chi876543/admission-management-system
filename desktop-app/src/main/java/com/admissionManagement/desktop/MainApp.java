@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class MainApp extends Application {
 
     @Override
@@ -13,7 +15,7 @@ public class MainApp extends Application {
         // Load màn hình login trước
         // Tạm thời load thẳng main.fxml để test UI
         Parent root = FXMLLoader.load(
-            getClass().getResource("/com/admissionManagement/desktop/views/main.fxml")
+                Objects.requireNonNull(getClass().getResource("/com/admissionManagement/desktop/views/main.fxml"))
         );
 
         Scene scene = new Scene(root, 1100, 680);

@@ -2,6 +2,7 @@ module desktop.app {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics; // cần cho BarChart
+    requires core;
 
     exports com.admissionManagement.desktop;
 

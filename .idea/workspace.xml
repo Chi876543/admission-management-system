@@ -5,15 +5,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc12c95c-c2cb-4d69-8e4c-0a1557942ffd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/java/com/admissionManagement/core/dto/ThiSinhDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/java/module-info.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/NganhController.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/NganhController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/CandidateController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/MainLayoutController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/MajorController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/ThiSinhController.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/ThiSinhController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/desktop-app/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/CandidateView.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/MainLayout.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/MajorView.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/thisinh-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/desktop-app/src/main/resources/com/admissionManagement/desktop/views/admin/thisinh-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="module-info" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -40,10 +56,16 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
     "git-widget-placeholder": "tuan",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Projects/admission-management-system/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin"
+    "last_opened_file_path": "D:/Projects/admission-management-system/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -67,7 +89,26 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1775885712525</updated>
+      <workItem from="1777080369134" duration="3242000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/desktop-app/src/main/java/com/admissionManagement/desktop/controllers/admin/ThiSinhController.java</url>
+          <line>47</line>
+          <properties class="com.admissionManagement.desktop.controllers.admin.ThiSinhController" method="initialize">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
