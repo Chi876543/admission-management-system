@@ -23,7 +23,6 @@
         <TableView fx:id="tblThiSinh" VBox.vgrow="ALWAYS" styleClass="main-table">
             <columns>
                 <TableColumn fx:id="colId"       text="ID"          prefWidth="60"  style="-fx-alignment:CENTER;"/>
-
                 <TableColumn fx:id="colSbd"      text="SBD"         prefWidth="100"/>
                 <TableColumn fx:id="colCccd"     text="CCCD"        prefWidth="120"/>
                 <TableColumn fx:id="colHo"       text="Họ và đệm"   prefWidth="140"/>
@@ -35,7 +34,6 @@
                 <TableColumn fx:id="colNoiSinh"  text="Nơi sinh"    prefWidth="100"/>
                 <TableColumn fx:id="colDoiTuong" text="Đối tượng" style="-fx-alignment:CENTER;"/>
                 <TableColumn fx:id="colKhuVuc"   text="Khu vực"     prefWidth="70"  style="-fx-alignment:CENTER;"/>
-
                 <TableColumn fx:id="colAction"   text="Thao tác"    prefWidth="110" style="-fx-alignment:CENTER;"/>
             </columns>
             <placeholder><Label text="Không có dữ liệu" styleClass="table-placeholder"/></placeholder>

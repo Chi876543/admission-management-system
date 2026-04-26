@@ -1,6 +1,5 @@
 package com.admissionManagement.core.service;
 
-
 import com.admissionManagement.core.dao.ThiSinhDAO;
 import com.admissionManagement.core.dto.ThiSinhDTO;
 import com.admissionManagement.core.entity.ThiSinh;
@@ -9,7 +8,6 @@ import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -20,6 +18,28 @@ public class ThiSinhBUS {
     public ThiSinhBUS() {
         this.dao = new ThiSinhDAO();
         this.factory = HibernateUtil.getSessionFactory();
+    }
+
+    private List<ThiSinhDTO> mapListEntityToListDTO(List<ThiSinh> entities) {
+        return entities.stream().map(entity -> {
+            String strGioiTinh = (entity.getGioiTinh() != null) ? entity.getGioiTinh().getLabel() : ThiSinh.GioiTinh.KHAC.getLabel();
+            return new ThiSinhDTO(
+                    entity.getIdThiSinh(),
+                    entity.getSoBaoDanh(),
+                    entity.getCccd(),
+                    entity.getHo(),
+                    entity.getTen(),
+                    entity.getNgaySinh(),
+                    strGioiTinh,
+                    entity.getDienThoai(),
+                    entity.getEmail(),
+                    entity.getPassword(),
+                    entity.getNoiSinh(),
+                    entity.getDoiTuong(),
+                    entity.getKhuVuc(),
+                    entity.getUpdatedAt() != null ? entity.getUpdatedAt().toString() : ""
+            );
+        }).toList();
     }
 
     public String addThiSinh(ThiSinhDTO thiSinhDTO){
@@ -40,20 +60,13 @@ public class ThiSinhBUS {
             entity.setDoiTuong(thiSinhDTO.getDoiTuong());
             entity.setKhuVuc(thiSinhDTO.getKhuVuc());
             entity.setUpdatedAt(LocalDate.now());
-            if (thiSinhDTO.getGioiTinh() != null) {
-                switch (thiSinhDTO.getGioiTinh()) {
-                    case "Nam": entity.setGioiTinh(ThiSinh.GioiTinh.NAM); break;
-                    case "Nữ":  entity.setGioiTinh(ThiSinh.GioiTinh.NU);  break;
-                    default:    entity.setGioiTinh(ThiSinh.GioiTinh.KHAC); break;
-                }
-            }
+            entity.setGioiTinh(ThiSinh.GioiTinh.fromLabel(thiSinhDTO.getGioiTinh()));
 
             dao.addWithSession(session, entity);
             tx.commit();
-            return "Added successfully";
+            return "Thêm mới thành công!";
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
             return "Lỗi: " + e.getMessage();
         }
     }
@@ -61,18 +74,13 @@ public class ThiSinhBUS {
     public String addListThiSinh(List<ThiSinhDTO> listDTO) {
         return DatabaseHelper.importBatch(listDTO, dto -> {
             ThiSinh entity = new ThiSinh();
+
             entity.setSoBaoDanh(dto.getSoBaoDanh());
             entity.setCccd(dto.getCccd());
             entity.setHo(dto.getHo());
             entity.setTen(dto.getTen());
             entity.setNgaySinh(dto.getNgaySinh());
-            if (dto.getGioiTinh() != null) {
-                switch (dto.getGioiTinh()) {
-                    case "Nam": entity.setGioiTinh(ThiSinh.GioiTinh.NAM); break;
-                    case "Nữ":  entity.setGioiTinh(ThiSinh.GioiTinh.NU); break;
-                    default:    entity.setGioiTinh(ThiSinh.GioiTinh.KHAC); break;
-                }
-            }
+            entity.setGioiTinh(ThiSinh.GioiTinh.fromLabel(dto.getGioiTinh()));
             entity.setDienThoai(dto.getDienThoai());
             entity.setEmail(dto.getEmail());
             entity.setNoiSinh(dto.getNoiSinh());
@@ -91,29 +99,28 @@ public class ThiSinhBUS {
         }
     }
 
-    public List<ThiSinhDTO> getAllThiSinh(){
-        try (Session session = factory.openSession()) {
-            List<ThiSinh> entities = dao.getAllWithSession(session);
+    public List<ThiSinhDTO> getAllThiSinh(String keyWord, int pageIndex, int pageSize){
+        String ho = null;
+        String ten = null;
+        String cccd = null;
 
-            return entities.stream().map(entity -> {
-                String strGioiTinh = (entity.getGioiTinh() == ThiSinh.GioiTinh.NAM) ? "Nam" : "Nữ";
-                return new ThiSinhDTO(
-                        entity.getIdThiSinh(),
-                        entity.getSoBaoDanh(),
-                        entity.getCccd(),
-                        entity.getHo(),
-                        entity.getTen(),
-                        entity.getNgaySinh(),
-                        strGioiTinh,
-                        entity.getDienThoai(),
-                        entity.getEmail(),
-                        entity.getPassword(),
-                        entity.getNoiSinh(),
-                        entity.getDoiTuong(),
-                        entity.getKhuVuc(),
-                        entity.getUpdatedAt() != null ? entity.getUpdatedAt().toString() : ""
-                );
-            }).toList();
+        if(keyWord != null && !keyWord.trim().isEmpty()){
+            if(keyWord.matches("^\\d{9,12}$")){
+                cccd = keyWord;
+            } else {
+                int lastSpaceIndex = keyWord.lastIndexOf(" ");
+                if(lastSpaceIndex > 0){
+                    ho = keyWord.substring(0, lastSpaceIndex);
+                    ten = keyWord.substring(lastSpaceIndex + 1);
+                } else {
+                    ten = keyWord;
+                }
+            }
+        }
+
+        try (Session session = factory.openSession()) {
+            List<ThiSinh> entities = dao.getAllWithSession(session, ho, ten ,cccd, pageIndex, pageSize);
+            return mapListEntityToListDTO(entities);
         }
     }
 
@@ -127,13 +134,7 @@ public class ThiSinhBUS {
                 return "Lỗi: Không tìm thấy thí sinh với ID " + id;
             }
 
-            if (newThiSinhDTO.getGioiTinh() != null) {
-                switch (newThiSinhDTO.getGioiTinh()) {
-                    case "Nam": entity.setGioiTinh(ThiSinh.GioiTinh.NAM); break;
-                    case "Nữ":  entity.setGioiTinh(ThiSinh.GioiTinh.NU);  break;
-                    default:    entity.setGioiTinh(ThiSinh.GioiTinh.KHAC); break;
-                }
-            }
+            entity.setGioiTinh(ThiSinh.GioiTinh.fromLabel(newThiSinhDTO.getGioiTinh()));
             entity.setCccd(newThiSinhDTO.getCccd());
             entity.setSoBaoDanh(newThiSinhDTO.getSoBaoDanh());
             entity.setHo(newThiSinhDTO.getHo());
@@ -150,10 +151,9 @@ public class ThiSinhBUS {
             entity.setUpdatedAt(LocalDate.now());
 
             tx.commit();
-            return "Updated successfully";
+            return "Sửa thành công!";
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
             return "Lỗi: " + e.getMessage();
         }
     }
@@ -165,16 +165,39 @@ public class ThiSinhBUS {
             ThiSinh thiSinh = dao.getWithSession(session, id);
 
             if (thiSinh == null) {
-                return "Lỗi: Không tìm thấy thí sinh để xóa!";
+                return null;
             }
 
             dao.deleteWithSession(session, thiSinh);
             tx.commit();
-            return "Deleted successfully";
+            return "Đã xóa thí sinh!";
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
             return "Lỗi: " + e.getMessage();
+        }
+    }
+
+    public Long getTotal(String keyWord) {
+        String ho = null;
+        String ten = null;
+        String cccd = null;
+
+        if(keyWord != null && !keyWord.trim().isEmpty()){
+            if(keyWord.matches("^\\d{9,12}$")){
+                cccd = keyWord;
+            } else {
+                int lastSpaceIndex = keyWord.lastIndexOf(" ");
+                if(lastSpaceIndex > 0){
+                    ho = keyWord.substring(0, lastSpaceIndex);
+                    ten = keyWord.substring(lastSpaceIndex + 1);
+                } else {
+                    ten = keyWord;
+                }
+            }
+        }
+
+        try (Session session = factory.openSession()){
+            return dao.getTotalWithSession(session, ho, ten ,cccd);
         }
     }
 }
