@@ -20,26 +20,28 @@ public class ThiSinhBUS {
         this.factory = HibernateUtil.getSessionFactory();
     }
 
+    private ThiSinhDTO toDTO(ThiSinh entity){
+        String strGioiTinh = (entity.getGioiTinh() != null) ? entity.getGioiTinh().getLabel() : ThiSinh.GioiTinh.KHAC.getLabel();
+        return new ThiSinhDTO(
+                entity.getIdThiSinh(),
+                entity.getSoBaoDanh(),
+                entity.getCccd(),
+                entity.getHo(),
+                entity.getTen(),
+                entity.getNgaySinh(),
+                strGioiTinh,
+                entity.getDienThoai(),
+                entity.getEmail(),
+                entity.getPassword(),
+                entity.getNoiSinh(),
+                entity.getDoiTuong(),
+                entity.getKhuVuc(),
+                entity.getUpdatedAt() != null ? entity.getUpdatedAt().toString() : ""
+        );
+    }
+
     private List<ThiSinhDTO> mapListEntityToListDTO(List<ThiSinh> entities) {
-        return entities.stream().map(entity -> {
-            String strGioiTinh = (entity.getGioiTinh() != null) ? entity.getGioiTinh().getLabel() : ThiSinh.GioiTinh.KHAC.getLabel();
-            return new ThiSinhDTO(
-                    entity.getIdThiSinh(),
-                    entity.getSoBaoDanh(),
-                    entity.getCccd(),
-                    entity.getHo(),
-                    entity.getTen(),
-                    entity.getNgaySinh(),
-                    strGioiTinh,
-                    entity.getDienThoai(),
-                    entity.getEmail(),
-                    entity.getPassword(),
-                    entity.getNoiSinh(),
-                    entity.getDoiTuong(),
-                    entity.getKhuVuc(),
-                    entity.getUpdatedAt() != null ? entity.getUpdatedAt().toString() : ""
-            );
-        }).toList();
+        return entities.stream().map(this::toDTO).toList();
     }
 
     public String addThiSinh(ThiSinhDTO thiSinhDTO){
@@ -93,9 +95,9 @@ public class ThiSinhBUS {
         });
     }
 
-    public ThiSinh getThiSinh(int id){
+    public ThiSinhDTO getThiSinh(int id){
         try (Session session = factory.openSession()) {
-            return dao.getWithSession(session, id);
+            return toDTO(dao.getWithSession(session, id));
         }
     }
 

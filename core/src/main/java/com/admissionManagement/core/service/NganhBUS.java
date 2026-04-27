@@ -1,6 +1,9 @@
 package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.NganhDAO;
+import com.admissionManagement.core.dto.BangQuyDoiDTO;
+import com.admissionManagement.core.dto.NganhDTO;
+import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.Nganh;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
@@ -16,6 +19,30 @@ public class NganhBUS {
     public NganhBUS() {
         this.dao = new NganhDAO();
         this.factory = HibernateUtil.getSessionFactory();
+    }
+
+    private NganhDTO toDTO(Nganh entity){
+        return new NganhDTO(
+                entity.getIdNganh(),
+                entity.getMaNganh(),
+                entity.getTenNganh(),
+                entity.getToHopGoc(),
+                entity.getChiTieu(),
+                entity.getDiemSan(),
+                entity.getDiemTrungTuyen(),
+                entity.getTuyenThang(),
+                entity.getDgnl(),
+                entity.getThpt(),
+                entity.getVsat(),
+                entity.getSlXtt(),
+                entity.getSlDgnl(),
+                entity.getSlVsat(),
+                entity.getSlThpt()
+        );
+    }
+
+    private List<NganhDTO> mapListEntityToListDTO(List<Nganh> entities) {
+        return entities.stream().map(this::toDTO).toList();
     }
 
     public String addBangQuyDoi(Nganh nganh){

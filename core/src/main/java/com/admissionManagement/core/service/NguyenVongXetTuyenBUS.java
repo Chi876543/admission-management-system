@@ -1,6 +1,9 @@
 package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.NguyenVongXetTuyenDAO;
+import com.admissionManagement.core.dto.BangQuyDoiDTO;
+import com.admissionManagement.core.dto.NguyenVongXetTuyenDTO;
+import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.NguyenVongXetTuyen;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
@@ -14,10 +17,30 @@ public class NguyenVongXetTuyenBUS {
     private final NguyenVongXetTuyenDAO dao;
     private final SessionFactory factory;
 
-
     public NguyenVongXetTuyenBUS() {
         this.dao = new NguyenVongXetTuyenDAO();
         this.factory = HibernateUtil.getSessionFactory();
+    }
+
+    private NguyenVongXetTuyenDTO toDTO(NguyenVongXetTuyen entity){
+        return new NguyenVongXetTuyenDTO(
+                entity.getIdNv(),
+                entity.getCccd(),
+                entity.getMaNganh(),
+                entity.getThuTu(),
+                entity.getDiemThxt(),
+                entity.getDiemUtqd(),
+                entity.getDiemCong(),
+                entity.getDiemXetTuyen(),
+                entity.getKetQua(),
+                entity.getNvKeys(),
+                entity.getPhuongThuc(),
+                entity.getThm()
+        );
+    }
+
+    private List<NguyenVongXetTuyenDTO> mapListEntityToListDTO(List<NguyenVongXetTuyen> entities) {
+        return entities.stream().map(this::toDTO).toList();
     }
 
     public String addNguyenVongXetTuyen(NguyenVongXetTuyen nguyenVongXetTuyen){

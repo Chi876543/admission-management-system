@@ -1,6 +1,9 @@
 package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.DiemThiXetTuyenDAO;
+import com.admissionManagement.core.dto.BangQuyDoiDTO;
+import com.admissionManagement.core.dto.DiemThiXetTuyenDTO;
+import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.DiemThiXetTuyen;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
@@ -16,6 +19,35 @@ public class DiemThiXetTuyenBUS {
     public DiemThiXetTuyenBUS() {
         this.dao = new DiemThiXetTuyenDAO();
         this.factory = HibernateUtil.getSessionFactory();
+    }
+
+    private DiemThiXetTuyenDTO toDTO(DiemThiXetTuyen entity){
+        return new DiemThiXetTuyenDTO(
+                entity.getIdDiemThi(),
+                entity.getCccd(),
+                entity.getSoBaoDanh(),
+                entity.getPhuongThuc(),
+                entity.getDiemToan(),
+                entity.getDiemLy(),
+                entity.getDiemHoa(),
+                entity.getDiemSinh(),
+                entity.getDiemSu(),
+                entity.getDiemDia(),
+                entity.getDiemVan(),
+                entity.getDiemAnh(),
+                entity.getDiemKtpl(),
+                entity.getN1Thi(),
+                entity.getN1Cc(),
+                entity.getCncn(),
+                entity.getCnnn(),
+                entity.getNl1(),
+                entity.getNk1(),
+                entity.getNk2()
+        );
+    }
+
+    private List<DiemThiXetTuyenDTO> mapListEntityToListDTO(List<DiemThiXetTuyen> entities) {
+        return entities.stream().map(this::toDTO).toList();
     }
 
     public String addDiemThiXetTuyen(DiemThiXetTuyen diemThiXetTuyen){

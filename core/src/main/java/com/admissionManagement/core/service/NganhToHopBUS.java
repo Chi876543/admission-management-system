@@ -4,6 +4,10 @@ package com.admissionManagement.core.service;
 import com.admissionManagement.core.dao.NganhToHopDAO;
 import com.admissionManagement.core.dao.NganhToHopDAO;
 
+import com.admissionManagement.core.dto.BangQuyDoiDTO;
+import com.admissionManagement.core.dto.NganhDTO;
+import com.admissionManagement.core.dto.NganhToHopDTO;
+import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.NganhToHop;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
@@ -16,9 +20,41 @@ public class NganhToHopBUS {
 
     private final NganhToHopDAO dao;
     private final SessionFactory factory;
+
     public NganhToHopBUS() {
         this.dao = new NganhToHopDAO();
         this.factory = HibernateUtil.getSessionFactory();
+    }
+
+    private NganhToHopDTO toDTO(NganhToHop entity){
+        return new NganhToHopDTO(
+                entity.getId(),
+                entity.getMaNganh(),
+                entity.getMaToHop(),
+                entity.getThMon1(),
+                entity.getHsMon1(),
+                entity.getThMon2(),
+                entity.getHsMon2(),
+                entity.getThMon3(),
+                entity.getHsMon3(),
+                entity.getTbKeys(),
+                entity.getN1(),
+                entity.getToan(),
+                entity.getLy(),
+                entity.getHoa(),
+                entity.getSinh(),
+                entity.getVan(),
+                entity.getSu(),
+                entity.getDia(),
+                entity.getAnh(),
+                entity.getKhac(),
+                entity.getKtpl(),
+                entity.getDoLech()
+        );
+    }
+
+    private List<NganhToHopDTO> mapListEntityToListDTO(List<NganhToHop> entities) {
+        return entities.stream().map(this::toDTO).toList();
     }
 
     public String addNganhToHop(NganhToHop nganhToHop){

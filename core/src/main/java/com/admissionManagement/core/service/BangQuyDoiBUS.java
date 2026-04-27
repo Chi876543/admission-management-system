@@ -1,6 +1,8 @@
 package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.BangQuyDoiDAO;
+import com.admissionManagement.core.dto.BangQuyDoiDTO;
+import com.admissionManagement.core.dto.ThiSinhDTO;
 import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.ThiSinh;
 import com.admissionManagement.core.util.HibernateUtil;
@@ -17,6 +19,25 @@ public class BangQuyDoiBUS {
     public BangQuyDoiBUS() {
         this.dao = new BangQuyDoiDAO();
         this.factory = HibernateUtil.getSessionFactory();
+    }
+
+    private BangQuyDoiDTO toDTO(BangQuyDoi entity){
+        return new BangQuyDoiDTO(
+                entity.getIdqd(),
+                entity.getPhuongThuc(),
+                entity.getToHop(),
+                entity.getMon(),
+                entity.getDiemA(),
+                entity.getDiemB(),
+                entity.getDiemC(),
+                entity.getDiemD(),
+                entity.getMaQuyDoi(),
+                entity.getPhanVi()
+        );
+    }
+
+    private List<BangQuyDoiDTO> mapListEntityToListDTO(List<BangQuyDoi> entities) {
+        return entities.stream().map(this::toDTO).toList();
     }
 
     public String addBangQuyDoi(BangQuyDoi bangQuyDoi){

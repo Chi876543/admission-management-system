@@ -1,7 +1,12 @@
 package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.DiemCongXetTuyenDAO;
+import com.admissionManagement.core.dto.BangQuyDoiDTO;
+import com.admissionManagement.core.dto.DiemCongSetTuyenDTO;
+import com.admissionManagement.core.dto.DiemThiXetTuyenDTO;
+import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.DiemCongXetTuyen;
+import com.admissionManagement.core.entity.DiemThiXetTuyen;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,6 +21,25 @@ public class DiemCongXetTuyenBUS {
     public DiemCongXetTuyenBUS() {
         this.dao = new DiemCongXetTuyenDAO();
         this.factory = HibernateUtil.getSessionFactory();
+    }
+
+    private DiemCongSetTuyenDTO toDTO(DiemCongXetTuyen entity){
+        return new DiemCongSetTuyenDTO(
+                entity.getIdDiemCong(),
+                entity.getTsCccd(),
+                entity.getMaNganh(),
+                entity.getMaToHop(),
+                entity.getPhuongThuc(),
+                entity.getDiemCC(),
+                entity.getDiemUtxt(),
+                entity.getDiemTong(),
+                entity.getGhiChu(),
+                entity.getDcKeys()
+        );
+    }
+
+    private List<DiemCongSetTuyenDTO> mapListEntityToListDTO(List<DiemCongXetTuyen> entities) {
+        return entities.stream().map(this::toDTO).toList();
     }
 
     public String addDiemCongXetTuyen(DiemCongXetTuyen diemCongXetTuyen){

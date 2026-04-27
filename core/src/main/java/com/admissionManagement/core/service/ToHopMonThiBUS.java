@@ -2,6 +2,8 @@ package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.BangQuyDoiDAO;
 import com.admissionManagement.core.dao.ToHopMonThiDAO;
+import com.admissionManagement.core.dto.BangQuyDoiDTO;
+import com.admissionManagement.core.dto.ToHopMonThiDTO;
 import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.ThiSinh;
 import com.admissionManagement.core.entity.ToHopMonThi;
@@ -20,6 +22,21 @@ public class ToHopMonThiBUS {
     public ToHopMonThiBUS() {
         this.dao = new ToHopMonThiDAO();
         this.factory = HibernateUtil.getSessionFactory();
+    }
+
+    private ToHopMonThiDTO toDTO(ToHopMonThi entity){
+        return new ToHopMonThiDTO(
+                entity.getIdToHop(),
+                entity.getMaToHop(),
+                entity.getMon1(),
+                entity.getMon2(),
+                entity.getMon3(),
+                entity.getTenToHop()
+        );
+    }
+
+    private List<ToHopMonThiDTO> mapListEntityToListDTO(List<ToHopMonThi> entities) {
+        return entities.stream().map(this::toDTO).toList();
     }
 
     public String addToHopMonThi(ToHopMonThi toHopMonThi){
