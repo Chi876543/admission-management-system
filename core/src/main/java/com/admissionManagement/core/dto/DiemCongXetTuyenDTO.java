@@ -1,13 +1,12 @@
 package com.admissionManagement.core.dto;
 
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NonNull;
 
 import java.math.BigDecimal;
 
 @Data
-public class DiemCongSetTuyenDTO {
+public class DiemCongXetTuyenDTO {
 
     @NonNull
     private int idDiemCong;

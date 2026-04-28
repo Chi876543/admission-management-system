@@ -1,12 +1,8 @@
 package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.DiemCongXetTuyenDAO;
-import com.admissionManagement.core.dto.BangQuyDoiDTO;
-import com.admissionManagement.core.dto.DiemCongSetTuyenDTO;
-import com.admissionManagement.core.dto.DiemThiXetTuyenDTO;
-import com.admissionManagement.core.entity.BangQuyDoi;
+import com.admissionManagement.core.dto.DiemCongXetTuyenDTO;
 import com.admissionManagement.core.entity.DiemCongXetTuyen;
-import com.admissionManagement.core.entity.DiemThiXetTuyen;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -23,8 +19,8 @@ public class DiemCongXetTuyenBUS {
         this.factory = HibernateUtil.getSessionFactory();
     }
 
-    private DiemCongSetTuyenDTO toDTO(DiemCongXetTuyen entity){
-        return new DiemCongSetTuyenDTO(
+    private DiemCongXetTuyenDTO toDTO(DiemCongXetTuyen entity){
+        return new DiemCongXetTuyenDTO(
                 entity.getIdDiemCong(),
                 entity.getTsCccd(),
                 entity.getMaNganh(),
@@ -38,15 +34,26 @@ public class DiemCongXetTuyenBUS {
         );
     }
 
-    private List<DiemCongSetTuyenDTO> mapListEntityToListDTO(List<DiemCongXetTuyen> entities) {
+    private List<DiemCongXetTuyenDTO> mapListEntityToListDTO(List<DiemCongXetTuyen> entities) {
         return entities.stream().map(this::toDTO).toList();
     }
 
-    public String addDiemCongXetTuyen(DiemCongXetTuyen diemCongXetTuyen){
+    public String addDiemCongXetTuyen(DiemCongXetTuyenDTO diemCongXetTuyenDTO){
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
+
+            DiemCongXetTuyen diemCongXetTuyen = new DiemCongXetTuyen();
+            diemCongXetTuyen.setTsCccd(diemCongXetTuyenDTO.getTsCccd());
+            diemCongXetTuyen.setMaNganh(diemCongXetTuyenDTO.getMaNganh());
+            diemCongXetTuyen.setMaToHop(diemCongXetTuyenDTO.getMaToHop());
+            diemCongXetTuyen.setPhuongThuc(diemCongXetTuyenDTO.getPhuongThuc());
+            diemCongXetTuyen.setDiemCC(diemCongXetTuyenDTO.getDiemCC());
+            diemCongXetTuyen.setDiemUtxt(diemCongXetTuyenDTO.getDiemUtxt());
+            diemCongXetTuyen.setDiemTong(diemCongXetTuyenDTO.getDiemTong());
+            diemCongXetTuyen.setGhiChu(diemCongXetTuyenDTO.getGhiChu());
+            diemCongXetTuyen.setDcKeys(diemCongXetTuyenDTO.getDcKeys());
 
             dao.addWithSession(session, diemCongXetTuyen);
 
@@ -61,38 +68,38 @@ public class DiemCongXetTuyenBUS {
         }
     }
 
-    public DiemCongXetTuyen getDiemCongXetTuyen(int id){
-        Session session = factory.openSession();
-        DiemCongXetTuyen diemCongXetTuyen = dao.getWithSession(session, id);
-        session.close();
-        return diemCongXetTuyen;
+    public DiemCongXetTuyenDTO getDiemCongXetTuyen(int id){
+        try(Session session = factory.openSession()){
+            return toDTO(dao.getWithSession(session, id));
+        }
     }
 
-    public List<DiemCongXetTuyen> getAllDiemCongXetTuyen(){
+    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyen(){
         Session session = factory.openSession();
         List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAllWithSession(session);
         session.close();
-        return listDiemCongXetTuyen;
+        return mapListEntityToListDTO(listDiemCongXetTuyen);
     }
 
-    public String updateDiemCongXetTuyen(int id, DiemCongXetTuyen newDiemCongXetTuyen){
-        Session session = factory.openSession();
+    public String updateDiemCongXetTuyen(int id, DiemCongXetTuyenDTO newDiemCongXetTuyenDTO){
         Transaction tx = null;
-        DiemCongXetTuyen diemCongXetTuyen = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            DiemCongXetTuyen diemCongXetTuyen = dao.getWithSession(session, id);
 
-            if(diemCongXetTuyen != null){
-                diemCongXetTuyen.setTsCccd(newDiemCongXetTuyen.getTsCccd());
-                diemCongXetTuyen.setMaNganh(newDiemCongXetTuyen.getMaNganh());
-                diemCongXetTuyen.setMaToHop(newDiemCongXetTuyen.getMaToHop());
-                diemCongXetTuyen.setPhuongThuc(newDiemCongXetTuyen.getPhuongThuc());
-                diemCongXetTuyen.setDiemCC(newDiemCongXetTuyen.getDiemCC());
-                diemCongXetTuyen.setDiemUtxt(newDiemCongXetTuyen.getDiemUtxt());
-                diemCongXetTuyen.setDiemTong(newDiemCongXetTuyen.getDiemTong());
-                diemCongXetTuyen.setGhiChu(newDiemCongXetTuyen.getGhiChu());
-                diemCongXetTuyen.setDcKeys(newDiemCongXetTuyen.getDcKeys());
+            if(diemCongXetTuyen == null){
+                return "Lỗi: Không tìm thấy bảng điểm cộng với ID " + id;
             }
+
+            diemCongXetTuyen.setTsCccd(newDiemCongXetTuyenDTO.getTsCccd());
+            diemCongXetTuyen.setMaNganh(newDiemCongXetTuyenDTO.getMaNganh());
+            diemCongXetTuyen.setMaToHop(newDiemCongXetTuyenDTO.getMaToHop());
+            diemCongXetTuyen.setPhuongThuc(newDiemCongXetTuyenDTO.getPhuongThuc());
+            diemCongXetTuyen.setDiemCC(newDiemCongXetTuyenDTO.getDiemCC());
+            diemCongXetTuyen.setDiemUtxt(newDiemCongXetTuyenDTO.getDiemUtxt());
+            diemCongXetTuyen.setDiemTong(newDiemCongXetTuyenDTO.getDiemTong());
+            diemCongXetTuyen.setGhiChu(newDiemCongXetTuyenDTO.getGhiChu());
+            diemCongXetTuyen.setDcKeys(newDiemCongXetTuyenDTO.getDcKeys());
 
             dao.updateWithSession(session, diemCongXetTuyen);
 
@@ -102,17 +109,18 @@ public class DiemCongXetTuyenBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
     public String deleteDiemCongXetTuyen(int id){
-        Session session = factory.openSession();
         Transaction tx = null;
-        DiemCongXetTuyen diemCongXetTuyen = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            DiemCongXetTuyen diemCongXetTuyen = dao.getWithSession(session, id);
+
+            if(diemCongXetTuyen == null){
+                return "Lỗi: Không tìm thấy bảng điểm cộng với ID " + id;
+            }
 
             dao.deleteWithSession(session, diemCongXetTuyen);
 
@@ -122,8 +130,6 @@ public class DiemCongXetTuyenBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 }

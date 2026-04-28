@@ -43,11 +43,22 @@ public class NguyenVongXetTuyenBUS {
         return entities.stream().map(this::toDTO).toList();
     }
 
-    public String addNguyenVongXetTuyen(NguyenVongXetTuyen nguyenVongXetTuyen){
-        Session session = factory.openSession();
+    public String addNguyenVongXetTuyen(NguyenVongXetTuyenDTO nguyenVongXetTuyenDTO){
         Transaction tx = null;
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            NguyenVongXetTuyen nguyenVongXetTuyen = new NguyenVongXetTuyen();
+            nguyenVongXetTuyen.setCccd(nguyenVongXetTuyenDTO.getCccd());
+            nguyenVongXetTuyen.setMaNganh(nguyenVongXetTuyenDTO.getMaNganh());
+            nguyenVongXetTuyen.setThuTu(nguyenVongXetTuyenDTO.getThuTu());
+            nguyenVongXetTuyen.setDiemThxt(nguyenVongXetTuyenDTO.getDiemThxt());
+            nguyenVongXetTuyen.setDiemUtqd(nguyenVongXetTuyenDTO.getDiemUtqd());
+            nguyenVongXetTuyen.setDiemCong(nguyenVongXetTuyenDTO.getDiemCong());
+            nguyenVongXetTuyen.setDiemXetTuyen(nguyenVongXetTuyenDTO.getDiemXetTuyen());
+            nguyenVongXetTuyen.setKetQua(nguyenVongXetTuyenDTO.getKetQua());
+            nguyenVongXetTuyen.setNvKeys(nguyenVongXetTuyenDTO.getNvKeys());
+            nguyenVongXetTuyen.setPhuongThuc(nguyenVongXetTuyenDTO.getPhuongThuc());
+            nguyenVongXetTuyen.setThm(nguyenVongXetTuyenDTO.getThm());
 
             dao.addWithSession(session, nguyenVongXetTuyen);
 
@@ -57,45 +68,43 @@ public class NguyenVongXetTuyenBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
-    public NguyenVongXetTuyen getNguyenVongXetTuyen(int id){
-        Session session = factory.openSession();
-        NguyenVongXetTuyen nguyenVongXetTuyen = dao.getWithSession(session, id);
-        session.close();
-        return nguyenVongXetTuyen;
+    public NguyenVongXetTuyenDTO getNguyenVongXetTuyen(int id){
+        try(Session session = factory.openSession()){
+            return toDTO(dao.getWithSession(session, id));
+        }
     }
 
-    public List<NguyenVongXetTuyen> getAllNganhToHop(){
+    public List<NguyenVongXetTuyenDTO> getAllNganhToHop(){
         Session session = factory.openSession();
         List<NguyenVongXetTuyen> listNguyenVongXetTuyen = dao.getAllWithSession(session);
         session.close();
-        return listNguyenVongXetTuyen;
+        return mapListEntityToListDTO(listNguyenVongXetTuyen);
     }
 
-    public String updateNguyenVongXetTuyen(int id, NguyenVongXetTuyen newNguyenVongXetTuyen){
-        Session session = factory.openSession();
+    public String updateNguyenVongXetTuyen(int id, NguyenVongXetTuyenDTO newNguyenVongXetTuyenDTO){
         Transaction tx = null;
-        NguyenVongXetTuyen nguyenVongXetTuyen = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            NguyenVongXetTuyen nguyenVongXetTuyen = dao.getWithSession(session, id);
 
-            if(nguyenVongXetTuyen != null) {
-                nguyenVongXetTuyen.setCccd(newNguyenVongXetTuyen.getCccd());
-                nguyenVongXetTuyen.setMaNganh(newNguyenVongXetTuyen.getMaNganh());
-                nguyenVongXetTuyen.setThuTu(newNguyenVongXetTuyen.getThuTu());
-                nguyenVongXetTuyen.setDiemThxt(newNguyenVongXetTuyen.getDiemThxt());
-                nguyenVongXetTuyen.setDiemUtqd(newNguyenVongXetTuyen.getDiemUtqd());
-                nguyenVongXetTuyen.setDiemCong(newNguyenVongXetTuyen.getDiemCong());
-                nguyenVongXetTuyen.setDiemXetTuyen(newNguyenVongXetTuyen.getDiemXetTuyen());
-                nguyenVongXetTuyen.setKetQua(newNguyenVongXetTuyen.getKetQua());
-                nguyenVongXetTuyen.setNvKeys(newNguyenVongXetTuyen.getNvKeys());
-                nguyenVongXetTuyen.setPhuongThuc(newNguyenVongXetTuyen.getPhuongThuc());
-                nguyenVongXetTuyen.setThm(newNguyenVongXetTuyen.getThm());
+            if(nguyenVongXetTuyen == null){
+                return "Lỗi: Không tìm thấy Nguyện vọng với ID " + id;
             }
+
+            nguyenVongXetTuyen.setCccd(newNguyenVongXetTuyenDTO.getCccd());
+            nguyenVongXetTuyen.setMaNganh(newNguyenVongXetTuyenDTO.getMaNganh());
+            nguyenVongXetTuyen.setThuTu(newNguyenVongXetTuyenDTO.getThuTu());
+            nguyenVongXetTuyen.setDiemThxt(newNguyenVongXetTuyenDTO.getDiemThxt());
+            nguyenVongXetTuyen.setDiemUtqd(newNguyenVongXetTuyenDTO.getDiemUtqd());
+            nguyenVongXetTuyen.setDiemCong(newNguyenVongXetTuyenDTO.getDiemCong());
+            nguyenVongXetTuyen.setDiemXetTuyen(newNguyenVongXetTuyenDTO.getDiemXetTuyen());
+            nguyenVongXetTuyen.setKetQua(newNguyenVongXetTuyenDTO.getKetQua());
+            nguyenVongXetTuyen.setNvKeys(newNguyenVongXetTuyenDTO.getNvKeys());
+            nguyenVongXetTuyen.setPhuongThuc(newNguyenVongXetTuyenDTO.getPhuongThuc());
+            nguyenVongXetTuyen.setThm(newNguyenVongXetTuyenDTO.getThm());
 
             dao.updateWithSession(session, nguyenVongXetTuyen);
 
@@ -105,17 +114,18 @@ public class NguyenVongXetTuyenBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
     public String deleteNguyenVongXetTuyen(int id){
-        Session session = factory.openSession();
         Transaction tx = null;
-        NguyenVongXetTuyen nguyenVongXetTuyen = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            NguyenVongXetTuyen nguyenVongXetTuyen = dao.getWithSession(session, id);
+
+            if(nguyenVongXetTuyen == null){
+                return "Lỗi: Không tìm thấy Nguyện vọng với ID " + id;
+            }
 
             dao.deleteWithSession(session, nguyenVongXetTuyen);
 
@@ -125,8 +135,6 @@ public class NguyenVongXetTuyenBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 

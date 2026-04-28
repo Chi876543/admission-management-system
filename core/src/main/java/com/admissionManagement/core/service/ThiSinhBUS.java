@@ -152,6 +152,7 @@ public class ThiSinhBUS {
             entity.setKhuVuc(newThiSinhDTO.getKhuVuc());
             entity.setUpdatedAt(LocalDate.now());
 
+//            dao.updateWithSession(session, entity);
             tx.commit();
             return "Sửa thành công!";
         } catch (Exception e) {

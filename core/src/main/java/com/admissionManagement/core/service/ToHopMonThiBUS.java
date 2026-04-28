@@ -39,11 +39,17 @@ public class ToHopMonThiBUS {
         return entities.stream().map(this::toDTO).toList();
     }
 
-    public String addToHopMonThi(ToHopMonThi toHopMonThi){
-        Session session = factory.openSession();
+    public String addToHopMonThi(ToHopMonThiDTO toHopMonThiDTO){
         Transaction tx = null;
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+
+            ToHopMonThi toHopMonThi = new ToHopMonThi();
+            toHopMonThi.setMaToHop(toHopMonThiDTO.getMaToHop());
+            toHopMonThi.setMon1(toHopMonThiDTO.getMon1());
+            toHopMonThi.setMon2(toHopMonThiDTO.getMon2());
+            toHopMonThi.setMon3(toHopMonThiDTO.getMon3());
+            toHopMonThi.setTenToHop(toHopMonThiDTO.getTenToHop());
 
             dao.addWithSession(session, toHopMonThi);
 
@@ -53,39 +59,37 @@ public class ToHopMonThiBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
-    public ToHopMonThi getToHopMonThi(int id){
-        Session session = factory.openSession();
-        ToHopMonThi toHopMonThi = dao.getWithSession(session, id);
-        session.close();
-        return toHopMonThi;
+    public ToHopMonThiDTO getToHopMonThi(int id){
+        try(Session session = factory.openSession()){
+            return toDTO(dao.getWithSession(session, id));
+        }
     }
 
-    public List<ToHopMonThi> getAllToHopMonThi(){
+    public List<ToHopMonThiDTO> getAllToHopMonThi(){
         Session session = factory.openSession();
         List<ToHopMonThi> listToHopMonThi = dao.getAllWithSession(session);
         session.close();
-        return listToHopMonThi;
+        return mapListEntityToListDTO(listToHopMonThi);
     }
 
-    public String updateToHopMonThi(int id, ToHopMonThi newToHopMonThi){
-        Session session = factory.openSession();
+    public String updateToHopMonThi(int id, ToHopMonThiDTO newToHopMonThiDTO){
         Transaction tx = null;
-        ToHopMonThi toHopMonThi = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            ToHopMonThi toHopMonThi = dao.getWithSession(session, id);
 
-            if(toHopMonThi != null) {
-                toHopMonThi.setMaToHop(newToHopMonThi.getMaToHop());
-                toHopMonThi.setMon1(newToHopMonThi.getMon1());
-                toHopMonThi.setMon2(newToHopMonThi.getMon2());
-                toHopMonThi.setMon3(newToHopMonThi.getMon3());
-                toHopMonThi.setTenToHop(newToHopMonThi.getTenToHop());
+            if(toHopMonThi == null){
+                return "Lỗi: Không tìm thấy tổ hợp môn với ID " + id;
             }
+
+            toHopMonThi.setMaToHop(newToHopMonThiDTO.getMaToHop());
+            toHopMonThi.setMon1(newToHopMonThiDTO.getMon1());
+            toHopMonThi.setMon2(newToHopMonThiDTO.getMon2());
+            toHopMonThi.setMon3(newToHopMonThiDTO.getMon3());
+            toHopMonThi.setTenToHop(newToHopMonThiDTO.getTenToHop());
 
             dao.updateWithSession(session, toHopMonThi);
 
@@ -95,17 +99,18 @@ public class ToHopMonThiBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
-    public String deletetToHopMonThi(int id){
-        Session session = factory.openSession();
+    public String deleteToHopMonThi(int id){
         Transaction tx = null;
-        ToHopMonThi toHopMonThi = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            ToHopMonThi toHopMonThi = dao.getWithSession(session, id);
+
+            if(toHopMonThi == null){
+                return "Lỗi: Không tìm thấy tổ hợp môn với ID " + id;
+            }
 
             dao.deleteWithSession(session, toHopMonThi);
 
@@ -115,8 +120,6 @@ public class ToHopMonThiBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 }

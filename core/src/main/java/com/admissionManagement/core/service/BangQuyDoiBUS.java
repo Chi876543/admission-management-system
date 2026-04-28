@@ -40,57 +40,65 @@ public class BangQuyDoiBUS {
         return entities.stream().map(this::toDTO).toList();
     }
 
-    public String addBangQuyDoi(BangQuyDoi bangQuyDoi){
-        Session session = factory.openSession();
+    public String addBangQuyDoi(BangQuyDoiDTO bangQuyDoiDTO){
         Transaction tx = null;
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
 
-            dao.addWithSession(session, bangQuyDoi);
+            BangQuyDoi bangQuyDoi = new BangQuyDoi();
+            bangQuyDoi.setPhuongThuc(bangQuyDoiDTO.getPhuongThuc());
+            bangQuyDoi.setToHop(bangQuyDoiDTO.getToHop());
+            bangQuyDoi.setMon(bangQuyDoiDTO.getMon());
+            bangQuyDoi.setDiemA(bangQuyDoiDTO.getDiemA());
+            bangQuyDoi.setDiemB(bangQuyDoiDTO.getDiemB());
+            bangQuyDoi.setDiemC(bangQuyDoiDTO.getDiemC());
+            bangQuyDoi.setDiemD(bangQuyDoiDTO.getDiemD());
+            bangQuyDoi.setMaQuyDoi(bangQuyDoiDTO.getMaQuyDoi());
+            bangQuyDoi.setPhanVi(bangQuyDoiDTO.getPhanVi());
 
+            dao.addWithSession(session, bangQuyDoi);
             tx.commit();
             return "Added successfully";
         } catch (Exception e) {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
-    public BangQuyDoi getBangQuyDoi(int id){
-        Session session = factory.openSession();
-        BangQuyDoi bangQuyDoi = dao.getWithSession(session, id);
-        session.close();
-        return bangQuyDoi;
+    public BangQuyDoiDTO getBangQuyDoi(int id){
+        try(Session session = factory.openSession()) {
+            return toDTO(dao.getWithSession(session, id));
+        }
     }
 
-    public List<BangQuyDoi> getAllBangQuyDoi(){
+
+    public List<BangQuyDoiDTO> getAllBangQuyDoi(){
         Session session = factory.openSession();
         List<BangQuyDoi> listBangQuyDoi = dao.getAllWithSession(session);
         session.close();
-        return listBangQuyDoi;
+        return mapListEntityToListDTO(listBangQuyDoi);
     }
 
-    public String updateBangQuyDoi(int id, BangQuyDoi newBangQuyDoi){
-        Session session = factory.openSession();
+    public String updateBangQuyDoi(int id, BangQuyDoiDTO newBangQuyDoiDTO){
         Transaction tx = null;
-        BangQuyDoi bangQuyDoi = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            BangQuyDoi bangQuyDoi = dao.getWithSession(session, id);
 
-            if (bangQuyDoi != null) {
-                bangQuyDoi.setPhuongThuc(newBangQuyDoi.getPhuongThuc());
-                bangQuyDoi.setToHop(newBangQuyDoi.getToHop());
-                bangQuyDoi.setMon(newBangQuyDoi.getMon());
-                bangQuyDoi.setDiemA(newBangQuyDoi.getDiemA());
-                bangQuyDoi.setDiemB(newBangQuyDoi.getDiemB());
-                bangQuyDoi.setDiemC(newBangQuyDoi.getDiemC());
-                bangQuyDoi.setDiemD(newBangQuyDoi.getDiemD());
-                bangQuyDoi.setMaQuyDoi(newBangQuyDoi.getMaQuyDoi());
-                bangQuyDoi.setPhanVi(newBangQuyDoi.getPhanVi());
+            if(bangQuyDoi == null){
+                return "Lỗi: Không tìm thấy bảng quy đổi với ID " + id;
             }
+
+            bangQuyDoi.setPhuongThuc(newBangQuyDoiDTO.getPhuongThuc());
+            bangQuyDoi.setToHop(newBangQuyDoiDTO.getToHop());
+            bangQuyDoi.setMon(newBangQuyDoiDTO.getMon());
+            bangQuyDoi.setDiemA(newBangQuyDoiDTO.getDiemA());
+            bangQuyDoi.setDiemB(newBangQuyDoiDTO.getDiemB());
+            bangQuyDoi.setDiemC(newBangQuyDoiDTO.getDiemC());
+            bangQuyDoi.setDiemD(newBangQuyDoiDTO.getDiemD());
+            bangQuyDoi.setMaQuyDoi(newBangQuyDoiDTO.getMaQuyDoi());
+            bangQuyDoi.setPhanVi(newBangQuyDoiDTO.getPhanVi());
 
             dao.updateWithSession(session, bangQuyDoi);
 
@@ -100,17 +108,18 @@ public class BangQuyDoiBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
-    public String deletetBangQuyDoi(int id){
-        Session session = factory.openSession();
+    public String deleteBangQuyDoi(int id){
         Transaction tx = null;
-        BangQuyDoi bangQuyDoi = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            BangQuyDoi bangQuyDoi = dao.getWithSession(session, id);
+
+            if (bangQuyDoi == null) {
+                return "Lỗi: Không tìm thấy bảng quy đổi với ID " + id;
+            }
 
             dao.deleteWithSession(session, bangQuyDoi);
 
@@ -120,8 +129,6 @@ public class BangQuyDoiBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 }

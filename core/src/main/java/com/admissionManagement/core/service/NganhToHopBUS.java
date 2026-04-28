@@ -57,11 +57,33 @@ public class NganhToHopBUS {
         return entities.stream().map(this::toDTO).toList();
     }
 
-    public String addNganhToHop(NganhToHop nganhToHop){
-        Session session = factory.openSession();
+    public String addNganhToHop(NganhToHopDTO nganhToHopDTO){
         Transaction tx = null;
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+
+            NganhToHop nganhToHop = new NganhToHop();
+            nganhToHop.setMaNganh(nganhToHopDTO.getMaNganh());
+            nganhToHop.setMaToHop(nganhToHopDTO.getMaToHop());
+            nganhToHop.setHsMon1(nganhToHopDTO.getHsMon1());
+            nganhToHop.setHsMon2(nganhToHopDTO.getHsMon2());
+            nganhToHop.setHsMon3(nganhToHopDTO.getHsMon3());
+            nganhToHop.setThMon1(nganhToHopDTO.getThMon1());
+            nganhToHop.setThMon2(nganhToHopDTO.getThMon2());
+            nganhToHop.setThMon3(nganhToHopDTO.getThMon3());
+            nganhToHop.setTbKeys(nganhToHopDTO.getTbKeys());
+            nganhToHop.setN1(nganhToHopDTO.getN1());
+            nganhToHop.setToan(nganhToHopDTO.getToan());
+            nganhToHop.setLy(nganhToHopDTO.getLy());
+            nganhToHop.setHoa(nganhToHopDTO.getHoa());
+            nganhToHop.setSinh(nganhToHopDTO.getSinh());
+            nganhToHop.setVan(nganhToHopDTO.getVan());
+            nganhToHop.setSu(nganhToHopDTO.getSu());
+            nganhToHop.setDia(nganhToHopDTO.getDia());
+            nganhToHop.setAnh(nganhToHopDTO.getAnh());
+            nganhToHop.setKhac(nganhToHopDTO.getKhac());
+            nganhToHop.setKtpl(nganhToHopDTO.getKtpl());
+            nganhToHop.setDoLech(nganhToHopDTO.getDoLech());
 
             dao.addWithSession(session, nganhToHop);
 
@@ -71,55 +93,53 @@ public class NganhToHopBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
-    public NganhToHop getNganhToHop(int id){
-        Session session = factory.openSession();
-        NganhToHop nganhTohop = dao.getWithSession(session, id);
-        session.close();
-        return nganhTohop;
+    public NganhToHopDTO getNganhToHop(int id){
+        try(Session session = factory.openSession()){
+            return toDTO(dao.getWithSession(session, id));
+        }
     }
 
-    public List<NganhToHop> getAllNganhToHop(){
+    public List<NganhToHopDTO> getAllNganhToHop(){
         Session session = factory.openSession();
         List<NganhToHop> listNganhToHop = dao.getAllWithSession(session);
         session.close();
-        return listNganhToHop;
+        return mapListEntityToListDTO(listNganhToHop);
     }
 
-    public String updateNganhToHop(int id, NganhToHop newNganhToHop){
-        Session session = factory.openSession();
+    public String updateNganhToHop(int id, NganhToHopDTO newNganhToHopDTO){
         Transaction tx = null;
-        NganhToHop nganhToHop = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            NganhToHop nganhToHop = dao.getWithSession(session, id);
 
-            if(nganhToHop != null) {
-                nganhToHop.setMaNganh(newNganhToHop.getMaNganh());
-                nganhToHop.setMaToHop(newNganhToHop.getMaToHop());
-                nganhToHop.setHsMon1(newNganhToHop.getHsMon1());
-                nganhToHop.setHsMon2(newNganhToHop.getHsMon2());
-                nganhToHop.setHsMon3(newNganhToHop.getHsMon3());
-                nganhToHop.setThMon1(newNganhToHop.getThMon1());
-                nganhToHop.setThMon2(newNganhToHop.getThMon2());
-                nganhToHop.setThMon3(newNganhToHop.getThMon3());
-                nganhToHop.setTbKeys(newNganhToHop.getTbKeys());
-                nganhToHop.setN1(newNganhToHop.getN1());
-                nganhToHop.setToan(newNganhToHop.getToan());
-                nganhToHop.setLy(newNganhToHop.getLy());
-                nganhToHop.setHoa(newNganhToHop.getHoa());
-                nganhToHop.setSinh(newNganhToHop.getSinh());
-                nganhToHop.setVan(newNganhToHop.getVan());
-                nganhToHop.setSu(newNganhToHop.getSu());
-                nganhToHop.setDia(newNganhToHop.getDia());
-                nganhToHop.setAnh(newNganhToHop.getAnh());
-                nganhToHop.setKhac(newNganhToHop.getKhac());
-                nganhToHop.setKtpl(newNganhToHop.getKtpl());
-                nganhToHop.setDoLech(newNganhToHop.getDoLech());
+            if(nganhToHop == null){
+                return "Lỗi: Không tìm thấy Ngành tổ hợp với ID " + id;
             }
+
+            nganhToHop.setMaNganh(newNganhToHopDTO.getMaNganh());
+            nganhToHop.setMaToHop(newNganhToHopDTO.getMaToHop());
+            nganhToHop.setHsMon1(newNganhToHopDTO.getHsMon1());
+            nganhToHop.setHsMon2(newNganhToHopDTO.getHsMon2());
+            nganhToHop.setHsMon3(newNganhToHopDTO.getHsMon3());
+            nganhToHop.setThMon1(newNganhToHopDTO.getThMon1());
+            nganhToHop.setThMon2(newNganhToHopDTO.getThMon2());
+            nganhToHop.setThMon3(newNganhToHopDTO.getThMon3());
+            nganhToHop.setTbKeys(newNganhToHopDTO.getTbKeys());
+            nganhToHop.setN1(newNganhToHopDTO.getN1());
+            nganhToHop.setToan(newNganhToHopDTO.getToan());
+            nganhToHop.setLy(newNganhToHopDTO.getLy());
+            nganhToHop.setHoa(newNganhToHopDTO.getHoa());
+            nganhToHop.setSinh(newNganhToHopDTO.getSinh());
+            nganhToHop.setVan(newNganhToHopDTO.getVan());
+            nganhToHop.setSu(newNganhToHopDTO.getSu());
+            nganhToHop.setDia(newNganhToHopDTO.getDia());
+            nganhToHop.setAnh(newNganhToHopDTO.getAnh());
+            nganhToHop.setKhac(newNganhToHopDTO.getKhac());
+            nganhToHop.setKtpl(newNganhToHopDTO.getKtpl());
+            nganhToHop.setDoLech(newNganhToHopDTO.getDoLech());
 
             dao.updateWithSession(session, nganhToHop);
 
@@ -129,17 +149,18 @@ public class NganhToHopBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
     public String deleteNganhToHop(int id){
-        Session session = factory.openSession();
         Transaction tx = null;
-        NganhToHop nganhToHop = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            NganhToHop nganhToHop = dao.getWithSession(session, id);
+
+            if(nganhToHop == null){
+                return "Lỗi: Không tìm thấy Ngành tổ hợp với ID " + id;
+            }
 
             dao.deleteWithSession(session, nganhToHop);
 
@@ -149,8 +170,6 @@ public class NganhToHopBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
