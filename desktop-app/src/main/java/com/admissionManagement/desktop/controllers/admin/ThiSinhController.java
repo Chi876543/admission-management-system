@@ -23,55 +23,37 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public class ThiSinhController extends BaseController implements Initializable {
-
-    // Khởi tạo tầng BUS để giao tiếp với DB
     private final ThiSinhBUS thiSinhBUS = new ThiSinhBUS();
 
-    // ── Giao diện TableView ──
+    // Giao diện View
     @FXML private TextField tfSearch;
     @FXML private TableView<ThiSinhDTO> tblThiSinh;
     @FXML private TableColumn<ThiSinhDTO, Integer> colId;
-    @FXML
-    private TableColumn<ThiSinhDTO, String> colSbd, colCccd, colHo, colTen,
+    @FXML private TableColumn<ThiSinhDTO, String> colSbd, colCccd, colHo, colTen,
             colNgaySinh, colGioiTinh, colSdt, colEmail, colNoiSinh, colDoiTuong, colKhuVuc;
     @FXML private TableColumn<ThiSinhDTO, Void> colAction;
-
     @FXML private Label lblCount;
     @FXML private Pagination pagination;
 
-    // ── Giao diện Form Dialog ──
-    @FXML private Label lblDialogTitle, lblError;
-    @FXML private TextField tfSbd, tfCccd, tfHo, tfTen, tfSdt, tfEmail, tfNoiSinh;
-    @FXML private DatePicker dpNgaySinh;
-    @FXML private ComboBox<String> cbGioiTinh, cbDoiTuong, cbKhuVuc;
-
     private final ObservableList<ThiSinhDTO> allData = FXCollections.observableArrayList();
-    private List<ThiSinhDTO> filtered = new ArrayList<>();
-    private int currentPage = 0;
-    private ThiSinhDTO editingRow;
-    private Stage dialogStage;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        if (tblThiSinh != null) {
-            setupTable();
-            loadData();
-        }
-        if (cbGioiTinh != null) {
-            cbGioiTinh.setItems(FXCollections.observableArrayList("Nam", "Nữ", "Khác"));
-            cbDoiTuong.setItems(FXCollections.observableArrayList("01", "02", "03", "04", "05", "06", "07", "Không"));
-            cbKhuVuc.setItems(FXCollections.observableArrayList("KV1", "KV2", "KV2-NT", "KV3"));
-        }
+        setupTable();
+        loadData(0);
     }
 
-    // ── Cấu hình TableView ──────────────────────────────────
+    // Cấu hình TableView
     private void setupTable() {
+        tblThiSinh.setItems(allData);
+
         colId.setCellValueFactory(new PropertyValueFactory<>("idThiSinh"));
         colSbd.setCellValueFactory(new PropertyValueFactory<>("soBaoDanh"));
         colCccd.setCellValueFactory(new PropertyValueFactory<>("cccd"));
@@ -87,8 +69,14 @@ public class ThiSinhController extends BaseController implements Initializable {
 
         colAction.setCellFactory(col -> new TableCell<>() {
             private final HBox box = makeActionCell(
-                    () -> openDialog(getTableView().getItems().get(getIndex())),
-                    () -> onDelete(getTableView().getItems().get(getIndex()))
+                    () -> {
+                        ThiSinhDTO item = getTableRow().getItem();
+                        if (item != null) openDialog(item);
+                    },
+                    () -> {
+                        ThiSinhDTO item = getTableRow().getItem();
+                        if (item != null) onDelete(item);
+                    }
             );
             @Override
             protected void updateItem(Void v, boolean empty) {
@@ -97,149 +85,72 @@ public class ThiSinhController extends BaseController implements Initializable {
             }
         });
 
-        pagination.currentPageIndexProperty().addListener((o, ov, nv) -> {
-            currentPage = nv.intValue();
-            showPage();
+        pagination.currentPageIndexProperty().addListener((observable, oldIndex, newIndex) -> {
+            loadData(newIndex.intValue());
         });
     }
 
-    // ── Dữ liệu & Tìm kiếm ─────────────────────────────────
-    private void loadData() {
-        List<ThiSinhDTO> dataTuDB = thiSinhBUS.getAllThiSinh();
-        allData.setAll(dataTuDB);
-        applyFilter();
+    // Dữ liệu & Tìm kiếm
+    private void loadData(int pageIndex) {
+        String keyWord = tfSearch.getText();
+        long totalRecords = thiSinhBUS.getTotal(keyWord);
+        int totalPages = (int) Math.ceil((double) totalRecords / PAGE_SIZE);
+        totalPages = Math.max(1, totalPages);
+        pagination.setPageCount(totalPages);
+
+        List<ThiSinhDTO> listThiSinh = thiSinhBUS.getAllThiSinh(keyWord, pageIndex, PAGE_SIZE);
+        allData.setAll(listThiSinh);
     }
 
-    private void applyFilter() {
-        String kw = tfSearch.getText().trim().toLowerCase();
-        filtered = allData.stream()
-                .filter(r -> kw.isEmpty()
-                        || (r.getCccd() != null && r.getCccd().contains(kw))
-                        || (r.getHo() + " " + r.getTen()).toLowerCase().contains(kw))
-                .collect(Collectors.toList());
-
-        currentPage = 0;
-        pagination.setPageCount(pageCount(filtered.size()));
-        pagination.setCurrentPageIndex(0);
-        showPage();
+    @FXML private void onSearch() {
+        if (pagination.getCurrentPageIndex() == 0) {
+            loadData(0);
+        } else {
+            pagination.setCurrentPageIndex(0);
+        }
     }
-
-    private void showPage() {
-        tblThiSinh.setItems(getPage(filtered, currentPage));
-        lblCount.setText(filtered.size() + " thí sinh");
+    @FXML private void onAdd() {
+        openDialog(null);
     }
-
-    @FXML private void onSearch() { applyFilter(); }
-    @FXML private void onAdd() { openDialog(null); }
 
     private void onDelete(ThiSinhDTO row) {
         if (confirmDelete(row.getHo() + " " + row.getTen())) {
             String result = thiSinhBUS.deleteThiSinh(row.getIdThiSinh());
 
-            if (result.contains("successfully")) {
-                allData.remove(row);
-                applyFilter();
-                showInfo("Thành công", "Đã xóa thí sinh!");
+            if (result != null) {
+                loadData(pagination.getCurrentPageIndex());
+                showInfo("Thành công", result);
             } else {
-                showError("Lỗi xóa: " + result);
+                showError("Lỗi xóa: " + "Không tìm thấy thí sinh để xóa!");
             }
         }
     }
 
-    // ── Quản lý Form Dialog (Thêm / Sửa) ───────────────────
+    // Quản lý Form Dialog (Thêm / Sửa)
     private void openDialog(ThiSinhDTO row) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/admissionManagement/desktop/views/admin/thisinh-dialog.fxml"));
             Parent root = loader.load();
-            ThiSinhController ctrl = loader.getController();
+            ThiSinhDialogController dialogCtrl = loader.getController();
 
-            dialogStage = new Stage();
+            Stage dialogStage = new Stage();
             dialogStage.setTitle(row == null ? "Thêm thí sinh" : "Sửa thí sinh");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.setScene(new Scene(root));
             dialogStage.setResizable(false);
 
-            ctrl.initDialog(dialogStage, row, allData, this);
+            dialogCtrl.setDialogData(dialogStage, row);
             dialogStage.showAndWait();
 
-            loadData();
+            if (dialogCtrl.getIsSaved()) {
+                loadData(pagination.getCurrentPageIndex());
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            showError("Lỗi khởi tạo giao diện: " + e.getMessage());
         }
     }
 
-    public void initDialog(Stage stage, ThiSinhDTO row, ObservableList<ThiSinhDTO> data, ThiSinhController parent) {
-        this.dialogStage = stage;
-        this.editingRow = row;
-
-        if (row != null) {
-            lblDialogTitle.setText("Sửa hồ sơ thí sinh ID: " + row.getIdThiSinh());
-            tfSbd.setText(row.getSoBaoDanh());
-            tfCccd.setText(row.getCccd()); tfCccd.setDisable(true);
-            tfHo.setText(row.getHo());
-            tfTen.setText(row.getTen());
-            tfSdt.setText(row.getDienThoai());
-            tfEmail.setText(row.getEmail());
-            tfNoiSinh.setText(row.getNoiSinh());
-            cbGioiTinh.setValue(row.getGioiTinh());
-            cbDoiTuong.setValue(row.getDoiTuong());
-            cbKhuVuc.setValue(row.getKhuVuc());
-        } else {
-            lblDialogTitle.setText("Thêm thí sinh mới");
-        }
-    }
-
-    @FXML private void onDialogSave() {
-        if (tfHo.getText().trim().isEmpty() || tfTen.getText().trim().isEmpty()) {
-            lblError.setText("Họ và Tên không được để trống.");
-            return;
-        }
-
-        if (editingRow == null) {
-            ThiSinhDTO r = new ThiSinhDTO(
-                    0,
-                    tfSbd.getText().trim(),
-                    tfCccd.getText().trim(),
-                    tfHo.getText().trim(),
-                    tfTen.getText().trim(),
-                    dpNgaySinh.getValue() != null ? dpNgaySinh.getValue().toString() : "",
-                    cbGioiTinh.getValue(),
-                    tfSdt.getText().trim(),
-                    tfEmail.getText().trim(),
-                    "123456", // Password mặc định
-                    tfNoiSinh.getText().trim(),
-                    cbDoiTuong.getValue(),
-                    cbKhuVuc.getValue(),
-                    null
-            );
-            String result = thiSinhBUS.addThiSinh(r);
-            if (!result.contains("successfully")) {
-                lblError.setText(result);
-                return;
-            }
-        } else {
-            editingRow.setSoBaoDanh(tfSbd.getText().trim());
-            editingRow.setHo(tfHo.getText().trim());
-            editingRow.setTen(tfTen.getText().trim());
-            editingRow.setDienThoai(tfSdt.getText().trim());
-            editingRow.setEmail(tfEmail.getText().trim());
-            editingRow.setNoiSinh(tfNoiSinh.getText().trim());
-            editingRow.setGioiTinh(cbGioiTinh.getValue());
-            editingRow.setDoiTuong(cbDoiTuong.getValue());
-            editingRow.setKhuVuc(cbKhuVuc.getValue());
-
-            String result = thiSinhBUS.updateThiSinh(editingRow.getIdThiSinh(), editingRow);
-            if (!result.contains("successfully")) {
-                lblError.setText(result);
-                return;
-            }
-        }
-        dialogStage.close();
-    }
-
-    @FXML private void onDialogCancel() { dialogStage.close(); }
-
-    // ── Xử lý Import CSV qua Batch ─────────────────────────
+    // Xử lý Import CSV qua Batch
     private void processImport(File file) {
         List<ThiSinhDTO> listImport = new ArrayList<>();
 
@@ -265,15 +176,14 @@ public class ThiSinhController extends BaseController implements Initializable {
             String result = thiSinhBUS.addListThiSinh(listImport);
 
             showInfo("Kết quả Import", result);
-            loadData();
+            loadData(0);
 
         } catch (Exception e) {
             showError("Lỗi không thể đọc file: " + e.getMessage());
         }
     }
 
-    @FXML
-    private void onImport() {
+    @FXML private void onImport() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Chọn file CSV thí sinh");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));

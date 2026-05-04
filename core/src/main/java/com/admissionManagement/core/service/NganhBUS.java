@@ -1,6 +1,9 @@
 package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.NganhDAO;
+import com.admissionManagement.core.dto.BangQuyDoiDTO;
+import com.admissionManagement.core.dto.NganhDTO;
+import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.Nganh;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
@@ -18,11 +21,50 @@ public class NganhBUS {
         this.factory = HibernateUtil.getSessionFactory();
     }
 
-    public String addBangQuyDoi(Nganh nganh){
-        Session session = factory.openSession();
+    private NganhDTO toDTO(Nganh entity){
+        return new NganhDTO(
+                entity.getIdNganh(),
+                entity.getMaNganh(),
+                entity.getTenNganh(),
+                entity.getToHopGoc(),
+                entity.getChiTieu(),
+                entity.getDiemSan(),
+                entity.getDiemTrungTuyen(),
+                entity.getTuyenThang(),
+                entity.getDgnl(),
+                entity.getThpt(),
+                entity.getVsat(),
+                entity.getSlXtt(),
+                entity.getSlDgnl(),
+                entity.getSlVsat(),
+                entity.getSlThpt()
+        );
+    }
+
+    private List<NganhDTO> mapListEntityToListDTO(List<Nganh> entities) {
+        return entities.stream().map(this::toDTO).toList();
+    }
+
+    public String addBangQuyDoi(NganhDTO nganhDTO){
         Transaction tx = null;
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+
+            Nganh nganh = new Nganh();
+            nganh.setMaNganh(nganhDTO.getMaNganh());
+            nganh.setTenNganh(nganhDTO.getTenNganh());
+            nganh.setToHopGoc(nganhDTO.getToHopGoc());
+            nganh.setChiTieu(nganhDTO.getChiTieu());
+            nganh.setDiemSan(nganhDTO.getDiemSan());
+            nganh.setDiemTrungTuyen(nganhDTO.getDiemTrungTuyen());
+            nganh.setTuyenThang(nganhDTO.getTuyenThang());
+            nganh.setDgnl(nganhDTO.getDgnl());
+            nganh.setThpt(nganhDTO.getThpt());
+            nganh.setVsat(nganhDTO.getVsat());
+            nganh.setSlXtt(nganhDTO.getSlXtt());
+            nganh.setSlDgnl(nganhDTO.getSlDgnl());
+            nganh.setSlThpt(nganhDTO.getSlThpt());
+            nganh.setSlVsat(nganhDTO.getSlVsat());
 
             dao.addWithSession(session, nganh);
 
@@ -32,48 +74,46 @@ public class NganhBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
-    public Nganh getNganh(int id){
-        Session session = factory.openSession();
-        Nganh nganh = dao.getWithSession(session, id);
-        session.close();
-        return nganh;
+    public NganhDTO getNganh(int id){
+        try(Session session = factory.openSession()){
+            return toDTO(dao.getWithSession(session, id));
+        }
     }
 
-    public List<Nganh> getAllNganh(){
+    public List<NganhDTO> getAllNganh(){
         Session session = factory.openSession();
         List<Nganh> listNganh = dao.getAllWithSession(session);
         session.close();
-        return listNganh;
+        return mapListEntityToListDTO(listNganh);
     }
 
-    public String updateNganh(int id, Nganh newNganh){
-        Session session = factory.openSession();
+    public String updateNganh(int id, NganhDTO newNganhDTO){
         Transaction tx = null;
-        Nganh nganh = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            Nganh nganh = dao.getWithSession(session, id);
 
-            if(nganh != null){
-                nganh.setMaNganh(newNganh.getMaNganh());
-                nganh.setTenNganh(newNganh.getTenNganh());
-                nganh.setToHopGoc(newNganh.getToHopGoc());
-                nganh.setChiTieu(newNganh.getChiTieu());
-                nganh.setDiemSan(newNganh.getDiemSan());
-                nganh.setDiemTrungTuyen(newNganh.getDiemTrungTuyen());
-                nganh.setTuyenThang(newNganh.getTuyenThang());
-                nganh.setDgnl(newNganh.getDgnl());
-                nganh.setThpt(newNganh.getThpt());
-                nganh.setVsat(newNganh.getVsat());
-                nganh.setSlXtt(newNganh.getSlXtt());
-                nganh.setSlDgnl(newNganh.getSlDgnl());
-                nganh.setSlThpt(newNganh.getSlThpt());
-                nganh.setSlVsat(newNganh.getSlVsat());
+            if(nganh == null){
+                return "Lỗi: Không tìm thấy Ngành với ID " + id;
             }
+
+            nganh.setMaNganh(newNganhDTO.getMaNganh());
+            nganh.setTenNganh(newNganhDTO.getTenNganh());
+            nganh.setToHopGoc(newNganhDTO.getToHopGoc());
+            nganh.setChiTieu(newNganhDTO.getChiTieu());
+            nganh.setDiemSan(newNganhDTO.getDiemSan());
+            nganh.setDiemTrungTuyen(newNganhDTO.getDiemTrungTuyen());
+            nganh.setTuyenThang(newNganhDTO.getTuyenThang());
+            nganh.setDgnl(newNganhDTO.getDgnl());
+            nganh.setThpt(newNganhDTO.getThpt());
+            nganh.setVsat(newNganhDTO.getVsat());
+            nganh.setSlXtt(newNganhDTO.getSlXtt());
+            nganh.setSlDgnl(newNganhDTO.getSlDgnl());
+            nganh.setSlThpt(newNganhDTO.getSlThpt());
+            nganh.setSlVsat(newNganhDTO.getSlVsat());
 
             dao.updateWithSession(session, nganh);
 
@@ -83,17 +123,18 @@ public class NganhBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 
     public String deleteNganh(int id){
-        Session session = factory.openSession();
         Transaction tx = null;
-        Nganh nganh = dao.getWithSession(session, id);
-        try {
+        try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
+            Nganh nganh = dao.getWithSession(session, id);
+
+            if(nganh == null){
+                return "Lỗi: Không tìm thấy Ngành với ID " + id;
+            }
 
             dao.deleteWithSession(session, nganh);
 
@@ -103,8 +144,6 @@ public class NganhBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
-        } finally {
-            session.close();
         }
     }
 }

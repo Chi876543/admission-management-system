@@ -42,7 +42,6 @@ public class DatabaseHelper {
 
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
             return "Lỗi Import Database: " + e.getMessage();
         }
     }

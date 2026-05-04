@@ -8,13 +8,37 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "xt_thisinhxettuyen25")
+@Table(name = "xt_thisinhxettuyen25", indexes = {
+    @Index(name = "idx_thisinh_ten", columnList = "ten"),
+    @Index(name = "idx_thisinh_ho_ten", columnList = "ho, ten")
+})
 
 public class ThiSinh {
     public enum GioiTinh {
-        NAM,
-        NU,
-        KHAC
+        NAM("Nam"),
+        NU("Nữ"),
+        KHAC("Khác");
+
+        private final String label;
+
+        GioiTinh(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public static GioiTinh fromLabel(String gender) {
+            if (gender == null) return KHAC;
+
+            for(GioiTinh gt : GioiTinh.values()) {
+                if(gt.label.equalsIgnoreCase(gender.trim())){
+                    return gt;
+                }
+            }
+            return KHAC;
+        }
     }
 
     @Id
