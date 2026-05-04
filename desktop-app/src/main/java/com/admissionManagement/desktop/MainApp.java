@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import java.util.Objects;
 
 public class MainApp extends Application {
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Load màn hình login trước
