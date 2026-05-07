@@ -43,7 +43,7 @@ public class DiemThiXetTuyen {
     @Column(name = "SU", precision = 8, scale = 2) private BigDecimal diemSu;
     @Column(name = "DI", precision = 8, scale = 2) private BigDecimal diemDia;
     @Column(name = "VA", precision = 8, scale = 2) private BigDecimal diemVan;
-    @Column(name = "TI", precision = 8, scale = 2) private BigDecimal diemAnh;
+    @Column(name = "TI", precision = 8, scale = 2) private BigDecimal diemTin;
     @Column(name = "KTPL", precision = 8, scale = 2) private BigDecimal diemKtpl;
 
     @Column(name = "N1_THI", precision = 8, scale = 2) private BigDecimal n1Thi;

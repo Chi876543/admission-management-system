@@ -28,7 +28,7 @@ public class DiemThiXetTuyenDTO {
     @NonNull private BigDecimal diemSu;
     @NonNull private BigDecimal diemDia;
     @NonNull private BigDecimal diemVan;
-    @NonNull private BigDecimal diemAnh;
+    @NonNull private BigDecimal diemTin;
     @NonNull private BigDecimal diemKtpl;
 
     @NonNull private BigDecimal n1Thi;

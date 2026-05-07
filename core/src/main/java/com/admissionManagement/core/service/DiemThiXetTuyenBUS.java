@@ -38,7 +38,7 @@ public class DiemThiXetTuyenBUS {
                 entity.getDiemSu(),
                 entity.getDiemDia(),
                 entity.getDiemVan(),
-                entity.getDiemAnh(),
+                entity.getDiemTin(),
                 entity.getDiemKtpl(),
                 entity.getN1Thi(),
                 entity.getN1Cc(),
@@ -75,7 +75,7 @@ public class DiemThiXetTuyenBUS {
             diemThiXetTuyen.setDiemSu(diemThiXetTuyenDTO.getDiemSu());
             diemThiXetTuyen.setDiemDia(diemThiXetTuyenDTO.getDiemDia());
             diemThiXetTuyen.setDiemVan(diemThiXetTuyenDTO.getDiemVan());
-            diemThiXetTuyen.setDiemAnh(diemThiXetTuyenDTO.getDiemAnh());
+            diemThiXetTuyen.setDiemTin(diemThiXetTuyenDTO.getDiemTin());
             diemThiXetTuyen.setDiemKtpl(diemThiXetTuyenDTO.getDiemKtpl());
             diemThiXetTuyen.setN1Thi(diemThiXetTuyenDTO.getN1Thi());
             diemThiXetTuyen.setN1Cc(diemThiXetTuyenDTO.getN1Cc());
@@ -135,7 +135,7 @@ public class DiemThiXetTuyenBUS {
             diemThiXetTuyen.setDiemSu(newDiemThiXetTuyenDTO.getDiemSu());
             diemThiXetTuyen.setDiemDia(newDiemThiXetTuyenDTO.getDiemDia());
             diemThiXetTuyen.setDiemVan(newDiemThiXetTuyenDTO.getDiemVan());
-            diemThiXetTuyen.setDiemAnh(newDiemThiXetTuyenDTO.getDiemAnh());
+            diemThiXetTuyen.setDiemTin(newDiemThiXetTuyenDTO.getDiemTin());
             diemThiXetTuyen.setDiemKtpl(newDiemThiXetTuyenDTO.getDiemKtpl());
             diemThiXetTuyen.setN1Thi(newDiemThiXetTuyenDTO.getN1Thi());
             diemThiXetTuyen.setN1Cc(newDiemThiXetTuyenDTO.getN1Cc());
