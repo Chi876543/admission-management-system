@@ -1,6 +1,7 @@
 package com.admissionManagement.core.dao;
 
 import com.admissionManagement.core.entity.Nganh;
+import com.admissionManagement.core.entity.ToHopMonThi;
 import org.hibernate.Session;
 
 import java.util.List;
@@ -14,6 +15,12 @@ public class NganhDAO {
     public Nganh getWithSession(Session session, int id){
         Nganh nganh = session.get(Nganh.class, id);
         return nganh;
+    }
+
+    public Nganh getByMaNganhWithSession(Session session, String maNganh){
+        return session.createQuery("FROM Nganh WHERE maNganh = :ma", Nganh.class)
+                .setParameter("ma", maNganh)
+                .uniqueResult();
     }
 
     public List<Nganh> getAllWithSession(Session session){

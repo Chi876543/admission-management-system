@@ -1,5 +1,6 @@
 package com.admissionManagement.core.dao;
 
+import com.admissionManagement.core.entity.Nganh;
 import com.admissionManagement.core.entity.ThiSinh;
 import org.hibernate.Session;
 import jakarta.persistence.criteria.*;
@@ -13,6 +14,12 @@ public class ThiSinhDAO {
 
     public ThiSinh getWithSession(Session session, int id) {
         return session.get(ThiSinh.class, id);
+    }
+
+    public ThiSinh getByCccdWithSesstion(Session session, String cccd) {
+        return session.createQuery("FROM ThiSinh WHERE cccd = :cccd", ThiSinh.class)
+                .setParameter("cccd", cccd)
+                .uniqueResult();
     }
 
     public List<ThiSinh> getAllWithSession(Session session, String ho, String ten, String cccd, int pageIndex, int pageSize){

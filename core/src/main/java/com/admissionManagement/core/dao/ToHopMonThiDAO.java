@@ -25,6 +25,12 @@ public class ToHopMonThiDAO {
         return toHopMonThi;
     }
 
+    public ToHopMonThi getByMaToHopWithSession(Session session, String maToHop){
+        return session.createQuery("FROM ToHopMonThi WHERE maToHop = :ma", ToHopMonThi.class)
+                .setParameter("ma", maToHop)
+                .uniqueResult();
+    }
+
     public List<ToHopMonThi> getAllWithSession(Session session){
         String query = "FROM ToHopMonThi ";
         List listToHopMonThi= session.createQuery(query).list();

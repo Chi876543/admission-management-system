@@ -6,7 +6,12 @@ import java.math.BigDecimal;
 
 @Data
 @Entity
-@Table(name = "xt_diemthixettuyen")
+@Table(
+        name = "xt_diemthixettuyen",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_diemthixettuyen_cccd", columnNames = {"cccd"})
+        }
+)
 
 public class DiemThiXetTuyen {
 
@@ -15,8 +20,14 @@ public class DiemThiXetTuyen {
     @Column(name = "iddiemthi")
     private int idDiemThi;
 
-    @Column(name = "cccd", length = 20, nullable = false, unique = true)
-    private String cccd;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "cccd",
+            referencedColumnName = "cccd",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_diemthi_thisinh")
+    )
+    private ThiSinh thiSinh;
 
     @Column(name = "sobaodanh", length = 45)
     private String soBaoDanh;

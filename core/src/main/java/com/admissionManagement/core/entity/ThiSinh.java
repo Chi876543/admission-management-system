@@ -1,17 +1,24 @@
 package com.admissionManagement.core.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
-
+import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
-@Table(name = "xt_thisinhxettuyen25", indexes = {
-    @Index(name = "idx_thisinh_ten", columnList = "ten"),
-    @Index(name = "idx_thisinh_ho_ten", columnList = "ho, ten")
-})
+@Table(
+        name = "xt_thisinhxettuyen25",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_thisinh_cccd", columnNames = {"cccd"})
+        },
+        indexes = {
+                @Index(name = "idx_thisinh_ten", columnList = "ten"),
+                @Index(name = "idx_thisinh_ho_ten", columnList = "ho, ten")
+        }
+)
 
 public class ThiSinh {
     public enum GioiTinh {
@@ -46,7 +53,7 @@ public class ThiSinh {
     @Column(name = "idthisinh")
     private int idThiSinh;
 
-    @Column(name = "cccd", length = 20, unique = true)
+    @Column(name = "cccd", length = 20, nullable = false)
     private String cccd;
 
     @Column(name = "sobaodanh", length = 45)
@@ -68,7 +75,7 @@ public class ThiSinh {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "gioi_tinh", length = 10)
+    @Column(name = "gioi_tinh")
     private GioiTinh gioiTinh;
 
     @Column(name = "email", length = 100)
@@ -77,12 +84,22 @@ public class ThiSinh {
     @Column(name = "noi_sinh", length = 45)
     private String noiSinh;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDate updatedAt; // Ánh xạ chính xác kiểu Date trong SQL
+    private LocalDate updatedAt;
 
     @Column(name = "doi_tuong", length = 45)
     private String doiTuong;
 
     @Column(name = "khu_vuc", length = 45)
     private String khuVuc;
+
+    @OneToOne(mappedBy = "thiSinh", cascade = CascadeType.ALL, orphanRemoval = true)
+    private DiemThiXetTuyen diemThi;
+
+    @OneToMany(mappedBy = "thiSinh", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DiemCongXetTuyen> danhSachDiemCongCuaThiSinh = new ArrayList<>();
+
+    @OneToMany(mappedBy = "thiSinh", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NguyenVongXetTuyen> danhSachNguyenVongCuaThiSinh = new ArrayList<>();
 }
