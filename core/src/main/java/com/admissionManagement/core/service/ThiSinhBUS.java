@@ -5,9 +5,15 @@ import com.admissionManagement.core.dto.ThiSinhDTO;
 import com.admissionManagement.core.entity.ThiSinh;
 import com.admissionManagement.core.helper.DatabaseHelper;
 import com.admissionManagement.core.util.HibernateUtil;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+
+import java.io.File;
+import java.io.Reader;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -73,26 +79,56 @@ public class ThiSinhBUS {
         }
     }
 
-    public String addListThiSinh(List<ThiSinhDTO> listDTO) {
-        return DatabaseHelper.importBatch(listDTO, dto -> {
-            ThiSinh entity = new ThiSinh();
+    public String importCsvData(File file) {
+        int batchSize = 1000;
+        int successCount = 0;
 
-            entity.setSoBaoDanh(dto.getSoBaoDanh());
-            entity.setCccd(dto.getCccd());
-            entity.setHo(dto.getHo());
-            entity.setTen(dto.getTen());
-            entity.setNgaySinh(dto.getNgaySinh());
-            entity.setGioiTinh(ThiSinh.GioiTinh.fromLabel(dto.getGioiTinh()));
-            entity.setDienThoai(dto.getDienThoai());
-            entity.setEmail(dto.getEmail());
-            entity.setNoiSinh(dto.getNoiSinh());
-            entity.setDoiTuong(dto.getDoiTuong());
-            entity.setKhuVuc(dto.getKhuVuc());
-            entity.setPassword("123456");
-            entity.setUpdatedAt(LocalDate.now());
+        try (Reader reader = Files.newBufferedReader(file.toPath());
+             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+             Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            return entity;
-        });
+            String[] line;
+            Transaction tx = session.beginTransaction();
+
+            while ((line = csvReader.readNext()) != null) {
+                try {
+                    ThiSinh entity = new ThiSinh();
+                    entity.setSoBaoDanh(line[0].trim());
+                    entity.setCccd(line[1].trim());
+                    entity.setHo(line[2].trim());
+                    entity.setTen(line[2].trim());
+                    entity.setNgaySinh(line[3].trim());
+                    entity.setDienThoai(null);
+                    entity.setEmail(null);
+                    entity.setPassword("123456");
+                    entity.setNoiSinh(line[35].trim());
+                    entity.setDoiTuong(line[5].trim());
+                    entity.setKhuVuc(line[6].trim());
+                    entity.setUpdatedAt(LocalDate.now());
+                    entity.setGioiTinh(ThiSinh.GioiTinh.fromLabel(line[4].trim()));
+
+                    session.persist(entity);
+                    successCount++;
+
+                    if (successCount % batchSize == 0) {
+                        tx.commit();
+                        session.clear();
+                        tx = session.beginTransaction();
+                    }
+                } catch (Exception e) {
+                    // Bỏ qua dòng lỗi (hoặc ghi log ra file TXT để sau này báo cáo)
+                }
+            }
+
+            if (tx.isActive()) {
+                tx.commit();
+            }
+
+            return "Import thành công " + successCount + " bản ghi!";
+
+        } catch (Exception e) {
+            return "Lỗi đọc file: " + e.getMessage();
+        }
     }
 
     public ThiSinhDTO getThiSinh(int id){

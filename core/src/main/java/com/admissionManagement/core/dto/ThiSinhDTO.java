@@ -1,9 +1,13 @@
 package com.admissionManagement.core.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ThiSinhDTO {
     @NonNull
     private int idThiSinh;
@@ -19,9 +23,7 @@ public class ThiSinhDTO {
     private String ngaySinh;
     @NonNull
     private String gioiTinh;
-    @NonNull
     private String dienThoai;
-    @NonNull
     private String email;
     @NonNull
     private String password;

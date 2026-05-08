@@ -5,7 +5,12 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "xt_nguyenvongxettuyen")
+@Table(
+        name = "xt_nguyenvongxettuyen",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_nguyenvong_keys", columnNames = {"nv_keys"})
+        }
+)
 @Data
 public class NguyenVongXetTuyen {
 
@@ -14,11 +19,23 @@ public class NguyenVongXetTuyen {
     @Column(name = "idnv")
     private int idNv;
 
-    @Column(name = "nn_cccd", length = 45, nullable = false)
-    private String cccd;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "nn_cccd",
+            referencedColumnName = "cccd",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_nguyenvong_thisinh")
+    )
+    private ThiSinh thiSinh;
 
-    @Column(name = "nv_manganh", length = 45, nullable = false)
-    private String maNganh;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "nv_manganh",
+            referencedColumnName = "manganh",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_nguyenvong_nganh")
+    )
+    private Nganh nganh;
 
     @Column(name = "nv_tt", nullable = false)
     private int thuTu;
@@ -38,12 +55,18 @@ public class NguyenVongXetTuyen {
     @Column(name = "nv_ketqua", length = 45)
     private String ketQua;
 
-    @Column(name = "nv_keys", length = 45, unique = true)
+    @Column(name = "nv_keys", length = 45)
     private String nvKeys;
 
     @Column(name = "tt_phuongthuc", length = 45)
     private String phuongThuc;
 
-    @Column(name = "tt_thm", length = 45)
-    private String thm;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "tt_thm",
+            referencedColumnName = "matohop",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_nguyenvong_tohop")
+    )
+    private ToHopMonThi toHopMonThi;
 }

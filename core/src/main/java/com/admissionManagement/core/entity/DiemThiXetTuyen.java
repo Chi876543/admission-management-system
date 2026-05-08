@@ -6,7 +6,12 @@ import java.math.BigDecimal;
 
 @Data
 @Entity
-@Table(name = "xt_diemthixettuyen")
+@Table(
+        name = "xt_diemthixettuyen",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_diemthixettuyen_cccd", columnNames = {"cccd"})
+        }
+)
 
 public class DiemThiXetTuyen {
 
@@ -15,8 +20,14 @@ public class DiemThiXetTuyen {
     @Column(name = "iddiemthi")
     private int idDiemThi;
 
-    @Column(name = "cccd", length = 20, nullable = false, unique = true)
-    private String cccd;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "cccd",
+            referencedColumnName = "cccd",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_diemthi_thisinh")
+    )
+    private ThiSinh thiSinh;
 
     @Column(name = "sobaodanh", length = 45)
     private String soBaoDanh;
@@ -32,7 +43,7 @@ public class DiemThiXetTuyen {
     @Column(name = "SU", precision = 8, scale = 2) private BigDecimal diemSu;
     @Column(name = "DI", precision = 8, scale = 2) private BigDecimal diemDia;
     @Column(name = "VA", precision = 8, scale = 2) private BigDecimal diemVan;
-    @Column(name = "TI", precision = 8, scale = 2) private BigDecimal diemAnh;
+    @Column(name = "TI", precision = 8, scale = 2) private BigDecimal diemTin;
     @Column(name = "KTPL", precision = 8, scale = 2) private BigDecimal diemKtpl;
 
     @Column(name = "N1_THI", precision = 8, scale = 2) private BigDecimal n1Thi;

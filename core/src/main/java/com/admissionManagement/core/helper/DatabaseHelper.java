@@ -1,48 +1,85 @@
 package com.admissionManagement.core.helper;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import java.util.List;
-import java.util.function.Function;
-import com.admissionManagement.core.util.HibernateUtil;
+import com.admissionManagement.core.dto.BangQuyDoiDTO;
+import com.admissionManagement.core.dto.NganhToHopDTO;
+import com.admissionManagement.core.dto.ThiSinhDTO;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class DatabaseHelper {
+    public static BigDecimal quyDoiDiemVSATVaDGNL(BigDecimal diem, BangQuyDoiDTO bangQuyDoi) {
+        if (bangQuyDoi == null || diem == null) {
+            return BigDecimal.ZERO;
+        }
 
-    /**
-     * Hàm Batch Insert dùng chung cho mọi bảng
-     * @param listDTO: Danh sách dữ liệu DTO nhận từ giao diện
-     * @param mapper: Hàm chuyển đổi (Lambda) từ DTO sang Entity tương ứng
-     * @param <D>: Kiểu dữ liệu của DTO
-     * @param <E>: Kiểu dữ liệu của Entity
-     */
-    public static <D, E> String importBatch(List<D> listDTO, Function<D, E> mapper) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
+        BigDecimal x = diem;
+        BigDecimal a = bangQuyDoi.getDiemA();
+        BigDecimal b = bangQuyDoi.getDiemB();
+        BigDecimal c = bangQuyDoi.getDiemC();
+        BigDecimal d = bangQuyDoi.getDiemD();
 
-            int batchSize = 50;
+        BigDecimal tuSo = x.subtract(a);
+        BigDecimal mauSo = b.subtract(a);
 
-            for (int i = 0; i < listDTO.size(); i++) {
-                D dto = listDTO.get(i);
+        if (mauSo.compareTo(BigDecimal.ZERO) == 0) {
+            return c;
+        }
 
-                E entity = mapper.apply(dto);
+        BigDecimal tyLe = tuSo.divide(mauSo, 5, RoundingMode.HALF_UP);
+        BigDecimal khoangQuyDoi = d.subtract(c);
+        BigDecimal phanBu = tyLe.multiply(khoangQuyDoi);
+        BigDecimal ketQua = c.add(phanBu);
 
-                if (entity != null) {
-                    session.persist(entity);
-                }
+        return ketQua.setScale(2, RoundingMode.HALF_UP);
+    }
 
-                if (i > 0 && i % batchSize == 0) {
-                    session.flush();
-                    session.clear();
-                }
+    public static BigDecimal tinhDiemVSATVaTHPT(NganhToHopDTO nganhToHop, BigDecimal d1, BigDecimal d2, BigDecimal d3) {
+        BigDecimal diem1 = d1.multiply(BigDecimal.valueOf(nganhToHop.getHsMon1()));
+        BigDecimal diem2 = d2.multiply(BigDecimal.valueOf(nganhToHop.getHsMon2()));
+        BigDecimal diem3 = d3.multiply(BigDecimal.valueOf(nganhToHop.getHsMon3()));
+        BigDecimal w = BigDecimal.valueOf(nganhToHop.getHsMon1()).add(BigDecimal.valueOf(nganhToHop.getHsMon2())).add(BigDecimal.valueOf(nganhToHop.getHsMon3()));
+
+        BigDecimal tuSo = diem1.add(diem2).add(diem3);
+        BigDecimal ketQua = tuSo.multiply(BigDecimal.valueOf(3))
+                .divide(w, 2, RoundingMode.HALF_UP);
+
+        return ketQua.subtract(nganhToHop.getDoLech());
+    }
+
+    public static BigDecimal tinhDiemUuTien (ThiSinhDTO thiSinh, BigDecimal diemCong, BigDecimal dthgxt) {
+        String doiTuong = thiSinh.getDoiTuong();
+        String khuVuc = thiSinh.getKhuVuc();
+
+        BigDecimal mucDiemUuTienKV = switch (khuVuc) {
+            case "KV1" -> new BigDecimal("0.75");
+            case "KV2-NT" -> new BigDecimal("0.50");
+            case "KV2" -> new BigDecimal("0.25");
+            default -> BigDecimal.ZERO;
+        };
+
+        BigDecimal mucDiemUuTienDT = switch (doiTuong) {
+            case "UT1" -> new BigDecimal("2.00");
+            case "UT2" -> new BigDecimal("1.00");
+            default -> BigDecimal.ZERO;
+        };
+
+        BigDecimal mucDiemUuTienTong = mucDiemUuTienKV.add(mucDiemUuTienDT);
+
+        BigDecimal tongDiem = dthgxt.add(diemCong);
+        BigDecimal mocGiamTru = new BigDecimal("22.5");
+
+        if (tongDiem.compareTo(mocGiamTru) < 0) {
+            return mucDiemUuTienTong;
+        } else {
+            BigDecimal tuSo = new BigDecimal("30").subtract(tongDiem);
+
+            if (tuSo.compareTo(BigDecimal.ZERO) < 0) {
+                return BigDecimal.ZERO;
             }
 
-            tx.commit();
-            return "Import thành công " + listDTO.size() + " bản ghi vào cơ sở dữ liệu.";
-
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            return "Lỗi Import Database: " + e.getMessage();
+            return tuSo.multiply(mucDiemUuTienTong)
+                    .divide(new BigDecimal("7.5"), 5, RoundingMode.HALF_UP);
         }
     }
 }

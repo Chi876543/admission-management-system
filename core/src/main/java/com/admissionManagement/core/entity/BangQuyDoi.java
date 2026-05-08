@@ -7,7 +7,12 @@ import java.math.BigDecimal;
 
 @Data
 @Entity
-@Table(name = "xt_bangquydoi")
+@Table(
+        name = "xt_bangquydoi",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_bangquydoi_keys", columnNames = {"d_maquydoi"})
+        }
+)
 
 public class BangQuyDoi {
 

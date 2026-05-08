@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class BangQuyDoiBUS {
@@ -129,6 +130,12 @@ public class BangQuyDoiBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
+        }
+    }
+
+    public BangQuyDoiDTO getBangQuyDoiWithScore(String phuongThuc, BigDecimal diem, String mon, String toHop){
+        try(Session session = factory.openSession()) {
+            return toDTO(dao.getLuatQuyDoiWithSession(session, phuongThuc, diem ,mon, toHop));
         }
     }
 }

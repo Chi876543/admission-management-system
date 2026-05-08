@@ -6,7 +6,12 @@ import java.math.BigDecimal;
 
 @Data
 @Entity
-@Table(name = "xt_diemcongxetuyen")
+@Table(
+        name = "xt_diemcongxetuyen",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_diemcongxettuyen_keys", columnNames = {"dc_keys"})
+        }
+)
 
 public class DiemCongXetTuyen {
 
@@ -15,14 +20,32 @@ public class DiemCongXetTuyen {
     @Column(name = "iddiemcong")
     private int idDiemCong;
 
-    @Column(name = "ts_cccd", length = 45, nullable = false)
-    private String tsCccd;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "ts_cccd",
+            referencedColumnName = "cccd",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_diemcongxettuyen_thisinh")
+    )
+    private ThiSinh thiSinh;
 
-    @Column(name = "manganh", length = 20)
-    private String maNganh;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "manganh",
+            referencedColumnName = "manganh",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_diemcongxettuyen_nganh")
+    )
+    private Nganh nganh;
 
-    @Column(name = "matohop", length = 10)
-    private String maToHop;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "matohop",
+            referencedColumnName = "matohop",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_diemcongxettuyen_tohopmonthi")
+    )
+    private ToHopMonThi toHopMonThi;
 
     @Column(name = "phuongthuc", length = 45)
     private String phuongThuc;
@@ -40,6 +63,6 @@ public class DiemCongXetTuyen {
     @Column(name = "ghichu")
     private String ghiChu;
 
-    @Column(name = "dc_keys", length = 45, nullable = false, unique = true)
+    @Column(name = "dc_keys", length = 45, nullable = false)
     private String dcKeys;
 }

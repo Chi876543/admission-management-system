@@ -2,8 +2,6 @@ package com.admissionManagement.desktop.controllers.admin;
 
 import com.admissionManagement.core.dto.ThiSinhDTO;
 import com.admissionManagement.core.service.ThiSinhBUS;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,13 +17,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.Reader;
-import java.nio.file.Files;
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import javafx.concurrent.Task;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -150,39 +144,7 @@ public class ThiSinhController extends BaseController implements Initializable {
         }
     }
 
-    // Xử lý Import CSV qua Batch
-    private void processImport(File file) {
-        List<ThiSinhDTO> listImport = new ArrayList<>();
-
-        try (Reader reader = Files.newBufferedReader(file.toPath());
-             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build()) {
-
-            String[] line;
-            while ((line = csvReader.readNext()) != null) {
-                try {
-                    ThiSinhDTO dto = new ThiSinhDTO(
-                            0,
-                            line[0].trim(), line[1].trim(), line[2].trim(), line[3].trim(),
-                            line[4].trim(), line[5].trim(), line[6].trim(), line[7].trim(),
-                            "123456",
-                            line[8].trim(), line[9].trim(), line[10].trim(), null
-                    );
-                    listImport.add(dto);
-                } catch (Exception e) {
-                    System.out.println("Bỏ qua 1 dòng lỗi cấu trúc.");
-                }
-            }
-
-            String result = thiSinhBUS.addListThiSinh(listImport);
-
-            showInfo("Kết quả Import", result);
-            loadData(0);
-
-        } catch (Exception e) {
-            showError("Lỗi không thể đọc file: " + e.getMessage());
-        }
-    }
-
+    // Xử lý Import CSV
     @FXML private void onImport() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Chọn file CSV thí sinh");
@@ -190,7 +152,26 @@ public class ThiSinhController extends BaseController implements Initializable {
         File selectedFile = fileChooser.showOpenDialog(tblThiSinh.getScene().getWindow());
 
         if (selectedFile != null) {
-            processImport(selectedFile);
+            Task<String> importTask = new Task<>() {
+                @Override
+                protected String call() throws Exception {
+                    return thiSinhBUS.importCsvData(selectedFile);
+                }
+            };
+
+            importTask.setOnSucceeded(e -> {
+                String result = importTask.getValue();
+                showInfo("Kết quả", result);
+                loadData(0);
+            });
+
+            importTask.setOnFailed(e -> {
+                showError("Lỗi Import: " + importTask.getException().getMessage());
+            });
+
+            new Thread(importTask).start();
+
+            showInfo("Đang xử lý", "Hệ thống đang import ngầm, vui lòng đợi...");
         }
     }
 }

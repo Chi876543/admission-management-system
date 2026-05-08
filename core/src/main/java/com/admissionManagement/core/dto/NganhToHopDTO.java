@@ -30,7 +30,7 @@ public class NganhToHopDTO {
     private String tbKeys;
 
     // boolean
-    @NonNull private Boolean n1;
+    @NonNull private Boolean anh;
     @NonNull private Boolean toan;
     @NonNull private Boolean ly;
     @NonNull private Boolean hoa;
@@ -38,7 +38,7 @@ public class NganhToHopDTO {
     @NonNull private Boolean van;
     @NonNull private Boolean su;
     @NonNull private Boolean dia;
-    @NonNull private Boolean anh;
+    @NonNull private Boolean tin;
     @NonNull private Boolean khac;
     @NonNull private Boolean ktpl;
 

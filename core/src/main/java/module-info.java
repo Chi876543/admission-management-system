@@ -3,6 +3,7 @@ module core {
     requires static lombok;
     requires jakarta.persistence;
     requires java.naming;
+    requires com.opencsv;
 
     exports com.admissionManagement.core.entity;
     exports com.admissionManagement.core.dto;

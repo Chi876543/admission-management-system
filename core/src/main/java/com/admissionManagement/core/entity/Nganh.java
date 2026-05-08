@@ -2,11 +2,20 @@ package com.admissionManagement.core.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
-@Table(name = "xt_nganh")
+@Table(
+        name = "xt_nganh",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_nganh_manganh", columnNames = {"manganh"})
+        }
+)
 
 public class Nganh {
 
@@ -18,12 +27,16 @@ public class Nganh {
     @Column(name = "manganh", length = 45, nullable = false)
     private String maNganh;
 
+    @OneToMany(mappedBy = "nganh", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NganhToHop> danhSachToHopCuaNganh = new ArrayList<>();
+
     @Column(name = "tennganh", length = 100, nullable = false)
     private String tenNganh;
 
     @Column(name = "n_tohopgoc", length = 3)
     private String toHopGoc;
 
+    @ColumnDefault("0")
     @Column(name = "n_chitieu", nullable = false)
     private int chiTieu;
 
@@ -42,4 +55,10 @@ public class Nganh {
     @Column(name = "sl_dgnl") private Integer slDgnl;
     @Column(name = "sl_vsat") private Integer slVsat;
     @Column(name = "sl_thpt", length = 45) private String slThpt;
+
+    @OneToMany(mappedBy = "nganh", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DiemCongXetTuyen> danhSachDiemCongCuaNganh = new ArrayList<>();
+
+    @OneToMany(mappedBy = "nganh", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NguyenVongXetTuyen> danhSachNguyenVongCuaNganh = new ArrayList<>();
 }
