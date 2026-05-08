@@ -4,9 +4,12 @@ import com.admissionManagement.core.entity.Nganh;
 import com.admissionManagement.core.entity.ThiSinh;
 import org.hibernate.Session;
 import jakarta.persistence.criteria.*;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class ThiSinhDAO {
     public void addWithSession(Session session, ThiSinh thiSinh) {
         session.persist(thiSinh);
@@ -75,5 +78,17 @@ public class ThiSinhDAO {
             cq.where(conditions.toArray(new Predicate[0]));
         }
         return session.createQuery(cq).getSingleResult();
+    }
+
+    public ThiSinh getByEmailWithSession(Session session, String email) {
+        return session.createQuery("FROM ThiSinh WHERE email = :email", ThiSinh.class)
+                .setParameter("email", email)
+                .uniqueResult();
+    }
+
+    public ThiSinh getBySbdWithSession(Session session, String sbd) {
+        return session.createQuery("FROM ThiSinh WHERE soBaoDanh = :sbd", ThiSinh.class)
+                .setParameter("sbd", sbd)
+                .uniqueResult();
     }
 }

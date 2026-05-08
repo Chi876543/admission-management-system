@@ -11,9 +11,11 @@ import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class NguyenVongXetTuyenBUS {
 
     private final NguyenVongXetTuyenDAO dao;
@@ -174,4 +176,11 @@ public class NguyenVongXetTuyenBUS {
         }
     }
 
+    // Dùng cho Dashboard: lấy danh sách nguyện vọng của thí sinh theo CCCD
+    public List<NguyenVongXetTuyenDTO> getByThiSinhCccd(String cccd) {
+        Session session = factory.openSession();
+        List<NguyenVongXetTuyen> list = dao.getByThiSinhCccdWithSession(session, cccd);
+        session.close();
+        return mapListEntityToListDTO(list);
+    }
 }

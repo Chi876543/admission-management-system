@@ -4,6 +4,7 @@ module core {
     requires jakarta.persistence;
     requires java.naming;
     requires com.opencsv;
+    requires spring.context;
 
     exports com.admissionManagement.core.entity;
     exports com.admissionManagement.core.dto;
@@ -13,4 +14,7 @@ module core {
 
     opens com.admissionManagement.core.entity to org.hibernate.orm.core;
     opens com.admissionManagement.core.dto to javafx.base;
+
+    opens com.admissionManagement.core.service to spring.core;
+    opens com.admissionManagement.core.dao to spring.core;
 }

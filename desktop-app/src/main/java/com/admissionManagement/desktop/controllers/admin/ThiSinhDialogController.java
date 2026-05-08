@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ThiSinhDialogController extends BaseController {
@@ -89,7 +90,7 @@ public class ThiSinhDialogController extends BaseController {
                     tfNoiSinh.getText().trim(),
                     cbDoiTuong.getValue(),
                     cbKhuVuc.getValue(),
-                    null
+                    LocalDateTime.now().toString()
             );
             String result = thiSinhBUS.addThiSinh(r);
             if (result.startsWith("Lỗi:")) {

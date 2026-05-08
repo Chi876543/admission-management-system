@@ -3,9 +3,11 @@ package com.admissionManagement.core.dao;
 import com.admissionManagement.core.entity.Nganh;
 import com.admissionManagement.core.entity.ToHopMonThi;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class NganhDAO {
 
     public void addWithSession(Session session, Nganh nganh) {

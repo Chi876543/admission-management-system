@@ -2,9 +2,11 @@ package com.admissionManagement.core.dao;
 
 import com.admissionManagement.core.entity.DiemThiXetTuyen;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class DiemThiXetTuyenDAO {
 
     public void addWithSession(Session session, DiemThiXetTuyen diemThiXetTuyen) {

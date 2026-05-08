@@ -3,10 +3,12 @@ package com.admissionManagement.core.dao;
 import com.admissionManagement.core.entity.BangQuyDoi;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Repository
 public class BangQuyDoiDAO {
     // Xóa Thuộc tính session và constructor
 

@@ -10,6 +10,7 @@ import com.opencsv.CSVReaderBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.Reader;
@@ -17,6 +18,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
 
+@Service
 public class ThiSinhBUS {
     private final ThiSinhDAO dao;
     private final SessionFactory factory;
@@ -237,6 +239,39 @@ public class ThiSinhBUS {
 
         try (Session session = factory.openSession()){
             return dao.getTotalWithSession(session, ho, ten ,cccd);
+        }
+    }
+
+    // Dùng cho Login: tìm theo email hoặc CCCD, kiểm tra password
+    public ThiSinhDTO findByEmailOrCccd(String emailOrCccd, String password) {
+        try (Session session = factory.openSession()) {
+            // Thử tìm theo email trước
+            ThiSinh thiSinh = dao.getByEmailWithSession(session, emailOrCccd);
+
+            // Nếu không có thì tìm theo CCCD
+            if (thiSinh == null) {
+                thiSinh = dao.getByCccdWithSesstion(session, emailOrCccd);
+            }
+
+            // Không tìm thấy hoặc sai password
+            if (thiSinh == null || !thiSinh.getPassword().equals(password)) {
+                return null;
+            }
+
+            return toDTO(thiSinh);
+        }
+    }
+
+    // Dùng cho Dashboard: tra cứu theo SBD + ngày sinh
+    public ThiSinhDTO findBySbd(String sbd, String ngaySinh) {
+        try (Session session = factory.openSession()) {
+            ThiSinh thiSinh = dao.getBySbdWithSession(session, sbd);
+
+            if (thiSinh == null || !thiSinh.getNgaySinh().equals(ngaySinh)) {
+                return null;
+            }
+
+            return toDTO(thiSinh);
         }
     }
 }

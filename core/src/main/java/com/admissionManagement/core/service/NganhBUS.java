@@ -9,9 +9,11 @@ import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class NganhBUS {
     private final NganhDAO dao;
     private final SessionFactory factory;

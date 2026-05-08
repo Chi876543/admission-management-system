@@ -7,9 +7,11 @@ import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class NguyenVongXetTuyenDAO {
     private final SessionFactory factory;
 
@@ -39,5 +41,13 @@ public class NguyenVongXetTuyenDAO {
 
     public void deleteWithSession(Session session, NguyenVongXetTuyen nguyenVongXetTuyen) {
         session.detach(nguyenVongXetTuyen);
+    }
+
+    public List<NguyenVongXetTuyen> getByThiSinhCccdWithSession(Session session, String cccd) {
+        return session.createQuery(
+                        "FROM NguyenVongXetTuyen nv WHERE nv.thiSinh.cccd = :cccd ORDER BY nv.thuTu ASC",
+                        NguyenVongXetTuyen.class)
+                .setParameter("cccd", cccd)
+                .getResultList();
     }
 }
