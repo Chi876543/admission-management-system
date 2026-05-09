@@ -1,11 +1,17 @@
 package com.admissionManagement.core.dao;
 
 import com.admissionManagement.core.entity.BangQuyDoi;
+import com.admissionManagement.core.entity.ThiSinh;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -21,10 +27,37 @@ public class BangQuyDoiDAO {
         return bangQuyDoi;
     }
 
-    public List<BangQuyDoi> getAllWithSession(Session session){
-        String query = "FROM BangQuyDoi";
-        List listBangQuyDoi = session.createQuery(query).list();
-        return listBangQuyDoi;
+    public List<BangQuyDoi> getAllWithSession(Session session, String phuongthuc, String tohop, String mon){
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<BangQuyDoi> cq = cb.createQuery(BangQuyDoi.class);
+        Root<BangQuyDoi> root = cq.from(BangQuyDoi.class);
+        List<Predicate> conditions = buildConditions(cb, root, phuongthuc, tohop, mon);
+
+        if(!conditions.isEmpty()){
+            cq.where(conditions.toArray(new Predicate[0]));
+        }
+
+        cq.orderBy(cb.desc(root.get("idqd")));
+
+        return session.createQuery(cq).getResultList();
+    }
+
+    public List<Predicate> buildConditions(CriteriaBuilder cb, Root<BangQuyDoi> root, String phuongthuc, String tohop, String mon) {
+        List<Predicate> conditions = new ArrayList<>();
+
+        if(phuongthuc != null && !phuongthuc.trim().isEmpty()){
+            conditions.add(cb.equal(root.get("phuongThuc"), phuongthuc.trim()));
+        }
+
+        if(tohop != null && !tohop.trim().isEmpty()){
+            conditions.add(cb.equal(root.get("toHop"), tohop.trim()));
+        }
+
+        if(mon != null && !mon.trim().isEmpty()){
+            conditions.add(cb.equal(root.get("mon"), mon.trim()));
+        }
+
+        return conditions;
     }
 
     public void updateWithSession(Session session, BangQuyDoi newBangQuyDoi) {

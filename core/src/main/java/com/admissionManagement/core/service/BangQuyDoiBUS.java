@@ -76,11 +76,25 @@ public class BangQuyDoiBUS {
     }
 
 
-    public List<BangQuyDoiDTO> getAllBangQuyDoi(){
-        Session session = factory.openSession();
-        List<BangQuyDoi> listBangQuyDoi = dao.getAllWithSession(session);
-        session.close();
-        return mapListEntityToListDTO(listBangQuyDoi);
+    public List<BangQuyDoiDTO> getAllBangQuyDoi(String keyWord){
+        String phuongthuc = null;
+        String tohop = null;
+        String mon = null;
+
+        if(keyWord != null && !keyWord.trim().isEmpty()){
+            if(keyWord.matches("/^[A-Z]\\d{2}$")){
+                tohop = keyWord;
+            }else if(keyWord.equals("DGNL") || keyWord.equals("VSAT")){
+                phuongthuc = keyWord;
+            }else{
+                mon = keyWord;
+            }
+        }
+
+        try(Session session = factory.openSession()){
+            List<BangQuyDoi> listBangQuyDoi = dao.getAllWithSession(session, phuongthuc, tohop, mon);
+            return mapListEntityToListDTO(listBangQuyDoi);
+        }
     }
 
     public String updateBangQuyDoi(int id, BangQuyDoiDTO newBangQuyDoiDTO){
