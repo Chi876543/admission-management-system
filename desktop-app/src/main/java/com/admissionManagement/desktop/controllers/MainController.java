@@ -1,17 +1,25 @@
 package com.admissionManagement.desktop.controllers;
 
+import com.admissionManagement.core.dto.UserDTO;
+import com.admissionManagement.desktop.controllers.admin.SessionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -33,6 +41,7 @@ public class MainController implements Initializable {
     @FXML private Button btnDiemCong;
     @FXML private Button btnNguyenVong;
     @FXML private Button btnQuyDoi;
+    @FXML private Button btnDangXuat;
 
     // ── Topbar ───────────────────────────────────────
     @FXML private Label lblPageTitle;
@@ -49,27 +58,41 @@ public class MainController implements Initializable {
 
     // ── Màn hình & metadata ──────────────────────────
     private static final String[][] SCREENS = {
-        // { fxml-key, fxml-path, title, subtitle }
-        {"users",       "admin/user-view.fxml",         "Quản lý người dùng",         "Danh sách tài khoản hệ thống"},
-        {"thisinh",     "admin/thisinh-view.fxml",      "Quản lý thí sinh",            "Import · Xem · Tìm kiếm · Sửa"},
-        {"nganh",       "admin/nganh-view.fxml",        "Quản lý ngành tuyển sinh",    "Thêm, sửa, xóa, import ngành"},
-        {"tohop",       "admin/tohop-view.fxml",        "Quản lý tổ hợp môn",          "Thêm, sửa, xóa tổ hợp"},
-        {"nganhtohop",  "admin/nganh-tohop-view.fxml",  "Ngành - Tổ hợp",              "Gán tổ hợp xét tuyển cho từng ngành"},
-        {"diem",        "admin/diem-view.fxml",         "Quản lý điểm thí sinh",       "THPT · VSAT · ĐGNL · Thống kê"},
-        {"diemcong",    "admin/diemcong-view.fxml",     "Quản lý điểm cộng",           "Ưu tiên đối tượng, khu vực"},
-        {"nguyenvong",  "admin/nguyenvong-view.fxml",   "Nguyện vọng & xét tuyển",     "Chạy xét tuyển · Xem kết quả"},
-        {"quydoi",      "admin/quydoi-view.fxml",       "Bảng quy đổi điểm",           "Quy đổi VSAT / ĐGNL sang thang 30"},
+            // { fxml-key, fxml-path, title, subtitle }
+            {"users",       "admin/user-view.fxml",         "Quản lý người dùng",         "Danh sách tài khoản hệ thống"},
+            {"thisinh",     "admin/thisinh-view.fxml",      "Quản lý thí sinh",            "Import · Xem · Tìm kiếm · Sửa"},
+            {"nganh",       "admin/nganh-view.fxml",        "Quản lý ngành tuyển sinh",    "Thêm, sửa, xóa, import ngành"},
+            {"tohop",       "admin/tohop-view.fxml",        "Quản lý tổ hợp môn",          "Thêm, sửa, xóa tổ hợp"},
+            {"nganhtohop",  "admin/nganh-tohop-view.fxml",  "Ngành - Tổ hợp",              "Gán tổ hợp xét tuyển cho từng ngành"},
+            {"diem",        "admin/diem-view.fxml",         "Quản lý điểm thí sinh",       "THPT · VSAT · ĐGNL · Thống kê"},
+            {"diemcong",    "admin/diemcong-view.fxml",     "Quản lý điểm cộng",           "Ưu tiên đối tượng, khu vực"},
+            {"nguyenvong",  "admin/nguyenvong-view.fxml",   "Nguyện vọng & xét tuyển",     "Chạy xét tuyển · Xem kết quả"},
+            {"quydoi",      "admin/quydoi-view.fxml",       "Bảng quy đổi điểm",           "Quy đổi VSAT / ĐGNL sang thang 30"},
     };
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Set user info (sau BE sẽ lấy từ session)
-        String currentUser = "admin";
-        lblAdminName.setText(currentUser);
-        lblUserBadge.setText("● " + currentUser);
+        UserDTO currentUser = SessionManager.getInstance().getCurrentUser();
 
-        // Load màn hình mặc định: Người dùng
-        loadScreen("users", btnUsers);
+        if (currentUser != null) {
+            String displayName = currentUser.getHoTen() != null
+                    ? currentUser.getHoTen() : currentUser.getUsername();
+            lblAdminName.setText(displayName);
+            lblUserBadge.setText("● " + currentUser.getRole());
+
+            // Ẩn "Quản lý người dùng" nếu không phải Admin
+            if (!"Admin".equals(currentUser.getRole())) {
+                btnUsers.setVisible(false);
+                btnUsers.setManaged(false);
+            }
+        }
+
+        // Load màn hình mặc định tùy role
+        if (SessionManager.getInstance().isAdmin()) {
+            loadScreen("users", btnUsers);
+        } else {
+            loadScreen("thisinh", btnThiSinh);
+        }
     }
 
     // ── Nav handlers ─────────────────────────────────
@@ -84,9 +107,30 @@ public class MainController implements Initializable {
     @FXML private void onNavQuyDoi()      { loadScreen("quydoi",      btnQuyDoi);      }
 
     @FXML private void onLogout() {
-        // TODO: Xóa session, quay về login.fxml
-        // SceneManager.getInstance().switchToLogin();
-        System.out.println("Logout clicked");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Đăng xuất");
+        alert.setHeaderText(null);
+        alert.setContentText("Bạn có chắc muốn đăng xuất không?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+
+        // Xóa session
+        SessionManager.getInstance().logout();
+
+        // Quay về login
+        try {
+            Parent root = FXMLLoader.load(
+                    getClass().getResource("/com/admissionManagement/desktop/views/admin/login.fxml")
+            );
+            Stage stage = (Stage) contentArea.getScene().getWindow();
+            stage.setScene(new Scene(root, 480, 560));
+            stage.setTitle("Đăng nhập — Hệ thống Quản lý Tuyển sinh 2025");
+            stage.setResizable(true);
+            stage.centerOnScreen();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // ── Core: load & switch screen ───────────────────

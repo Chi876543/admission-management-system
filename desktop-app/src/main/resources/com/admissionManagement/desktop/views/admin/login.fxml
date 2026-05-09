@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.admissionManagement.desktop.controllers.admin.LoginController"
+           styleClass="login-container"
+           stylesheets="@../../styles/login.css">
+
+    <!-- Nền xám nhạt toàn màn hình -->
+    <VBox alignment="CENTER" spacing="0">
+
+        <!-- Card đăng nhập -->
+        <VBox styleClass="login-card" spacing="0" maxWidth="400">
+
+            <!-- Header card -->
+            <VBox styleClass="login-header" spacing="6" alignment="CENTER">
+                <Label text="🎓" style="-fx-font-size: 36px;  -fx-text-fill: white;"/>
+                <Label text="Quản lý Tuyển sinh" styleClass="title-label"/>
+                <Label text="Đăng nhập để tiếp tục" styleClass="subtitle-label"/>
+            </VBox>
+
+            <!-- Form -->
+            <VBox styleClass="login-form" spacing="16">
+
+                <!-- Username -->
+                <VBox spacing="6">
+                    <Label text="Tài khoản" styleClass="field-label"/>
+                    <TextField fx:id="tfUsername"
+                               promptText="Nhập username..."
+                               styleClass="login-field"/>
+                </VBox>
+
+                <!-- Password -->
+                <VBox spacing="6">
+                    <Label text="Mật khẩu" styleClass="field-label"/>
+                    <StackPane>
+                        <!-- PasswordField (mặc định hiện) -->
+                        <PasswordField fx:id="tfPassword"
+                                       promptText="Nhập mật khẩu..."
+                                       styleClass="login-field"
+                                       onKeyPressed="#onPasswordKeyPressed"/>
+                        <!-- TextField (ẩn mặc định, hiện khi toggle) -->
+                        <TextField fx:id="tfPasswordVisible"
+                                   promptText="Nhập mật khẩu..."
+                                   styleClass="login-field"
+                                   visible="false"
+                                   managed="false"
+                                   onKeyPressed="#onPasswordKeyPressed"/>
+                        <!-- Nút mắt -->
+                        <Button fx:id="btnTogglePass"
+                                text="👁"
+                                styleClass="btn-eye"
+                                onAction="#onTogglePassword"
+                                StackPane.alignment="CENTER_RIGHT"
+                                style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-cursor: hand;">
+                            <StackPane.margin>
+                                <Insets right="8"/>
+                            </StackPane.margin>
+                        </Button>
+                    </StackPane>
+                </VBox>
+
+                <!-- Lỗi -->
+                <Label fx:id="lblError" text="" styleClass="login-error" wrapText="true"/>
+
+                <!-- Nút đăng nhập -->
+                <Button text="Đăng nhập"
+                        styleClass="login-btn"
+                        maxWidth="Infinity"
+                        defaultButton="true"
+                        onAction="#onLogin"/>
+
+            </VBox>
+
+            <!-- Footer -->
+            <Label text="Hệ thống Quản lý Tuyển sinh"
+                   styleClass="login-footer"
+                   alignment="CENTER"
+                   maxWidth="Infinity"/>
+
+        </VBox>
+
+    </VBox>
+
+</StackPane>

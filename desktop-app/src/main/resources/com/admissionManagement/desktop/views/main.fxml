@@ -17,7 +17,7 @@
 
             <!-- Logo / App name -->
             <VBox styleClass="sidebar-logo" spacing="2">
-                <Label text="Tuyển Sinh 2025" styleClass="sidebar-title"/>
+                <Label text="Tuyển Sinh" styleClass="sidebar-title"/>
                 <Label text="Hệ thống quản lý" styleClass="sidebar-sub"/>
             </VBox>
 
@@ -48,7 +48,7 @@
                 <HBox alignment="CENTER_LEFT" spacing="8">
                     <Label fx:id="lblAdminName" text="admin" styleClass="footer-user"/>
                 </HBox>
-                <Button text="Đăng xuất" styleClass="btn-logout" maxWidth="Infinity" onAction="#onLogout"/>
+                <Button fx:id="btnDangXuat" text="Đăng xuất" styleClass="btn-logout" maxWidth="Infinity" onAction="#onLogout"/>
             </VBox>
 
         </VBox>
