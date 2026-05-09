@@ -17,5 +17,88 @@
 .subtitle-label {
     -fx-font-size: 14px;
     -fx-text-fill: #7f8c8d;
-    -fx-padding: 0 0 20 0; /* Cách lề dưới 20px */
+    -fx-padding: 0 0 20 0;
+}
+
+/* Card tổng thể */
+.login-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 20, 0, 0, 4);
+    -fx-pref-width: 400;
+}
+
+/* Header bên trong card */
+.login-header {
+    -fx-background-color: #1a2340;
+    -fx-background-radius: 12 12 0 0;
+    -fx-padding: 32 24 28 24;
+}
+.login-header .title-label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+.login-header .subtitle-label {
+    -fx-text-fill: rgba(255,255,255,0.6);
+    -fx-font-size: 13px;
+    -fx-padding: 0;
+}
+
+/* Form bên trong card */
+.login-form {
+    -fx-padding: 28 28 20 28;
+}
+
+.field-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+}
+
+.login-field {
+    -fx-pref-height: 40;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 1;
+    -fx-padding: 0 12;
+    -fx-font-size: 13px;
+}
+.login-field:focus {
+    -fx-border-color: #3b82f6;
+    -fx-effect: dropshadow(gaussian, rgba(59,130,246,0.25), 6, 0, 0, 0);
+}
+
+/* Nút đăng nhập */
+.login-btn {
+    -fx-pref-height: 42;
+    -fx-background-color: #1a2340;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+.login-btn:hover {
+    -fx-background-color: #2d3a5e;
+}
+.login-btn:active {
+    -fx-background-color: #111827;
+}
+
+/* Label lỗi */
+.login-error {
+    -fx-text-fill: #ef4444;
+    -fx-font-size: 12px;
+    -fx-min-height: 16;
+}
+
+/* Footer */
+.login-footer {
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 11px;
+    -fx-padding: 12 0 16 0;
+    -fx-border-color: #f3f4f6;
+    -fx-border-width: 1 0 0 0;
 }

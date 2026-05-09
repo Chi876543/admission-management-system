@@ -27,6 +27,7 @@
         <mapping class="com.admissionManagement.core.entity.NguyenVongXetTuyen"/>
         <mapping class="com.admissionManagement.core.entity.ThiSinh"/>
         <mapping class="com.admissionManagement.core.entity.ToHopMonThi"/>
+        <mapping class="com.admissionManagement.core.entity.User"/>
 
     </session-factory>
 </hibernate-configuration>

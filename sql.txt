@@ -1,0 +1,2 @@
+INSERT INTO xt_users (username, ho_ten, email, password, role, status)
+VALUES ('admin', 'Quản trị viên', 'admin@edu.vn', '123456', 'Admin', 'Hoạt động');

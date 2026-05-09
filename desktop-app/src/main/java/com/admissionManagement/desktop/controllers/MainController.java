@@ -49,24 +49,31 @@ public class MainController implements Initializable {
 
     // ── Màn hình & metadata ──────────────────────────
     private static final String[][] SCREENS = {
-        // { fxml-key, fxml-path, title, subtitle }
-        {"users",       "admin/user-view.fxml",         "Quản lý người dùng",         "Danh sách tài khoản hệ thống"},
-        {"thisinh",     "admin/thisinh-view.fxml",      "Quản lý thí sinh",            "Import · Xem · Tìm kiếm · Sửa"},
-        {"nganh",       "admin/nganh-view.fxml",        "Quản lý ngành tuyển sinh",    "Thêm, sửa, xóa, import ngành"},
-        {"tohop",       "admin/tohop-view.fxml",        "Quản lý tổ hợp môn",          "Thêm, sửa, xóa tổ hợp"},
-        {"nganhtohop",  "admin/nganh-tohop-view.fxml",  "Ngành - Tổ hợp",              "Gán tổ hợp xét tuyển cho từng ngành"},
-        {"diem",        "admin/diem-view.fxml",         "Quản lý điểm thí sinh",       "THPT · VSAT · ĐGNL · Thống kê"},
-        {"diemcong",    "admin/diemcong-view.fxml",     "Quản lý điểm cộng",           "Ưu tiên đối tượng, khu vực"},
-        {"nguyenvong",  "admin/nguyenvong-view.fxml",   "Nguyện vọng & xét tuyển",     "Chạy xét tuyển · Xem kết quả"},
-        {"quydoi",      "admin/quydoi-view.fxml",       "Bảng quy đổi điểm",           "Quy đổi VSAT / ĐGNL sang thang 30"},
+            // { fxml-key, fxml-path, title, subtitle }
+            {"users",       "admin/user-view.fxml",         "Quản lý người dùng",         "Danh sách tài khoản hệ thống"},
+            {"thisinh",     "admin/thisinh-view.fxml",      "Quản lý thí sinh",            "Import · Xem · Tìm kiếm · Sửa"},
+            {"nganh",       "admin/nganh-view.fxml",        "Quản lý ngành tuyển sinh",    "Thêm, sửa, xóa, import ngành"},
+            {"tohop",       "admin/tohop-view.fxml",        "Quản lý tổ hợp môn",          "Thêm, sửa, xóa tổ hợp"},
+            {"nganhtohop",  "admin/nganh-tohop-view.fxml",  "Ngành - Tổ hợp",              "Gán tổ hợp xét tuyển cho từng ngành"},
+            {"diem",        "admin/diem-view.fxml",         "Quản lý điểm thí sinh",       "THPT · VSAT · ĐGNL · Thống kê"},
+            {"diemcong",    "admin/diemcong-view.fxml",     "Quản lý điểm cộng",           "Ưu tiên đối tượng, khu vực"},
+            {"nguyenvong",  "admin/nguyenvong-view.fxml",   "Nguyện vọng & xét tuyển",     "Chạy xét tuyển · Xem kết quả"},
+            {"quydoi",      "admin/quydoi-view.fxml",       "Bảng quy đổi điểm",           "Quy đổi VSAT / ĐGNL sang thang 30"},
     };
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Set user info (sau BE sẽ lấy từ session)
-        String currentUser = "admin";
-        lblAdminName.setText(currentUser);
-        lblUserBadge.setText("● " + currentUser);
+        // Lấy thông tin user đang đăng nhập từ SessionManager
+        com.admissionManagement.core.dto.UserDTO currentUser =
+                com.admissionManagement.desktop.controllers.admin.SessionManager.getInstance().getCurrentUser();
+
+        if (currentUser != null) {
+            String displayName = currentUser.getHoTen() != null
+                    ? currentUser.getHoTen()
+                    : currentUser.getUsername();
+            lblAdminName.setText(displayName);
+            lblUserBadge.setText("● " + currentUser.getRole());
+        }
 
         // Load màn hình mặc định: Người dùng
         loadScreen("users", btnUsers);
@@ -84,9 +91,23 @@ public class MainController implements Initializable {
     @FXML private void onNavQuyDoi()      { loadScreen("quydoi",      btnQuyDoi);      }
 
     @FXML private void onLogout() {
-        // TODO: Xóa session, quay về login.fxml
-        // SceneManager.getInstance().switchToLogin();
-        System.out.println("Logout clicked");
+        // Xóa session
+        com.admissionManagement.desktop.controllers.admin.SessionManager.getInstance().logout();
+
+        // Quay về login
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource("/com/admissionManagement/desktop/views/login.fxml")
+            );
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = (javafx.stage.Stage) contentArea.getScene().getWindow();
+            stage.setScene(new javafx.scene.Scene(root, 480, 560));
+            stage.setTitle("Đăng nhập — Hệ thống Quản lý Tuyển sinh 2025");
+            stage.setResizable(false);
+            stage.centerOnScreen();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // ── Core: load & switch screen ───────────────────

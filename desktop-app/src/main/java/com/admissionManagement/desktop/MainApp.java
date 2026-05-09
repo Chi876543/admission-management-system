@@ -13,16 +13,15 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Load màn hình login trước
-        // Tạm thời load thẳng main.fxml để test UI
         Parent root = FXMLLoader.load(
-                Objects.requireNonNull(getClass().getResource("/com/admissionManagement/desktop/views/main.fxml"))
+                Objects.requireNonNull(getClass().getResource("/com/admissionManagement/desktop/views/admin/login.fxml"))
         );
 
-        Scene scene = new Scene(root, 1100, 680);
-        primaryStage.setTitle("Hệ thống Quản lý Tuyển sinh 2025");
+        Scene scene = new Scene(root, 480, 560);
+        primaryStage.setTitle("Đăng nhập — Hệ thống Quản lý Tuyển sinh");
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(900);
-        primaryStage.setMinHeight(600);
+        primaryStage.setResizable(true);
+        primaryStage.centerOnScreen();
         primaryStage.show();
     }
 

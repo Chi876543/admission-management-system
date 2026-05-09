@@ -46,7 +46,7 @@
     <HBox spacing="12">
         <VBox HBox.hgrow="ALWAYS" spacing="4">
             <Label text="Quyền *" styleClass="field-label"/>
-            <ComboBox fx:id="cbRole" maxWidth="Infinity" styleClass="field-input"/>
+            <ComboBox fx:id="cbRoleDialog" maxWidth="Infinity" styleClass="field-input"/>
         </VBox>
         <VBox HBox.hgrow="ALWAYS" spacing="4">
             <Label text="Trạng thái" styleClass="field-label"/>
