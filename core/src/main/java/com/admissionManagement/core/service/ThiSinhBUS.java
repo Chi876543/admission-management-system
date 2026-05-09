@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -82,10 +84,11 @@ public class ThiSinhBUS {
     }
 
     public String importCsvData(File file) {
-        int batchSize = 1000;
+        int batchSize = 50; // Với Hibernate, batch nên để từ 20-50 để tối ưu memory
         int successCount = 0;
+        int errorCount = 0;
 
-        try (Reader reader = Files.newBufferedReader(file.toPath());
+        try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8);
              CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
              Session session = HibernateUtil.getSessionFactory().openSession()) {
 
@@ -94,42 +97,63 @@ public class ThiSinhBUS {
 
             while ((line = csvReader.readNext()) != null) {
                 try {
+                    // Kiểm tra số lượng cột để tránh IndexOutOfBoundsException
+                    if (line.length < 12) continue;
+
                     ThiSinh entity = new ThiSinh();
-                    entity.setSoBaoDanh(line[0].trim());
-                    entity.setCccd(line[1].trim());
-                    entity.setHo(line[2].trim());
-                    entity.setTen(line[2].trim());
-                    entity.setNgaySinh(line[3].trim());
-                    entity.setDienThoai(null);
-                    entity.setEmail(null);
-                    entity.setPassword("123456");
-                    entity.setNoiSinh(line[35].trim());
-                    entity.setDoiTuong(line[5].trim());
+
+                    // MAPPING CHÍNH XÁC THEO FILE thi_sinh_100.csv:
+                    // 0:cccd, 1:dien_thoai, 2:doi_tuong, 3:email, 4:gioi_tinh, 5:ho,
+                    // 6:khu_vuc, 7:ngay_sinh, 8:noi_sinh, 9:password, 10:sobaodanh, 11:ten
+
+                    entity.setCccd(line[0].trim());
+                    entity.setDienThoai(line[1].trim());
+                    entity.setDoiTuong(line[2].trim());
+                    entity.setEmail(line[3].trim());
+
+                    // Xử lý Enum GioiTinh (Đảm bảo file CSV là "NAM"/"NỮ" khớp với logic của bạn)
+                    String genderRaw = line[4].trim().toUpperCase();
+                    entity.setGioiTinh(ThiSinh.GioiTinh.fromLabel(genderRaw));
+
+                    entity.setHo(line[5].trim());
                     entity.setKhuVuc(line[6].trim());
-                    entity.setUpdatedAt(LocalDate.now());
-                    entity.setGioiTinh(ThiSinh.GioiTinh.fromLabel(line[4].trim()));
+
+                    // Xử lý ngày sinh: File là 2005-01-15 (ISO_LOCAL_DATE)
+                    entity.setNgaySinh(String.valueOf(LocalDate.parse(line[7].trim())));
+
+                    entity.setNoiSinh(line[8].trim());
+                    entity.setPassword(line[9].trim());
+                    entity.setSoBaoDanh(line[10].trim());
+                    entity.setTen(line[11].trim());
+
+                    // Fix lỗi updatedAt không được null
+                    entity.setUpdatedAt(LocalDate.from(LocalDateTime.now()));
 
                     session.persist(entity);
                     successCount++;
 
+                    // Batch Flush
                     if (successCount % batchSize == 0) {
-                        tx.commit();
+                        session.flush();
                         session.clear();
-                        tx = session.beginTransaction();
                     }
                 } catch (Exception e) {
-                    // Bỏ qua dòng lỗi (hoặc ghi log ra file TXT để sau này báo cáo)
+                    errorCount++;
+                    System.err.println("Lỗi dòng " + (successCount + errorCount) + ": " + e.getMessage());
                 }
             }
 
-            if (tx.isActive()) {
+            if (tx != null && tx.isActive()) {
+                session.flush();
                 tx.commit();
             }
 
-            return "Import thành công " + successCount + " bản ghi!";
+            session.close();
+
+            return "Import thành công " + successCount + " bản ghi! (Thất bại: " + errorCount + ")";
 
         } catch (Exception e) {
-            return "Lỗi đọc file: " + e.getMessage();
+            return "Lỗi hệ thống: " + e.getMessage();
         }
     }
 

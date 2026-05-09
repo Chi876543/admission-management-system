@@ -5,8 +5,10 @@
             com.mysql.cj.jdbc.Driver
         </property>
 
+
+        <!--    gộp lại insert để insert đc hàng triệu dòng    -->
         <property name="hibernate.connection.url">
-            jdbc:mysql://localhost:3306/xettuyen2026
+            jdbc:mysql://localhost:3306/xettuyen2026?rewriteBatchedStatements=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true
         </property>
 
         <property name="hibernate.connection.username">root</property>
@@ -16,7 +18,17 @@
             org.hibernate.dialect.MySQLDialect
         </property>
 
-        <property name="hibernate.show_sql">true</property>
+
+        <!--    50 là vừa cho ram    -->
+        <property name="hibernate.jdbc.batch_size">50</property>
+
+        <property name="hibernate.order_inserts">true</property>
+        <property name="hibernate.order_updates">true</property>
+
+        <property name="hibernate.jdbc.batch_versioned_data">true</property>
+
+        <!--    chỉ bật khi debug    -->
+        <property name="hibernate.show_sql">false</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <mapping class="com.admissionManagement.core.entity.BangQuyDoi"/>
