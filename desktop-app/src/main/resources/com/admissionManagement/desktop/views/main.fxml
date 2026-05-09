@@ -48,7 +48,7 @@
                 <HBox alignment="CENTER_LEFT" spacing="8">
                     <Label fx:id="lblAdminName" text="admin" styleClass="footer-user"/>
                 </HBox>
-                <Button text="Đăng xuất" styleClass="btn-logout" maxWidth="Infinity" onAction="#onLogout"/>
+                <Button fx:id="btnDangXuat" text="Đăng xuất" styleClass="btn-logout" maxWidth="Infinity" onAction="#onLogout"/>
             </VBox>
 
         </VBox>

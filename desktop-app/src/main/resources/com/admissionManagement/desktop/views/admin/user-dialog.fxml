@@ -12,6 +12,7 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.admissionManagement.desktop.controllers.admin.UserController"
       styleClass="dialog-root"
+      stylesheets="@../../styles/app.css"
       spacing="14" prefWidth="420">
 
     <padding><Insets top="20" right="24" bottom="8" left="24"/></padding>

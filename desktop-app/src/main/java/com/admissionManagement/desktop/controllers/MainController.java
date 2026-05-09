@@ -1,17 +1,25 @@
 package com.admissionManagement.desktop.controllers;
 
+import com.admissionManagement.core.dto.UserDTO;
+import com.admissionManagement.desktop.controllers.admin.SessionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -33,6 +41,7 @@ public class MainController implements Initializable {
     @FXML private Button btnDiemCong;
     @FXML private Button btnNguyenVong;
     @FXML private Button btnQuyDoi;
+    @FXML private Button btnDangXuat;
 
     // ── Topbar ───────────────────────────────────────
     @FXML private Label lblPageTitle;
@@ -63,20 +72,27 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Lấy thông tin user đang đăng nhập từ SessionManager
-        com.admissionManagement.core.dto.UserDTO currentUser =
-                com.admissionManagement.desktop.controllers.admin.SessionManager.getInstance().getCurrentUser();
+        UserDTO currentUser = SessionManager.getInstance().getCurrentUser();
 
         if (currentUser != null) {
             String displayName = currentUser.getHoTen() != null
-                    ? currentUser.getHoTen()
-                    : currentUser.getUsername();
+                    ? currentUser.getHoTen() : currentUser.getUsername();
             lblAdminName.setText(displayName);
             lblUserBadge.setText("● " + currentUser.getRole());
+
+            // Ẩn "Quản lý người dùng" nếu không phải Admin
+            if (!"Admin".equals(currentUser.getRole())) {
+                btnUsers.setVisible(false);
+                btnUsers.setManaged(false);
+            }
         }
 
-        // Load màn hình mặc định: Người dùng
-        loadScreen("users", btnUsers);
+        // Load màn hình mặc định tùy role
+        if (SessionManager.getInstance().isAdmin()) {
+            loadScreen("users", btnUsers);
+        } else {
+            loadScreen("thisinh", btnThiSinh);
+        }
     }
 
     // ── Nav handlers ─────────────────────────────────
@@ -91,19 +107,26 @@ public class MainController implements Initializable {
     @FXML private void onNavQuyDoi()      { loadScreen("quydoi",      btnQuyDoi);      }
 
     @FXML private void onLogout() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Đăng xuất");
+        alert.setHeaderText(null);
+        alert.setContentText("Bạn có chắc muốn đăng xuất không?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+
         // Xóa session
-        com.admissionManagement.desktop.controllers.admin.SessionManager.getInstance().logout();
+        SessionManager.getInstance().logout();
 
         // Quay về login
         try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/com/admissionManagement/desktop/views/login.fxml")
+            Parent root = FXMLLoader.load(
+                    getClass().getResource("/com/admissionManagement/desktop/views/admin/login.fxml")
             );
-            javafx.scene.Parent root = loader.load();
-            javafx.stage.Stage stage = (javafx.stage.Stage) contentArea.getScene().getWindow();
-            stage.setScene(new javafx.scene.Scene(root, 480, 560));
+            Stage stage = (Stage) contentArea.getScene().getWindow();
+            stage.setScene(new Scene(root, 480, 560));
             stage.setTitle("Đăng nhập — Hệ thống Quản lý Tuyển sinh 2025");
-            stage.setResizable(false);
+            stage.setResizable(true);
             stage.centerOnScreen();
         } catch (Exception e) {
             e.printStackTrace();

@@ -79,8 +79,15 @@ public class UserController implements Initializable {
     }
 
     private void setupComboBoxes() {
-        cbRole.setItems(FXCollections.observableArrayList("Admin", "User"));
-        cbStatus.setItems(FXCollections.observableArrayList("Hoạt động", "Đã khóa"));
+        // Thêm "Tất cả" là item đầu tiên — chọn nó = bỏ filter
+        cbRole.getItems().clear();
+        cbRole.getItems().addAll("Tất cả", "Admin", "User");
+        cbRole.setValue("Tất cả");
+
+        cbStatus.getItems().clear();
+        cbStatus.getItems().addAll("Tất cả", "Hoạt động", "Đã khóa");
+        cbStatus.setValue("Tất cả");
+
         cbRole.setOnAction(e -> applyFilter());
         cbStatus.setOnAction(e -> applyFilter());
     }
@@ -176,8 +183,9 @@ public class UserController implements Initializable {
 
     private void applyFilter() {
         String keyword = tfSearch.getText().trim().toLowerCase();
-        String role    = cbRole.getValue();
-        String status  = cbStatus.getValue();
+        String role    = "Tất cả".equals(cbRole.getValue())   ? null : cbRole.getValue();
+        String status  = "Tất cả".equals(cbStatus.getValue()) ? null : cbStatus.getValue();
+
 
         List<UserRow> result = allData.stream()
                 .filter(r -> keyword.isEmpty()
@@ -195,6 +203,7 @@ public class UserController implements Initializable {
         pagination.setPageCount(Math.max(1, (int) Math.ceil((double) filtered.size() / PAGE_SIZE)));
         pagination.setCurrentPageIndex(0);
         showPage();
+        tblUsers.refresh();
     }
 
     private void showPage() {
