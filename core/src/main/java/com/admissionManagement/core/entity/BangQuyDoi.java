@@ -18,7 +18,7 @@ public class BangQuyDoi {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idqd")
+    @Column(name = "idqd", nullable = false)
     private int idqd;
 
     @Column(name = "d_phuongthuc", length = 45)

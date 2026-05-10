@@ -20,6 +20,5 @@ public class ToHopMonThiDTO {
     @NonNull
     private String mon3;
 
-    @NonNull
     private String tenToHop;
 }

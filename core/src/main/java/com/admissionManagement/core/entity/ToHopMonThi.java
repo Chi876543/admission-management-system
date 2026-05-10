@@ -18,7 +18,7 @@ public class ToHopMonThi {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idtohop")
+    @Column(name = "idtohop", nullable = false)
     private int idToHop;
 
     @Column(name = "matohop", length = 45, nullable = false)

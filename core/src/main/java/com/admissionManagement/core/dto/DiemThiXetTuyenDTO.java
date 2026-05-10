@@ -15,41 +15,39 @@ public class DiemThiXetTuyenDTO {
     @NonNull
     private String cccd;
 
-    @NonNull
     private String soBaoDanh;
 
-    @NonNull
     private String phuongThuc;
 
 
-    @NonNull private BigDecimal diemToan;
-    @NonNull private BigDecimal diemLy;
-    @NonNull private BigDecimal diemHoa;
-    @NonNull private BigDecimal diemSinh;
-    @NonNull private BigDecimal diemSu;
-    @NonNull private BigDecimal diemDia;
-    @NonNull private BigDecimal diemVan;
-    @NonNull private BigDecimal diemTin;
-    @NonNull private BigDecimal diemKtpl;
+    private BigDecimal diemToan;
+    private BigDecimal diemLy;
+    private BigDecimal diemHoa;
+    private BigDecimal diemSinh;
+    private BigDecimal diemSu;
+    private BigDecimal diemDia;
+    private BigDecimal diemVan;
+    private BigDecimal diemTin;
+    private BigDecimal diemKtpl;
 
-    @NonNull private BigDecimal n1Thi;
-    @NonNull private BigDecimal n1Cc;
-    @NonNull private BigDecimal cncn;
-    @NonNull private BigDecimal cnnn;
-    @NonNull private BigDecimal nl1;
-    @NonNull private BigDecimal nk1;
-    @NonNull private BigDecimal nk2;
-    @NonNull private BigDecimal nk3;
-    @NonNull private BigDecimal nk4;
-    @NonNull private BigDecimal nk5;
-    @NonNull private BigDecimal nk6;
+    private BigDecimal n1Thi;
+    private BigDecimal n1Cc;
+    private BigDecimal cncn;
+    private BigDecimal cnnn;
+    private BigDecimal nl1;
+    private BigDecimal nk1;
+    private BigDecimal nk2;
+    private BigDecimal nk3;
+    private BigDecimal nk4;
+    private BigDecimal nk5;
+    private BigDecimal nk6;
 
-    @NonNull private BigDecimal diemToanVSAT;
-    @NonNull private BigDecimal diemLyVSAT;
-    @NonNull private BigDecimal diemHoaVSAT;
-    @NonNull private BigDecimal diemSinhVSAT;
-    @NonNull private BigDecimal diemSuVSAT;
-    @NonNull private BigDecimal diemDiaVSAT;
-    @NonNull private BigDecimal diemVanVSAT;
-    @NonNull private BigDecimal n1VSAT;
+    private BigDecimal diemToanVSAT;
+    private BigDecimal diemLyVSAT;
+    private BigDecimal diemHoaVSAT;
+    private BigDecimal diemSinhVSAT;
+    private BigDecimal diemSuVSAT;
+    private BigDecimal diemDiaVSAT;
+    private BigDecimal diemVanVSAT;
+    private BigDecimal n1VSAT;
 }

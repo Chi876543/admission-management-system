@@ -20,19 +20,14 @@ public class DiemCongXetTuyenDTO {
     @NonNull
     private String maToHop;
 
-    @NonNull
     private String phuongThuc;
 
-    @NonNull
     private BigDecimal diemCC;
 
-    @NonNull
     private BigDecimal diemUtxt;
 
-    @NonNull
     private BigDecimal diemTong;
 
-    @NonNull
     private String ghiChu;
 
     @NonNull
