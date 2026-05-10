@@ -1,10 +1,7 @@
 package com.admissionManagement.desktop.controllers.admin;
 
 import com.admissionManagement.core.dto.ThiSinhDTO;
-import com.admissionManagement.core.service.NganhBUS;
-import com.admissionManagement.core.service.NganhToHopBUS;
-import com.admissionManagement.core.service.ThiSinhBUS;
-import com.admissionManagement.core.service.ToHopMonThiBUS;
+import com.admissionManagement.core.service.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -31,6 +28,7 @@ public class ThiSinhController extends BaseController implements Initializable {
     private final ToHopMonThiBUS toHopMonThiBUS = new ToHopMonThiBUS();
     private final NganhBUS nganhBUS = new NganhBUS();
     private final NganhToHopBUS nganhToHopBUS = new NganhToHopBUS();
+    private final DiemThiXetTuyenBUS diemThiXetTuyenBUS = new DiemThiXetTuyenBUS();
 
     // Giao diện View
     @FXML private TextField tfSearch;
@@ -161,7 +159,7 @@ public class ThiSinhController extends BaseController implements Initializable {
             Task<String> importTask = new Task<>() {
                 @Override
                 protected String call() throws Exception {
-                    return nganhToHopBUS.importCsvData(selectedFile);
+                    return diemThiXetTuyenBUS.importDGNLCsvData(selectedFile);
                 }
             };
 

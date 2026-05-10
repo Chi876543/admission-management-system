@@ -28,7 +28,7 @@
         <property name="hibernate.jdbc.batch_versioned_data">true</property>
 
         <!--    chỉ bật khi debug    -->
-        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.show_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <mapping class="com.admissionManagement.core.entity.BangQuyDoi"/>

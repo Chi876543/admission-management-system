@@ -7,8 +7,10 @@ import com.admissionManagement.core.entity.ToHopMonThi;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class DatabaseHelper {
     public static BigDecimal quyDoiDiemVSATVaDGNL(BigDecimal diem, BangQuyDoiDTO bangQuyDoi) {
@@ -159,5 +161,23 @@ public class DatabaseHelper {
             System.out.println("Lỗi bóc tách tổ hợp: " + chuoiToHop);
             return null;
         }
+    }
+
+    public static String lamSachTenMon(String rawName) {
+        if (rawName == null || rawName.isEmpty()) return "";
+
+        String temp = Normalizer.normalize(rawName, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        String noAccent = pattern.matcher(temp).replaceAll("").toLowerCase();
+
+        noAccent = noAccent.replaceAll("đ", "d");
+        noAccent = noAccent.replaceAll("vsat", "")
+                .replaceAll("vs", "")
+                .replaceAll("-", "")
+                .replaceAll("_", "")
+                .replaceAll("\\(", "")
+                .replaceAll("\\)", "");
+
+        return noAccent.trim().replaceAll("\\s+", " ");
     }
 }

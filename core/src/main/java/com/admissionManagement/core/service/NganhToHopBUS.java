@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.Reader;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -147,6 +148,8 @@ public class NganhToHopBUS {
                     ToHopMonThi toHop = cacheToHop.get(line[5].trim());
                     entity.setToHopMonThi(toHop);
                     entity.setTbKeys(line[4].trim());
+                    String cleanedValue = line[7].trim().replace(",", ".");
+                    entity.setDoLech(BigDecimal.valueOf(Long.parseLong(cleanedValue)));
 
                     int viTriMoNgoac = line[3].trim().indexOf("(");
                     int viTriDongNgoac = line[3].trim().indexOf(")");
