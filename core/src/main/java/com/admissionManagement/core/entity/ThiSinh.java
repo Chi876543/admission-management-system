@@ -102,4 +102,15 @@ public class ThiSinh {
 
     @OneToMany(mappedBy = "thiSinh", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NguyenVongXetTuyen> danhSachNguyenVongCuaThiSinh = new ArrayList<>();
+
+    public void asyncDiemThi(DiemThiXetTuyen diem) {
+        if (diem == null) {
+            if (this.diemThi != null) {
+                this.diemThi.setThiSinh(null);
+            }
+        } else {
+            diem.setThiSinh(this);
+        }
+        this.diemThi = diem;
+    }
 }

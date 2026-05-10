@@ -1,5 +1,6 @@
 package com.admissionManagement.core.dto;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -38,4 +39,17 @@ public class DiemThiXetTuyenDTO {
     @NonNull private BigDecimal nl1;
     @NonNull private BigDecimal nk1;
     @NonNull private BigDecimal nk2;
+    @NonNull private BigDecimal nk3;
+    @NonNull private BigDecimal nk4;
+    @NonNull private BigDecimal nk5;
+    @NonNull private BigDecimal nk6;
+
+    @NonNull private BigDecimal diemToanVSAT;
+    @NonNull private BigDecimal diemLyVSAT;
+    @NonNull private BigDecimal diemHoaVSAT;
+    @NonNull private BigDecimal diemSinhVSAT;
+    @NonNull private BigDecimal diemSuVSAT;
+    @NonNull private BigDecimal diemDiaVSAT;
+    @NonNull private BigDecimal diemVanVSAT;
+    @NonNull private BigDecimal n1VSAT;
 }

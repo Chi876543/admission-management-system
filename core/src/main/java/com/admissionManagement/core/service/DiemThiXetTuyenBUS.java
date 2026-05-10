@@ -48,7 +48,19 @@ public class DiemThiXetTuyenBUS {
                 entity.getCnnn(),
                 entity.getNl1(),
                 entity.getNk1(),
-                entity.getNk2()
+                entity.getNk2(),
+                entity.getNk3(),
+                entity.getNk4(),
+                entity.getNk5(),
+                entity.getNk6(),
+                entity.getDiemToanVSAT(),
+                entity.getDiemLyVSAT(),
+                entity.getDiemHoaVSAT(),
+                entity.getDiemSinhVSAT(),
+                entity.getDiemSuVSAT(),
+                entity.getDiemDiaVSAT(),
+                entity.getDiemVanVSAT(),
+                entity.getN1VSAT()
         );
     }
 

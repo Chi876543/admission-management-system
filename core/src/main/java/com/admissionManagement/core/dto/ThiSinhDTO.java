@@ -29,9 +29,7 @@ public class ThiSinhDTO {
     private String password;
     @NonNull
     private String noiSinh;
-    @NonNull
     private String doiTuong;
-    @NonNull
     private String khuVuc;
     @NonNull
     private String updatedAt;

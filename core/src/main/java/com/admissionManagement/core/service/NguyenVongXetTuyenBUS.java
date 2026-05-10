@@ -183,4 +183,16 @@ public class NguyenVongXetTuyenBUS {
         session.close();
         return mapListEntityToListDTO(list);
     }
+
+    public List<NguyenVongXetTuyenDTO> getNguyenVongBelongToThiSinh(String sbd) {
+        try (Session session = factory.openSession()) {
+            ThiSinh thiSinh = thisinhdao.getBySbdWithSession(session, sbd);
+
+            if(thiSinh == null) {
+                return null;
+            }
+
+            return mapListEntityToListDTO(thiSinh.getDanhSachNguyenVongCuaThiSinh());
+        }
+    }
 }

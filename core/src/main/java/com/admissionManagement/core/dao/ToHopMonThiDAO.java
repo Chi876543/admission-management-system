@@ -39,6 +39,10 @@ public class ToHopMonThiDAO {
         return listToHopMonThi;
     }
 
+    public List<String> getAllMaToHop(Session session) {
+        return session.createQuery("SELECT t.maToHop FROM ToHopMonThi t", String.class).list();
+    }
+
     public void updateWithSession(Session session, ToHopMonThi newToHopMonThi) {
         session.merge(newToHopMonThi);
     }
