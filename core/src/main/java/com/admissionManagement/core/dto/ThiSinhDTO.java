@@ -12,6 +12,7 @@ public class ThiSinhDTO {
     @NonNull
     private int idThiSinh;
     String soBaoDanh;
+
     @NonNull
     private String cccd;
     private String ho;
@@ -20,7 +21,6 @@ public class ThiSinhDTO {
     private String gioiTinh;
     private String dienThoai;
     private String email;
-//    @NonNull
     private String password;
     private String noiSinh;
     private String doiTuong;

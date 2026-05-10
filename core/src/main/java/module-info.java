@@ -5,6 +5,7 @@ module core {
     requires java.naming;
     requires com.opencsv;
     requires spring.context;
+    requires org.apache.poi.poi;
 
     exports com.admissionManagement.core.entity;
     exports com.admissionManagement.core.dto;
