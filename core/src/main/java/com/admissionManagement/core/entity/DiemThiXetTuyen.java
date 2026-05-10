@@ -36,6 +36,7 @@ public class DiemThiXetTuyen {
     private String phuongThuc;
 
     // Map các môn thi
+    //THPT
     @Column(name = "`TO`", precision = 8, scale = 2) private BigDecimal diemToan;
     @Column(name = "LI", precision = 8, scale = 2) private BigDecimal diemLy;
     @Column(name = "HO", precision = 8, scale = 2) private BigDecimal diemHoa;
@@ -44,13 +45,30 @@ public class DiemThiXetTuyen {
     @Column(name = "DI", precision = 8, scale = 2) private BigDecimal diemDia;
     @Column(name = "VA", precision = 8, scale = 2) private BigDecimal diemVan;
     @Column(name = "TI", precision = 8, scale = 2) private BigDecimal diemTin;
-    @Column(name = "KTPL", precision = 8, scale = 2) private BigDecimal diemKtpl;
-
     @Column(name = "N1_THI", precision = 8, scale = 2) private BigDecimal n1Thi;
+
+    //VSAT
+    @Column(name = "TO_VSAT", precision = 8, scale = 2) private BigDecimal diemToanVSAT;
+    @Column(name = "LI_VSAT", precision = 8, scale = 2) private BigDecimal diemLyVSAT;
+    @Column(name = "HO_VSAT", precision = 8, scale = 2) private BigDecimal diemHoaVSAT;
+    @Column(name = "SI_VSAT", precision = 8, scale = 2) private BigDecimal diemSinhVSAT;
+    @Column(name = "SU_VSAT", precision = 8, scale = 2) private BigDecimal diemSuVSAT;
+    @Column(name = "DI_VSAT", precision = 8, scale = 2) private BigDecimal diemDiaVSAT;
+    @Column(name = "VA_VSAT", precision = 8, scale = 2) private BigDecimal diemVanVSAT;
+    @Column(name = "N1_VSAT", precision = 8, scale = 2) private BigDecimal n1VSAT;
+
+    //Quy doi
     @Column(name = "N1_CC", precision = 8, scale = 2) private BigDecimal n1Cc;
+
+    //DGNL
+    @Column(name = "NL1", precision = 8, scale = 2) private BigDecimal nl1;
+
+    //Khác
+    @Column(name = "KTPL", precision = 8, scale = 2) private BigDecimal diemKtpl;
     @Column(name = "CNCN", precision = 8, scale = 2) private BigDecimal cncn;
     @Column(name = "CNNN", precision = 8, scale = 2) private BigDecimal cnnn;
-    @Column(name = "NL1", precision = 8, scale = 2) private BigDecimal nl1;
+
+    //Năng khiếu
     @Column(name = "NK1", precision = 8, scale = 2) private BigDecimal nk1;
     @Column(name = "NK2", precision = 8, scale = 2) private BigDecimal nk2;
 }
