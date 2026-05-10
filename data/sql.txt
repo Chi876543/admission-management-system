@@ -108,3 +108,29 @@ INSERT INTO xt_users (username, ho_ten, email, password, role, status) VALUES
 -- Tổng: 100 tài khoản (3 Admin + 97 User)
 -- Password tất cả: 123456
 -- ~16 tài khoản Đã khóa, còn lại Hoạt động
+
+-- Tối ưu tìm kiếm theo username (Unique nếu có thể)
+ALTER TABLE xt_users ADD INDEX idx_username (username);
+ALTER TABLE xt_users ADD INDEX idx_ho_ten (ho_ten);
+
+
+-- 10 thí sinh mẫu cho bảng xt_thi_sinh
+
+INSERT INTO xt_thisinhxettuyen25 (cccd, dien_thoai, doi_tuong, email, gioi_tinh, ho, khu_vuc, ngay_sinh, noi_sinh, password, sobaodanh, ten, updated_at) VALUES
+('001234567890', '0912345678', 'KV1', 'thiSinh001@edu.vn', 'NAM', 'Nguyễn', 'Hà Nội', '2005-01-15', 'Hà Nội', '123456', 'SBD001', 'Văn An', NOW()),
+('001234567891', '0912345679', 'KV2', 'thiSinh002@edu.vn', 'NỮ', 'Trần', 'TP.HCM', '2005-03-20', 'TP.HCM', '123456', 'SBD002', 'Thị Bình', NOW()),
+('001234567892', '0912345680', 'KV1', 'thiSinh003@edu.vn', 'NAM', 'Lê', 'Hải Phòng', '2005-05-10', 'Hải Phòng', '123456', 'SBD003', 'Quốc Cường', NOW()),
+('001234567893', '0912345681', 'KV3', 'thiSinh004@edu.vn', 'NỮ', 'Phạm', 'Đà Nẵng', '2005-07-22', 'Đà Nẵng', '123456', 'SBD004', 'Minh Dũng', NOW()),
+('001234567894', '0912345682', 'KV2', 'thiSinh005@edu.vn', 'NAM', 'Hoàng', 'Cần Thơ', '2005-02-14', 'Cần Thơ', '123456', 'SBD005', 'Đức Phong', NOW()),
+('001234567895', '0912345683', 'KV1', 'thiSinh006@edu.vn', 'NỮ', 'Đặng', 'Hà Nội', '2005-04-18', 'Hà Nội', '123456', 'SBD006', 'Thị Giang', NOW()),
+('001234567896', '0912345684', 'KV2', 'thiSinh007@edu.vn', 'NAM', 'Bùi', 'TP.HCM', '2005-06-25', 'TP.HCM', '123456', 'SBD007', 'Văn Hùng', NOW()),
+('001234567897', '0912345685', 'KV3', 'thiSinh008@edu.vn', 'NỮ', 'Ngô', 'Hải Phòng', '2005-08-30', 'Hải Phòng', '123456', 'SBD008', 'Thị Iris', NOW()),
+('001234567898', '0912345686', 'KV1', 'thiSinh009@edu.vn', 'NAM', 'Đinh', 'Đà Nẵng', '2005-09-12', 'Đà Nẵng', '123456', 'SBD009', 'Công Kiên', NOW()),
+('001234567899', '0912345687', 'KV2', 'thiSinh010@edu.vn', 'NỮ', 'Lý', 'Cần Thơ', '2005-10-05', 'Cần Thơ', '123456', 'SBD010', 'Thị Lan', NOW());
+
+-- Tối ưu tìm kiếm theo CCCD và Số báo danh (Unique nếu có thể)
+ALTER TABLE xt_thisinhxettuyen25 ADD INDEX idx_cccd (cccd);
+ALTER TABLE xt_thisinhxettuyen25 ADD INDEX idx_sbd (sobaodanh);
+
+-- Tối ưu tìm kiếm theo Họ và Tên (Dùng cho lệnh LIKE 'Ten%')
+ALTER TABLE xt_thisinhxettuyen25 ADD INDEX idx_ho_ten (ho, ten);
