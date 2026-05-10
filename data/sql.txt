@@ -146,7 +146,9 @@ INSERT INTO xt_nganh (maNganh, tenNganh, n_chitieu) VALUES
 ('7580201', 'Xây dựng', 100),
 ('7720201', 'Dược học', 150),
 ('7380101', 'Luật', 200),
-('7210403', 'Thiết kế đồ họa', 100);
+('7210403', 'Thiết kế đồ họa', 100),
+('7140201', 'Sư phạm Giáo dục mầm non', 100)
+ON DUPLICATE KEY UPDATE tenNganh=VALUES(tenNganh);
 
 ALTER TABLE xt_nganh ADD INDEX idx_ma_nganh (maNganh);
 ALTER TABLE xt_nganh ADD INDEX idx_ten_nganh (tenNganh);
@@ -155,28 +157,36 @@ ALTER TABLE xt_nganh ADD INDEX idx_ten_nganh (tenNganh);
 INSERT INTO xt_tohop_monthi (maToHop, mon1, mon2, mon3) VALUES
 ('A00', 'TO', 'LI', 'HO'),
 ('A01', 'TO', 'LI', 'TI'),
+('A02', 'TO', 'LI', 'SI'),
 ('B00', 'TO', 'HO', 'SI'),
 ('C00', 'VA', 'SU', 'DI'),
 ('D01', 'TO', 'VA', 'N1'),
-('D07', 'TO', 'HO', 'N1'),
 ('C14', 'TO', 'VA', 'KTPL'),
-('D08', 'TO', 'SI', 'N1_CC'),
-('A02', 'TO', 'LI', 'SI'),
-('D10', 'TO', 'DI', 'N1');
+('M00', 'VA', 'TO', 'NK1'),
+('H00', 'VA', 'NK1', 'NK2')
+ON DUPLICATE KEY UPDATE mon1=VALUES(mon1);
 
 ALTER TABLE xt_tohop_monthi ADD INDEX idx_ma_to_hop (maToHop);
 
 
-INSERT INTO xt_nganh_tohop (manganh, matohop, tb_keys) VALUES
-('7480201', 'A00', '7480201_A00'),
-('7480201', 'A01', '7480201_A01'),
-('7480101', 'A00', '7480101_A00'),
-('7480101', 'A02', '7480101_A02'),
-('7340101', 'D01', '7340101_D01'),
-('7310101', 'A00', '7310101_A00'),
-('7220201', 'D01', '7220201_D01'),
-('7520216', 'A01', '7520216_A01'),
-('7580201', 'A00', '7580201_A00'),
-('7720201', 'B00', '7720201_B00');
+INSERT INTO xt_nganh_tohop
+(manganh, matohop, tb_keys, th_mon1, hsmon1, th_mon2, hsmon2, th_mon3, hsmon3,
+ `TO`, `LI`, `HO`, `SI`, `VA`, `SU`, `DI`, `TI`, `N1`, `KTPL`, `CNCN`, `CNNN`, `NK1`, `NK2`, `NK3`, `NK4`, `NK5`, `NK6`, `KHAC`, dolech)
+VALUES
+-- CNTT
+('7480201', 'A00', '7480201_A00', 'TO', 1, 'LI', 1, 'HO', 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00),
+('7480201', 'A01', '7480201_A01', 'TO', 1, 'LI', 1, 'TI', 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00),
+
+-- Thiết kế đồ họa
+('7210403', 'H00', '7210403_H00', 'VA', 1, 'NK1', 2, 'NK2', 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1.00),
+
+-- Kinh tế
+('7310101', 'C14', '7310101_C14', 'TO', 1, 'VA', 1, 'KTPL', 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00),
+
+-- Sư phạm Mầm non
+('7140201', 'M00', '7140201_M00', 'VA', 1, 'TO', 1, 'NK1', 2, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2.00),
+
+-- Ngôn ngữ Anh
+('7220201', 'D01', '7220201_D01', 'TO', 1, 'VA', 1, 'N1', 2, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00);
 
 ALTER TABLE xt_nganh_tohop ADD INDEX idx_nganh_id (maNganh);

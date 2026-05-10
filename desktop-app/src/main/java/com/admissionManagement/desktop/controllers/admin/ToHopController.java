@@ -178,18 +178,15 @@ public class ToHopController extends BaseController implements Initializable {
         File file = chooser.showOpenDialog(tblToHop.getScene().getWindow());
         if (file == null) return;
 
-        try (FileInputStream fis = new FileInputStream(file)) {
-            // TODO: gọi BUS khi bạn hoàn thiện
-            // String result = toHopBUS.importFromCSV(fis);
-            // if (result.startsWith("Lỗi")) {
-            //     lblImportStatus.setStyle("-fx-text-fill: #c62828;");
-            //     lblImportStatus.setText(result);
-            // } else {
-            //     lblImportStatus.setText(result);
-            //     loadData();
-            // }
-
-            lblImportStatus.setText("Đã chọn: " + file.getName() + " (chưa import)");
+        try {
+             String result = toHopBUS.importCsvData(file);
+             if (result.startsWith("Lỗi")) {
+                 lblImportStatus.setStyle("-fx-text-fill: #c62828;");
+                 lblImportStatus.setText(result);
+             } else {
+                 lblImportStatus.setText(result);
+                 loadData();
+             }
         } catch (Exception ex) {
             lblImportStatus.setStyle("-fx-text-fill: #c62828;");
             lblImportStatus.setText("Lỗi đọc file: " + ex.getMessage());

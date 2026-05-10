@@ -185,19 +185,15 @@ public class NganhController extends BaseController implements Initializable {
         File file = chooser.showOpenDialog(tblNganh.getScene().getWindow());
         if (file == null) return; // người dùng hủy
 
-        try (FileInputStream fis = new FileInputStream(file)) {
-            // TODO: gọi BUS khi bạn hoàn thiện
-            // String result = nganhBUS.importFromCSV(fis);
-            // if (result.startsWith("Lỗi")) {
-            //     lblImportStatus.setStyle("-fx-text-fill: #c62828;");
-            //     lblImportStatus.setText(result);
-            // } else {
-            //     lblImportStatus.setText(result);
-            //     loadData();
-            // }
-
-            // --- Tạm thời: chỉ thông báo chọn file thành công ---
-            lblImportStatus.setText("Đã chọn: " + file.getName() + " (chưa import)");
+        try {
+             String result = nganhBUS.importCsvData(file);
+             if (result.startsWith("Lỗi")) {
+                 lblImportStatus.setStyle("-fx-text-fill: #c62828;");
+                 lblImportStatus.setText(result);
+             } else {
+                 lblImportStatus.setText(result);
+                 loadData();
+             }
         } catch (Exception ex) {
             lblImportStatus.setStyle("-fx-text-fill: #c62828;");
             lblImportStatus.setText("Lỗi đọc file: " + ex.getMessage());
