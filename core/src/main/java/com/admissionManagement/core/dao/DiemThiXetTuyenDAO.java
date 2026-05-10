@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class DiemThiXetTuyenDAO {
