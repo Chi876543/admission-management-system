@@ -31,6 +31,10 @@ public class NganhDAO {
         return listNganh;
     }
 
+    public List<String> getAllMaNganh(Session session) {
+        return session.createQuery("SELECT n.maNganh FROM Nganh n", String.class).list();
+    }
+
     public void updateWithSession(Session session, Nganh newNganh) {
         session.merge(newNganh);
     }

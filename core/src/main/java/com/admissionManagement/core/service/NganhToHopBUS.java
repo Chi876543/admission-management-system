@@ -9,17 +9,25 @@ import com.admissionManagement.core.dao.ToHopMonThiDAO;
 import com.admissionManagement.core.dto.BangQuyDoiDTO;
 import com.admissionManagement.core.dto.NganhDTO;
 import com.admissionManagement.core.dto.NganhToHopDTO;
-import com.admissionManagement.core.entity.BangQuyDoi;
-import com.admissionManagement.core.entity.Nganh;
-import com.admissionManagement.core.entity.NganhToHop;
-import com.admissionManagement.core.entity.ToHopMonThi;
+import com.admissionManagement.core.entity.*;
+import com.admissionManagement.core.helper.DatabaseHelper;
 import com.admissionManagement.core.util.HibernateUtil;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class NganhToHopBUS {
@@ -112,6 +120,80 @@ public class NganhToHopBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
+        }
+    }
+
+    public String importCsvData(File file) {
+        int batchSize = 1000;
+        int successCount = 0;
+
+        try (Reader reader = Files.newBufferedReader(file.toPath());
+             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+             Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            Map<String, Nganh> cacheNganh = nganhdao.getAllWithSession(session).stream()
+                    .collect(Collectors.toMap(Nganh::getMaNganh, n -> n));
+            Map<String, ToHopMonThi> cacheToHop = tohopmonthidao.getAllWithSession(session).stream()
+                    .collect(Collectors.toMap(ToHopMonThi::getMaToHop, t -> t));
+
+            String[] line;
+            Transaction tx = session.beginTransaction();
+
+            while ((line = csvReader.readNext()) != null) {
+                try {
+                    NganhToHop entity = new NganhToHop();
+                    Nganh nganh = cacheNganh.get(line[1].trim());
+                    entity.setNganh(nganh);
+                    ToHopMonThi toHop = cacheToHop.get(line[5].trim());
+                    entity.setToHopMonThi(toHop);
+                    entity.setTbKeys(line[4].trim());
+
+                    int viTriMoNgoac = line[3].trim().indexOf("(");
+                    int viTriDongNgoac = line[3].trim().indexOf(")");
+
+                    if (viTriMoNgoac == -1 || viTriDongNgoac == -1) {
+                        continue;
+                    }
+                    String phanLoi = line[3].trim().substring(viTriMoNgoac + 1, viTriDongNgoac).trim();
+                    String[] cacMon = phanLoi.split(",");
+                    if (cacMon.length < 3) {
+                        continue;
+                    }
+                    String mon1 = cacMon[0].split("-")[0].trim();
+                    String mon2 = cacMon[1].split("-")[0].trim();
+                    String mon3 = cacMon[2].split("-")[0].trim();
+                    String hsmon1 = cacMon[0].split("-")[1].trim();
+                    String hsmon2 = cacMon[1].split("-")[1].trim();
+                    String hsmon3 = cacMon[2].split("-")[1].trim();
+
+                    entity.setThMon1(mon1);
+                    entity.setHsMon1(Byte.valueOf(hsmon1));
+                    entity.setThMon2(mon2);
+                    entity.setHsMon2(Byte.valueOf(hsmon2));
+                    entity.setThMon3(mon3);
+                    entity.setHsMon3(Byte.valueOf(hsmon3));
+
+                    session.persist(entity);
+                    successCount++;
+
+                    if (successCount % batchSize == 0) {
+                        tx.commit();
+                        session.clear();
+                        tx = session.beginTransaction();
+                    }
+                } catch (Exception e) {
+                    // Bỏ qua dòng lỗi (hoặc ghi log ra file TXT để sau này báo cáo)
+                }
+            }
+
+            if (tx.isActive()) {
+                tx.commit();
+            }
+
+            return "Import thành công " + successCount + " bản ghi!";
+
+        } catch (Exception e) {
+            return "Lỗi đọc file: " + e.getMessage();
         }
     }
 
