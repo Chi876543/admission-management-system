@@ -20,7 +20,7 @@ public class ThiSinhDTO {
     private String gioiTinh;
     private String dienThoai;
     private String email;
-    @NonNull
+//    @NonNull
     private String password;
     private String noiSinh;
     private String doiTuong;

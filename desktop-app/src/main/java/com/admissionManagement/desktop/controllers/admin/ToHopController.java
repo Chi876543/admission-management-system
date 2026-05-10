@@ -25,7 +25,8 @@ public class ToHopController extends BaseController implements Initializable {
 
     public static final List<String> DS_MON = List.of(
             "TO", "LI", "HO", "SI", "VA", "SU", "DI", "TI",
-            "N1", "KTPL", "N1_CC", "CNCN", "CNNN"
+            "N1", "KTPL", "CNCN", "CNNN", "NK1", "NK2", "NK3", "NK4",
+            "NK5", "NK6"
     );
 
     @FXML private Label     lblFormTitle, lblError, lblCount, lblImportStatus;

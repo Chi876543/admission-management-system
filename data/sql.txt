@@ -167,17 +167,16 @@ INSERT INTO xt_tohop_monthi (maToHop, mon1, mon2, mon3) VALUES
 ALTER TABLE xt_tohop_monthi ADD INDEX idx_ma_to_hop (maToHop);
 
 
-INSERT INTO xt_nganh_tohop (maNganh, maToHop) VALUES
-('7480201', 'A00'),
-('7480201', 'A01'),
-('7480101', 'A00'),
-('7480101', 'A02'),
-('7340101', 'D01'),
-('7310101', 'A00'),
-('7220201', 'D01'),
-('7520216', 'A01'),
-('7580201', 'A00'),
-('7720201', 'B00');
+INSERT INTO xt_nganh_tohop (manganh, matohop, tb_keys) VALUES
+('7480201', 'A00', '7480201_A00'),
+('7480201', 'A01', '7480201_A01'),
+('7480101', 'A00', '7480101_A00'),
+('7480101', 'A02', '7480101_A02'),
+('7340101', 'D01', '7340101_D01'),
+('7310101', 'A00', '7310101_A00'),
+('7220201', 'D01', '7220201_D01'),
+('7520216', 'A01', '7520216_A01'),
+('7580201', 'A00', '7580201_A00'),
+('7720201', 'B00', '7720201_B00');
 
 ALTER TABLE xt_nganh_tohop ADD INDEX idx_nganh_id (maNganh);
-ALTER TABLE xt_nganh_tohop ADD INDEX idx_to_hop_id (tenNganh);

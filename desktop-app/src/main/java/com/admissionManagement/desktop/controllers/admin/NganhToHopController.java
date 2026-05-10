@@ -186,7 +186,9 @@ public class NganhToHopController extends BaseController implements Initializabl
                 selectedNganh.getMaNganh() + "_" + th.getMaToHop(),
                 flags[0], flags[1], flags[2], flags[3], flags[4],
                 flags[5], flags[6], flags[7], flags[8], flags[9],
-                flags[10], BigDecimal.ZERO
+                flags[10], flags[11], flags[12], flags[13]
+                , flags[14], flags[15], flags[16], flags[17]
+                , flags[18], BigDecimal.ZERO
         );
 
         String result = nganhToHopBUS.addNganhToHop(dto);
@@ -199,7 +201,9 @@ public class NganhToHopController extends BaseController implements Initializabl
 
     private boolean[] buildMonFlags(String m1, String m2, String m3) {
         Set<String> monSet = new HashSet<>(List.of(m1, m2, m3));
-        Set<String> known = Set.of("TO","LI","HO","SI","VA","SU","DI","TI","N1","KTPL");
+        Set<String> known = Set.of("TO", "LI", "HO", "SI", "VA", "SU", "DI", "TI",
+            "N1", "KTPL", "CNCN", "CNNN", "NK1", "NK2", "NK3", "NK4",
+            "NK5", "NK6");
         boolean hasKhac = monSet.stream().anyMatch(m -> !known.contains(m));
         return new boolean[]{
                 monSet.contains("N1"),
@@ -211,6 +215,14 @@ public class NganhToHopController extends BaseController implements Initializabl
                 monSet.contains("SU"),
                 monSet.contains("DI"),
                 monSet.contains("TI"),
+                monSet.contains("NK1"),
+                monSet.contains("NK2"),
+                monSet.contains("NK3"),
+                monSet.contains("NK4"),
+                monSet.contains("NK5"),
+                monSet.contains("NK6"),
+                monSet.contains("CNCN"),
+                monSet.contains("CNNN"),
                 hasKhac,
                 monSet.contains("KTPL")
         };

@@ -49,7 +49,7 @@ public class NganhToHop {
     @Column(name = "th_mon3", length = 10) private String thMon3;
     @Column(name = "hsmon3") private Byte hsMon3;
 
-    @Column(name = "tb_keys", length = 45)
+    @Column(name = "tb_keys", length = 45, nullable = false)
     private String tbKeys;
 
     // boolean
