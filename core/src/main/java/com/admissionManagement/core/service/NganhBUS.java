@@ -5,13 +5,22 @@ import com.admissionManagement.core.dto.BangQuyDoiDTO;
 import com.admissionManagement.core.dto.NganhDTO;
 import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.Nganh;
+import com.admissionManagement.core.entity.ToHopMonThi;
+import com.admissionManagement.core.helper.DatabaseHelper;
 import com.admissionManagement.core.util.HibernateUtil;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class NganhBUS {
@@ -82,6 +91,49 @@ public class NganhBUS {
     public NganhDTO getNganh(int id){
         try(Session session = factory.openSession()){
             return toDTO(dao.getWithSession(session, id));
+        }
+    }
+
+    public String importCsvData(File file) {
+        int successCount = 0;
+
+        try (Reader reader = Files.newBufferedReader(file.toPath());
+             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+             Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            Transaction tx = session.beginTransaction();
+
+            String[] line;
+
+            while ((line = csvReader.readNext()) != null) {
+                try {
+                    boolean isRoot = line[6].trim().equalsIgnoreCase("Gốc");
+                    if (isRoot) {
+                        Nganh entity = new Nganh();
+                        entity.setMaNganh(line[1].trim());
+                        entity.setTenNganh(line[2].trim());
+                        entity.setToHopGoc(line[5].trim());
+                        entity.setTuyenThang("1");
+                        entity.setDgnl("1");
+                        entity.setThpt("1");
+                        entity.setVsat("1");
+                        session.persist(entity);
+                        successCount++;
+                    }
+                } catch (Exception e) {
+                    // Ghi log lỗi dòng
+                    System.out.println("Lỗi parse dòng tổ hợp: " + e.getMessage());
+                }
+            }
+
+            if (tx.isActive()) {
+                tx.commit();
+            }
+
+            return "Import thành công " + successCount + " tổ hợp môn thi mới!";
+
+        } catch (Exception e) {
+            return "Lỗi đọc file: " + e.getMessage();
         }
     }
 
