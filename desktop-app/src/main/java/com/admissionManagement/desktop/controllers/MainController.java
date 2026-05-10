@@ -98,9 +98,20 @@ public class MainController implements Initializable {
     // ── Nav handlers ─────────────────────────────────
     @FXML private void onNavUsers()       { loadScreen("users",       btnUsers);       }
     @FXML private void onNavThiSinh()     { loadScreen("thisinh",     btnThiSinh);     }
-    @FXML private void onNavNganh()       { loadScreen("nganh",       btnNganh);       }
-    @FXML private void onNavToHop()       { loadScreen("tohop",       btnToHop);       }
-    @FXML private void onNavNganhToHop()  { loadScreen("nganhtohop",  btnNganhToHop);  }
+    @FXML private void onNavNganh() {
+        screenCache.remove("nganhtohop"); // Ngành thay đổi → invalidate cache ngành-tổ hợp
+        loadScreen("nganh", btnNganh);
+    }
+
+    @FXML private void onNavToHop() {
+        screenCache.remove("nganhtohop"); // Tổ hợp thay đổi → invalidate cache ngành-tổ hợp
+        loadScreen("tohop", btnToHop);
+    }
+
+    @FXML private void onNavNganhToHop() {
+        screenCache.remove("nganhtohop"); // Luôn reload màn hình này
+        loadScreen("nganhtohop", btnNganhToHop);
+    }
     @FXML private void onNavDiem()        { loadScreen("diem",        btnDiem);        }
     @FXML private void onNavDiemCong()    { loadScreen("diemcong",    btnDiemCong);    }
     @FXML private void onNavNguyenVong()  { loadScreen("nguyenvong",  btnNguyenVong);  }

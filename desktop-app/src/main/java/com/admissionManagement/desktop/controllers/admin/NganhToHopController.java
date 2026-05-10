@@ -37,12 +37,15 @@ public class NganhToHopController extends BaseController implements Initializabl
 
     // ── Panel phải ────────────────────────────────────
     @FXML private Label                         lblSelectedNganh, lblError, lblImportStatus;
+    @FXML private Label                         lblFormMode; // "Gán mới" hoặc "Đang sửa"
     @FXML private ComboBox<ToHopMonThiDTO>      cbToHopGan;
     @FXML private TextField                     tfHsMon1, tfHsMon2, tfHsMon3;
+    @FXML private Button                        btnGan; // text đổi giữa "+ Gán" và "💾 Lưu"
+    @FXML private Button                        btnHuyEdit; // ẩn khi không sửa
     @FXML private TableView<NganhToHopDTO>      tblToHopCuaNganh;
     @FXML private TableColumn<NganhToHopDTO,String> colMaTH, colTenTH, colMon1, colMon2, colMon3;
     @FXML private TableColumn<NganhToHopDTO,String> colHs1, colHs2, colHs3;
-    @FXML private TableColumn<NganhToHopDTO,Void>   colXoa;
+    @FXML private TableColumn<NganhToHopDTO,Void>   colXoa, colSua;
 
     private final NganhBUS       nganhBUS      = new NganhBUS();
     private final ToHopMonThiBUS toHopBUS      = new ToHopMonThiBUS();
@@ -53,6 +56,7 @@ public class NganhToHopController extends BaseController implements Initializabl
     private final ObservableList<NganhToHopDTO>  toHopCuaNganh = FXCollections.observableArrayList();
 
     private NganhDTO selectedNganh;
+    private NganhToHopDTO editingRow = null; // null = đang gán mới, non-null = đang sửa
 
     @Override
     public void initialize(URL u, ResourceBundle r) {
@@ -96,6 +100,26 @@ public class NganhToHopController extends BaseController implements Initializabl
             }
             @Override protected void updateItem(Void v, boolean empty) {
                 super.updateItem(v, empty); setGraphic(empty ? null : btn);
+            }
+        });
+
+        // Cột Sửa
+        colSua.setCellFactory(col -> new TableCell<>() {
+            private final Button btn = new Button("Sửa");
+            {
+                btn.getStyleClass().addAll("btn-default", "btn-sm");
+                btn.setOnAction(e -> loadToFormEdit(getTableView().getItems().get(getIndex())));
+            }
+            @Override protected void updateItem(Void v, boolean empty) {
+                super.updateItem(v, empty); setGraphic(empty ? null : btn);
+            }
+        });
+
+        // Double click cũng mở sửa
+        tblToHopCuaNganh.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                NganhToHopDTO row = tblToHopCuaNganh.getSelectionModel().getSelectedItem();
+                if (row != null) loadToFormEdit(row);
             }
         });
 
@@ -156,8 +180,57 @@ public class NganhToHopController extends BaseController implements Initializabl
         lblError.setText("");
     }
 
-    // ── Gán tổ hợp ───────────────────────────────────
+    // ── Load dữ liệu hàng vào form để sửa ───────────
+    private void loadToFormEdit(NganhToHopDTO row) {
+        editingRow = row;
+
+        // Tìm ToHopMonThiDTO tương ứng để set vào ComboBox
+        ToHopMonThiDTO th = danhSachToHop.stream()
+                .filter(t -> t.getMaToHop().equals(row.getMaToHop()))
+                .findFirst().orElse(null);
+        cbToHopGan.setValue(th);
+        cbToHopGan.setDisable(true); // Không cho đổi tổ hợp khi sửa — chỉ sửa hệ số
+
+        tfHsMon1.setText(row.getHsMon1() != null ? row.getHsMon1().toString() : "1");
+        tfHsMon2.setText(row.getHsMon2() != null ? row.getHsMon2().toString() : "1");
+        tfHsMon3.setText(row.getHsMon3() != null ? row.getHsMon3().toString() : "1");
+
+        lblFormMode.setText("✏ Đang sửa: " + row.getMaToHop());
+        lblFormMode.setStyle("-fx-text-fill: #e65100; -fx-font-weight: bold;");
+        btnGan.setText("💾 Lưu sửa");
+        btnGan.getStyleClass().removeAll("btn-success");
+        btnGan.getStyleClass().add("btn-primary");
+        btnHuyEdit.setVisible(true);
+        btnHuyEdit.setManaged(true);
+        lblError.setText("");
+    }
+
+    // ── Hủy sửa, về chế độ gán mới ─────────────────
+    @FXML private void onHuyEdit() {
+        editingRow = null;
+        cbToHopGan.setValue(null);
+        cbToHopGan.setDisable(false);
+        tfHsMon1.clear(); tfHsMon2.clear(); tfHsMon3.clear();
+        lblFormMode.setText("➕ Gán tổ hợp mới");
+        lblFormMode.setStyle("-fx-text-fill: #1a2340; -fx-font-weight: bold;");
+        btnGan.setText("+ Gán");
+        btnGan.getStyleClass().removeAll("btn-primary");
+        btnGan.getStyleClass().add("btn-success");
+        btnHuyEdit.setVisible(false);
+        btnHuyEdit.setManaged(false);
+        lblError.setText("");
+    }
+
+    // ── Gán tổ hợp (hoặc lưu sửa) ───────────────────
     @FXML private void onGanToHop() {
+        if (editingRow != null) {
+            onLuuSua(); // Đang sửa → lưu
+        } else {
+            onGanMoi(); // Chưa có editing → gán mới
+        }
+    }
+
+    private void onGanMoi() {
         if (selectedNganh == null) { lblError.setText("Vui lòng chọn ngành trước."); return; }
         ToHopMonThiDTO th = cbToHopGan.getValue();
         if (th == null) { lblError.setText("Vui lòng chọn tổ hợp."); return; }
@@ -199,11 +272,46 @@ public class NganhToHopController extends BaseController implements Initializabl
         loadToHopCuaNganh();
     }
 
+    private void onLuuSua() {
+        byte hs1, hs2, hs3;
+        try {
+            hs1 = Byte.parseByte(tfHsMon1.getText().trim().isEmpty() ? "1" : tfHsMon1.getText().trim());
+            hs2 = Byte.parseByte(tfHsMon2.getText().trim().isEmpty() ? "1" : tfHsMon2.getText().trim());
+            hs3 = Byte.parseByte(tfHsMon3.getText().trim().isEmpty() ? "1" : tfHsMon3.getText().trim());
+        } catch (NumberFormatException ex) {
+            lblError.setText("Hệ số môn phải là số nguyên (1 hoặc 2)."); return;
+        }
+
+        // Giữ nguyên tất cả field, chỉ cập nhật hệ số 3 môn
+        NganhToHopDTO dto = new NganhToHopDTO(
+                editingRow.getId(),
+                editingRow.getMaNganh(), editingRow.getMaToHop(),
+                editingRow.getThMon1(), hs1,
+                editingRow.getThMon2(), hs2,
+                editingRow.getThMon3(), hs3,
+                editingRow.getTbKeys(),
+                editingRow.getAnh(),  editingRow.getToan(), editingRow.getLy(),
+                editingRow.getHoa(),  editingRow.getSinh(), editingRow.getVan(),
+                editingRow.getSu(),   editingRow.getDia(),  editingRow.getTin(),
+                editingRow.getNk1(),  editingRow.getNk2(),  editingRow.getNk3(),
+                editingRow.getNk4(),  editingRow.getNk5(),  editingRow.getNk6(),
+                editingRow.getCncn(), editingRow.getCncc(),
+                editingRow.getKhac(), editingRow.getKtpl(),
+                editingRow.getDoLech()
+        );
+
+        String result = nganhToHopBUS.updateNganhToHop(editingRow.getId(), dto);
+        if (result.startsWith("Lỗi")) { lblError.setText(result); return; }
+
+        onHuyEdit();
+        loadToHopCuaNganh();
+    }
+
     private boolean[] buildMonFlags(String m1, String m2, String m3) {
         Set<String> monSet = new HashSet<>(List.of(m1, m2, m3));
         Set<String> known = Set.of("TO", "LI", "HO", "SI", "VA", "SU", "DI", "TI",
-            "N1", "KTPL", "CNCN", "CNNN", "NK1", "NK2", "NK3", "NK4",
-            "NK5", "NK6");
+                "N1", "KTPL", "CNCN", "CNNN", "NK1", "NK2", "NK3", "NK4",
+                "NK5", "NK6");
         boolean hasKhac = monSet.stream().anyMatch(m -> !known.contains(m));
         return new boolean[]{
                 monSet.contains("N1"),
@@ -252,14 +360,14 @@ public class NganhToHopController extends BaseController implements Initializabl
         if (file == null) return;
 
         try {
-             String result = nganhToHopBUS.importCsvData(file);
-             if (result.startsWith("Lỗi")) {
-                 lblImportStatus.setStyle("-fx-text-fill: #c62828;");
-                 lblImportStatus.setText(result);
-             } else {
-                 lblImportStatus.setText(result);
-                 loadAllData();
-             }
+            String result = nganhToHopBUS.importCsvData(file);
+            if (result.startsWith("Lỗi")) {
+                lblImportStatus.setStyle("-fx-text-fill: #c62828;");
+                lblImportStatus.setText(result);
+            } else {
+                lblImportStatus.setText(result);
+                loadAllData();
+            }
         } catch (Exception ex) {
             lblImportStatus.setStyle("-fx-text-fill: #c62828;");
             lblImportStatus.setText("Lỗi đọc file: " + ex.getMessage());
