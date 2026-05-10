@@ -55,7 +55,7 @@ public class NguyenVongXetTuyen {
     @Column(name = "nv_ketqua", length = 45)
     private String ketQua;
 
-    @Column(name = "nv_keys", length = 45)
+    @Column(name = "nv_keys", length = 45, nullable = false)
     private String nvKeys;
 
     @Column(name = "tt_phuongthuc", length = 45)

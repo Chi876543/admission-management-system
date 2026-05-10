@@ -1,11 +1,15 @@
 package com.admissionManagement.core.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.math.BigDecimal;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class NguyenVongXetTuyenDTO {
 
     @NonNull
@@ -20,25 +24,19 @@ public class NguyenVongXetTuyenDTO {
     @NonNull
     private int thuTu;
 
-    @NonNull
     private BigDecimal diemThxt;
 
-    @NonNull
     private BigDecimal diemUtqd;
 
-    @NonNull
     private BigDecimal diemCong;
 
-    @NonNull
     private BigDecimal diemXetTuyen;
 
-    @NonNull
     private String ketQua;
 
     @NonNull
     private String nvKeys;
 
-    @NonNull
     private String phuongThuc;
 
     @NonNull

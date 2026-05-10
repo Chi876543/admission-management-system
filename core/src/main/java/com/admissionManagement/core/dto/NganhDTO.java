@@ -1,11 +1,15 @@
 package com.admissionManagement.core.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.math.BigDecimal;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class NganhDTO {
     @NonNull
     private int idNganh;
@@ -16,25 +20,22 @@ public class NganhDTO {
     @NonNull
     private String tenNganh;
 
-    @NonNull
     private String toHopGoc;
 
     @NonNull
     private int chiTieu;
 
-    @NonNull
     private BigDecimal diemSan;
 
-    @NonNull
     private BigDecimal diemTrungTuyen;
 
-    @NonNull private String tuyenThang;
-    @NonNull private String dgnl;
-    @NonNull private String thpt;
-    @NonNull private String vsat;
+    private String tuyenThang;
+    private String dgnl;
+    private String thpt;
+    private String vsat;
 
-    @NonNull private Integer slXtt;
-    @NonNull private Integer slDgnl;
-    @NonNull private Integer slVsat;
-    @NonNull private String slThpt;
+    private Integer slXtt;
+    private Integer slDgnl;
+    private Integer slVsat;
+    private String slThpt;
 }

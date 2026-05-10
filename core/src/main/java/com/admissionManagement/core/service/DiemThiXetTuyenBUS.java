@@ -7,13 +7,23 @@ import com.admissionManagement.core.dto.DiemThiXetTuyenDTO;
 import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.DiemThiXetTuyen;
 import com.admissionManagement.core.entity.ThiSinh;
+import com.admissionManagement.core.helper.DatabaseHelper;
 import com.admissionManagement.core.util.HibernateUtil;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DiemThiXetTuyenBUS {
@@ -107,6 +117,153 @@ public class DiemThiXetTuyenBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
+        }
+    }
+
+    public String importVsatCsvData(File file) {
+        int batchSize = 1000;
+        int successCount = 0;
+
+        try (Reader reader = Files.newBufferedReader(file.toPath());
+             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+             Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            String[] line;
+            Transaction tx = session.beginTransaction();
+
+            Map<String, DiemThiXetTuyen> diemCache = new HashMap<>();
+
+            while ((line = csvReader.readNext()) != null) {
+                try {
+                    String cccd = line[1].trim();
+                    DiemThiXetTuyen diem = diemCache.get(cccd);
+                    if (diem == null) {
+                        diem = dao.getByCccdWithSession(session, cccd);
+                        if (diem != null) {
+                            diemCache.put(cccd, diem);
+                        }
+                    }
+
+                    if (diem != null) {
+                        String cleanMonHoc = DatabaseHelper.lamSachTenMon(line[7].trim());
+                        String cleanedValue = line[8].trim().replace(",", ".");
+                        BigDecimal diemMoi = new BigDecimal(cleanedValue);
+
+                        if (diem.getDiemToanVSAT() == null) diem.setDiemToanVSAT(BigDecimal.ZERO);
+                        if (diem.getDiemLyVSAT() == null) diem.setDiemLyVSAT(BigDecimal.ZERO);
+                        if (diem.getDiemVanVSAT() == null) diem.setDiemVanVSAT(BigDecimal.ZERO);
+                        if (diem.getDiemHoaVSAT() == null) diem.setDiemHoaVSAT(BigDecimal.ZERO);
+                        if (diem.getDiemSinhVSAT() == null) diem.setDiemSinhVSAT(BigDecimal.ZERO);
+                        if (diem.getDiemSuVSAT() == null) diem.setDiemSuVSAT(BigDecimal.ZERO);
+                        if (diem.getDiemDiaVSAT() == null) diem.setDiemDiaVSAT(BigDecimal.ZERO);
+                        if (diem.getN1VSAT() == null) diem.setN1VSAT(BigDecimal.ZERO);
+
+                        if (cleanMonHoc.contains("toan")) {
+                            if (diem.getDiemToanVSAT().compareTo(diemMoi) < 0)
+                                diem.setDiemToanVSAT(diemMoi);
+                        } else if (cleanMonHoc.contains("ly") || cleanMonHoc.contains("li")) {
+                            if (diem.getDiemLyVSAT().compareTo(diemMoi) < 0)
+                                diem.setDiemLyVSAT(diemMoi);
+                        } else if (cleanMonHoc.contains("van")) {
+                            if (diem.getDiemVanVSAT().compareTo(diemMoi) < 0)
+                                diem.setDiemVanVSAT(diemMoi);
+                        } else if (cleanMonHoc.contains("hoa")) {
+                            if (diem.getDiemHoaVSAT().compareTo(diemMoi) < 0)
+                                diem.setDiemHoaVSAT(diemMoi);
+                        } else if (cleanMonHoc.contains("sinh")) {
+                            if (diem.getDiemSinhVSAT().compareTo(diemMoi) < 0)
+                                diem.setDiemSinhVSAT(diemMoi);
+                        } else if (cleanMonHoc.contains("su")) {
+                            if (diem.getDiemSuVSAT().compareTo(diemMoi) < 0)
+                                diem.setDiemSuVSAT(diemMoi);
+                        } else if (cleanMonHoc.contains("dia")) {
+                            if (diem.getDiemDiaVSAT().compareTo(diemMoi) < 0)
+                                diem.setDiemDiaVSAT(diemMoi);
+                        } else if (cleanMonHoc.contains("anh")) {
+                            if (diem.getN1VSAT().compareTo(diemMoi) < 0)
+                                diem.setN1VSAT(diemMoi);
+                        }
+                    }
+
+                    successCount++;
+
+                    if (successCount % batchSize == 0) {
+                        tx.commit();
+                        session.clear();
+                        diemCache.clear();
+                        tx = session.beginTransaction();
+                    }
+                } catch (Exception e) {
+                    // Bỏ qua dòng lỗi
+                }
+            }
+
+            if (tx.isActive()) {
+                tx.commit();
+            }
+
+            return "Import thành công " + successCount + " bản ghi!";
+
+        } catch (Exception e) {
+            return "Lỗi đọc file: " + e.getMessage();
+        }
+    }
+
+    public String importDGNLCsvData(File file) {
+        int batchSize = 1000;
+        int successCount = 0;
+
+        try (Reader reader = Files.newBufferedReader(file.toPath());
+             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+             Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            String[] line;
+            Transaction tx = session.beginTransaction();
+
+            Map<String, DiemThiXetTuyen> diemCache = new HashMap<>();
+
+            while ((line = csvReader.readNext()) != null) {
+                try {
+                    String cccd = line[1].trim();
+                    DiemThiXetTuyen diem = diemCache.get(cccd);
+                    if (diem == null) {
+                        diem = dao.getByCccdWithSession(session, cccd);
+                        if (diem != null) {
+                            diemCache.put(cccd, diem);
+                        }
+                    }
+
+                    if (diem != null) {
+                        BigDecimal diemMoi = new BigDecimal(line[8].trim());
+                        if (diem.getNl1() == null) {
+                            diem.setNl1(BigDecimal.ZERO);
+                        }
+                        if (diem.getNl1().compareTo(diemMoi) < 0) {
+                            diem.setNl1(diemMoi);
+                        }
+                    }
+
+                    successCount++;
+
+                    if (successCount % batchSize == 0) {
+                        tx.commit();
+                        session.clear();
+                        diemCache.clear();
+                        tx = session.beginTransaction();
+                    }
+                } catch (Exception e) {
+                    // Bỏ qua dòng lỗi
+                }
+            }
+
+            if (tx.isActive()) {
+                tx.commit();
+            }
+
+            return "Import thành công " + successCount + " bản ghi!";
+
+        } catch (Exception e) {
+            return "Lỗi đọc file: " + e.getMessage();
         }
     }
 
