@@ -35,7 +35,7 @@
                 <TableColumn fx:id="colEmail"     text="Email"        prefWidth="200"/>
                 <TableColumn fx:id="colRole"      text="Quyền"        prefWidth="90"  style="-fx-alignment:CENTER;"/>
                 <TableColumn fx:id="colStatus"    text="Trạng thái"   prefWidth="110" style="-fx-alignment:CENTER;"/>
-                <TableColumn fx:id="colAction"    text="Thao tác"     prefWidth="160" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colAction"    text="Thao tác"     prefWidth="240" style="-fx-alignment:CENTER;"/>
             </columns>
             <placeholder>
                 <Label text="Không có dữ liệu" styleClass="table-placeholder"/>

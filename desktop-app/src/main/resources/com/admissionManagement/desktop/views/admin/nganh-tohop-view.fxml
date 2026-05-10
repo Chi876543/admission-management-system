@@ -1,57 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.admissionManagement.desktop.controllers.admin.NganhToHopController"
       styleClass="screen-root" spacing="12">
-
     <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
 
-    <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
-        <Button text="⬆ Import CSV" styleClass="btn-primary" onAction="#onImport"/>
-        <Label text="← Click chọn ngành bên trái để quản lý tổ hợp"
-               styleClass="record-count"/>
+    <HBox alignment="CENTER_LEFT" spacing="8">
+        <Label fx:id="lblError" text="" styleClass="error-label" HBox.hgrow="ALWAYS"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <!-- Nút Import CSV cho NganhToHop -->
+        <Button fx:id="btnImport" text="⬆ Import CSV"
+                styleClass="btn-default" onAction="#onImportCSV"/>
+        <Label fx:id="lblImportStatus" text="" styleClass="record-count"
+               style="-fx-text-fill: #2e7d32;"/>
     </HBox>
 
-    <!-- 2 panel song song -->
     <HBox VBox.vgrow="ALWAYS" spacing="12">
 
         <!-- Panel trái: danh sách ngành -->
-        <VBox HBox.hgrow="ALWAYS" styleClass="table-card" spacing="0">
-            <HBox styleClass="pagination-bar" alignment="CENTER_LEFT">
+        <VBox styleClass="table-card" spacing="0" prefWidth="360" minWidth="300">
+            <HBox styleClass="pagination-bar" alignment="CENTER_LEFT" spacing="8">
                 <Label text="Danh sách ngành" styleClass="inline-form-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="tfSearchNganh" promptText="Tìm..." styleClass="search-box"
+                           prefWidth="140" onKeyReleased="#onSearchNganh"/>
             </HBox>
-            <TableView fx:id="tblNganh" VBox.vgrow="ALWAYS" styleClass="main-table"
-                       onMouseClicked="#onNganhClick">
+            <TableView fx:id="tblNganh" VBox.vgrow="ALWAYS" styleClass="main-table" onMouseClicked="#onNganhClick">
                 <columns>
                     <TableColumn fx:id="colMaNganh"  text="Mã ngành" prefWidth="110"/>
-                    <TableColumn fx:id="colTenNganh" text="Tên ngành" prefWidth="200"/>
+                    <TableColumn fx:id="colTenNganh" text="Tên ngành" prefWidth="220"/>
                 </columns>
                 <placeholder><Label text="Không có ngành" styleClass="table-placeholder"/></placeholder>
             </TableView>
         </VBox>
 
-        <!-- Panel phải: tổ hợp của ngành đang chọn -->
+        <!-- Panel phải: tổ hợp của ngành -->
         <VBox HBox.hgrow="ALWAYS" styleClass="table-card" spacing="0">
-            <HBox styleClass="pagination-bar" alignment="CENTER_LEFT" spacing="8">
-                <Label fx:id="lblSelectedNganh" text="Chọn một ngành để xem tổ hợp"
+
+            <!-- Header: label + combobox + hệ số + nút gán -->
+            <VBox styleClass="pagination-bar" spacing="8">
+                <Label fx:id="lblSelectedNganh" text="← Chọn ngành để quản lý tổ hợp"
                        styleClass="inline-form-title"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <ComboBox fx:id="cbToHopGan" promptText="Chọn tổ hợp..." prefWidth="160"/>
-                <Button text="+ Gán" styleClass="btn-success" onAction="#onGanToHop"/>
-            </HBox>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <ComboBox fx:id="cbToHopGan" promptText="Chọn tổ hợp..." prefWidth="220"/>
+                    <VBox spacing="2" alignment="CENTER">
+                        <Label text="HS Môn 1" style="-fx-font-size:10px;"/>
+                        <TextField fx:id="tfHsMon1" promptText="1" prefWidth="55" styleClass="field-input"/>
+                    </VBox>
+                    <VBox spacing="2" alignment="CENTER">
+                        <Label text="HS Môn 2" style="-fx-font-size:10px;"/>
+                        <TextField fx:id="tfHsMon2" promptText="1" prefWidth="55" styleClass="field-input"/>
+                    </VBox>
+                    <VBox spacing="2" alignment="CENTER">
+                        <Label text="HS Môn 3" style="-fx-font-size:10px;"/>
+                        <TextField fx:id="tfHsMon3" promptText="1" prefWidth="55" styleClass="field-input"/>
+                    </VBox>
+                    <Button text="+ Gán" styleClass="btn-success" onAction="#onGanToHop"
+                            style="-fx-padding: 8 16;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Bảng tổ hợp đã gán -->
             <TableView fx:id="tblToHopCuaNganh" VBox.vgrow="ALWAYS" styleClass="main-table">
                 <columns>
                     <TableColumn fx:id="colMaTH"  text="Mã TH"     prefWidth="80"/>
-                    <TableColumn fx:id="colTenTH" text="Tên tổ hợp" prefWidth="160"/>
-                    <TableColumn fx:id="colMon"   text="Môn thi"    prefWidth="200"/>
-                    <TableColumn fx:id="colXoa"   text="Gỡ"         prefWidth="60" style="-fx-alignment:CENTER;"/>
+                    <TableColumn fx:id="colTenTH" text="Tên TH"     prefWidth="130"/>
+                    <TableColumn fx:id="colMon1"  text="Môn 1"      prefWidth="70"/>
+                    <TableColumn fx:id="colHs1"   text="Hệ số"      prefWidth="55" style="-fx-alignment:CENTER;"/>
+                    <TableColumn fx:id="colMon2"  text="Môn 2"      prefWidth="70"/>
+                    <TableColumn fx:id="colHs2"   text="Hệ số"      prefWidth="55" style="-fx-alignment:CENTER;"/>
+                    <TableColumn fx:id="colMon3"  text="Môn 3"      prefWidth="70"/>
+                    <TableColumn fx:id="colHs3"   text="Hệ số"      prefWidth="55" style="-fx-alignment:CENTER;"/>
+                    <TableColumn fx:id="colXoa"   text="Thao tác"   prefWidth="70" style="-fx-alignment:CENTER;"/>
                 </columns>
-                <placeholder><Label text="Chưa có tổ hợp nào" styleClass="table-placeholder"/></placeholder>
+                <placeholder><Label text="Chưa có tổ hợp nào được gán" styleClass="table-placeholder"/></placeholder>
             </TableView>
         </VBox>
 

@@ -1,51 +1,62 @@
 package com.admissionManagement.desktop.controllers.admin;
 
-import javafx.beans.property.SimpleStringProperty;
+import com.admissionManagement.core.dto.NganhDTO;
+import com.admissionManagement.core.service.NganhBUS;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-// ═══════════════════════════════════════════════════════════════
-//  NganhController
-// ═══════════════════════════════════════════════════════════════
 public class NganhController extends BaseController implements Initializable {
 
-    @FXML private Label    lblFormTitle, lblError, lblCount;
-    @FXML private TextField tfMaNganh, tfTenNganh, tfChiTieu, tfKhoa, tfSearch;
+    @FXML private Label     lblFormTitle, lblError, lblCount, lblImportStatus;
+    @FXML private TextField tfMaNganh, tfTenNganh, tfToHopGoc, tfChiTieu;
+    @FXML private TextField tfDiemSan, tfDiemTrungTuyen, tfSearch;
+    @FXML private CheckBox  cbTuyenThang, cbDgnl, cbThpt, cbVsat;
+
     @FXML private TableView<NganhRow>           tblNganh;
-    @FXML private TableColumn<NganhRow,String>  colMa, colTen, colKhoa, colChiTieu, colDaDangKy;
-    @FXML private TableColumn<NganhRow,Void>    colAction;
+    @FXML private TableColumn<NganhRow, String> colMa, colTen, colToHopGoc;
+    @FXML private TableColumn<NganhRow, String> colChiTieu, colDiemSan, colDiemTrungTuyen, colPhuongThuc;
+    @FXML private TableColumn<NganhRow, Void>   colAction;
 
     private final ObservableList<NganhRow> allData = FXCollections.observableArrayList();
+    private final NganhBUS nganhBUS = new NganhBUS();
     private NganhRow editingRow;
 
-    @Override public void initialize(URL u, ResourceBundle r) {
-        setupTable(); loadData();
+    @Override
+    public void initialize(URL u, ResourceBundle r) {
+        setupTable();
+        loadData();
     }
 
     private void setupTable() {
         colMa.setCellValueFactory(new PropertyValueFactory<>("maNganh"));
         colTen.setCellValueFactory(new PropertyValueFactory<>("tenNganh"));
-        colKhoa.setCellValueFactory(new PropertyValueFactory<>("khoa"));
+        colToHopGoc.setCellValueFactory(new PropertyValueFactory<>("toHopGoc"));
         colChiTieu.setCellValueFactory(new PropertyValueFactory<>("chiTieu"));
-        colDaDangKy.setCellValueFactory(new PropertyValueFactory<>("daDangKy"));
+        colDiemSan.setCellValueFactory(new PropertyValueFactory<>("diemSan"));
+        colDiemTrungTuyen.setCellValueFactory(new PropertyValueFactory<>("diemTrungTuyen"));
+        colPhuongThuc.setCellValueFactory(new PropertyValueFactory<>("phuongThuc"));
+
         colAction.setCellFactory(col -> new TableCell<>() {
             private final HBox box = makeActionCell(
-                () -> loadToForm(getTableView().getItems().get(getIndex())),
-                () -> onDeleteRow(getTableView().getItems().get(getIndex()))
+                    () -> loadToForm(getTableView().getItems().get(getIndex())),
+                    () -> onDeleteRow(getTableView().getItems().get(getIndex()))
             );
             @Override protected void updateItem(Void v, boolean empty) {
                 super.updateItem(v, empty); setGraphic(empty ? null : box);
@@ -53,20 +64,30 @@ public class NganhController extends BaseController implements Initializable {
         });
     }
 
-    private void loadData() {
-        allData.setAll(
-            new NganhRow("7480201","Công nghệ thông tin","Khoa CNTT","120","87"),
-            new NganhRow("7340301","Kế toán","Khoa Kinh tế","80","62"),
-            new NganhRow("7510301","Kỹ thuật điện tử","Khoa Điện - Điện tử","100","45")
-        );
+    public void loadData() {
+        List<NganhDTO> list = new ArrayList<>(nganhBUS.getAllNganh());
+        Collections.reverse(list);
+        allData.setAll(list.stream().map(dto -> new NganhRow(
+                dto.getIdNganh(), dto.getMaNganh(), dto.getTenNganh(),
+                dto.getToHopGoc() != null ? dto.getToHopGoc() : "",
+                String.valueOf(dto.getChiTieu()),
+                dto.getDiemSan() != null ? dto.getDiemSan().toPlainString() : "0",
+                dto.getDiemTrungTuyen() != null ? dto.getDiemTrungTuyen().toPlainString() : "0",
+                "1".equals(dto.getTuyenThang()),
+                "1".equals(dto.getDgnl()),
+                "1".equals(dto.getThpt()),
+                "1".equals(dto.getVsat())
+        )).collect(Collectors.toList()));
         refresh();
     }
 
     private void refresh() {
         String kw = tfSearch != null ? tfSearch.getText().trim().toLowerCase() : "";
         List<NganhRow> f = allData.stream()
-            .filter(r -> kw.isEmpty() || r.getMaNganh().contains(kw) || r.getTenNganh().toLowerCase().contains(kw))
-            .collect(Collectors.toList());
+                .filter(r -> kw.isEmpty()
+                        || r.getMaNganh().toLowerCase().contains(kw)
+                        || r.getTenNganh().toLowerCase().contains(kw))
+                .collect(Collectors.toList());
         tblNganh.setItems(FXCollections.observableArrayList(f));
         lblCount.setText(f.size() + " ngành");
     }
@@ -85,55 +106,146 @@ public class NganhController extends BaseController implements Initializable {
         lblFormTitle.setText("Sửa ngành: " + row.getMaNganh());
         tfMaNganh.setText(row.getMaNganh()); tfMaNganh.setDisable(true);
         tfTenNganh.setText(row.getTenNganh());
-        tfKhoa.setText(row.getKhoa());
+        tfToHopGoc.setText(row.getToHopGoc());
         tfChiTieu.setText(row.getChiTieu());
+        tfDiemSan.setText(row.getDiemSan());
+        tfDiemTrungTuyen.setText(row.getDiemTrungTuyen());
+        cbTuyenThang.setSelected(row.isTuyenThang());
+        cbDgnl.setSelected(row.isDgnl());
+        cbThpt.setSelected(row.isThpt());
+        cbVsat.setSelected(row.isVsat());
+        lblError.setText("");
     }
 
     @FXML private void onSave() {
-        if (tfMaNganh.getText().trim().isEmpty() || tfTenNganh.getText().trim().isEmpty()) {
+        lblError.setText("");
+        String ma  = tfMaNganh.getText().trim();
+        String ten = tfTenNganh.getText().trim();
+        if (ma.isEmpty() || ten.isEmpty()) {
             lblError.setText("Mã ngành và tên ngành không được để trống."); return;
         }
-        if (editingRow == null) {
-            allData.add(new NganhRow(tfMaNganh.getText().trim(), tfTenNganh.getText().trim(),
-                    tfKhoa.getText().trim(), tfChiTieu.getText().trim(), "0"));
-            // TODO: nganhService.create(...)
-        } else {
-            editingRow.setTenNganh(tfTenNganh.getText().trim());
-            editingRow.setKhoa(tfKhoa.getText().trim());
-            editingRow.setChiTieu(tfChiTieu.getText().trim());
-            // TODO: nganhService.update(...)
+        BigDecimal diemSan, diemTT;
+        int chiTieu;
+        try {
+            diemSan = new BigDecimal(tfDiemSan.getText().trim().isEmpty() ? "0" : tfDiemSan.getText().trim());
+            diemTT  = new BigDecimal(tfDiemTrungTuyen.getText().trim().isEmpty() ? "0" : tfDiemTrungTuyen.getText().trim());
+            chiTieu = Integer.parseInt(tfChiTieu.getText().trim().isEmpty() ? "0" : tfChiTieu.getText().trim());
+        } catch (NumberFormatException ex) {
+            lblError.setText("Điểm và chỉ tiêu phải là số."); return;
         }
-        onReset(); refresh();
+
+        NganhDTO dto = new NganhDTO(
+                editingRow != null ? editingRow.getId() : 0,
+                ma, ten, tfToHopGoc.getText().trim(), chiTieu, diemSan, diemTT,
+                cbTuyenThang.isSelected() ? "1" : "0",
+                cbDgnl.isSelected()       ? "1" : "0",
+                cbThpt.isSelected()       ? "1" : "0",
+                cbVsat.isSelected()       ? "1" : "0",
+                0, 0, 0, ""
+        );
+
+        String result = editingRow == null
+                ? nganhBUS.addBangQuyDoi(dto)
+                : nganhBUS.updateNganh(editingRow.getId(), dto);
+
+        if (result.startsWith("Lỗi")) { lblError.setText(result); return; }
+        onReset();
+        loadData();
     }
 
     @FXML private void onReset() {
-        editingRow = null; lblFormTitle.setText("Thêm ngành mới"); lblError.setText("");
+        editingRow = null;
+        lblFormTitle.setText("Thêm ngành mới"); lblError.setText("");
         tfMaNganh.clear(); tfMaNganh.setDisable(false);
-        tfTenNganh.clear(); tfKhoa.clear(); tfChiTieu.clear();
+        tfTenNganh.clear(); tfToHopGoc.clear();
+        tfChiTieu.clear(); tfDiemSan.clear(); tfDiemTrungTuyen.clear();
+        cbTuyenThang.setSelected(false); cbDgnl.setSelected(false);
+        cbThpt.setSelected(false); cbVsat.setSelected(false);
     }
-
-    @FXML private void onImport() { showInfo("Import", "Import CSV sau khi kết nối BE."); }
 
     private void onDeleteRow(NganhRow row) {
-        if (confirmDelete(row.getTenNganh())) {
-            allData.remove(row);
-            // TODO: nganhService.delete(row.getMaNganh())
-            refresh();
+        if (!confirmDelete(row.getTenNganh())) return;
+        String result = nganhBUS.deleteNganh(row.getId());
+        if (result.startsWith("Lỗi")) {
+            showError(result);
+        } else {
+            loadData();
         }
     }
 
-    public static class NganhRow {
-        private String maNganh, tenNganh, khoa, chiTieu, daDangKy;
-        public NganhRow(String ma, String ten, String khoa, String chiTieu, String da) {
-            this.maNganh=ma; this.tenNganh=ten; this.khoa=khoa; this.chiTieu=chiTieu; this.daDangKy=da;
+    // ── Import CSV ────────────────────────────────────────────────────────────
+    @FXML private void onImportCSV() {
+        lblImportStatus.setText("");
+        lblImportStatus.setStyle("-fx-text-fill: #2e7d32;");
+
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Chọn file CSV danh sách ngành");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        File file = chooser.showOpenDialog(tblNganh.getScene().getWindow());
+        if (file == null) return; // người dùng hủy
+
+        try (FileInputStream fis = new FileInputStream(file)) {
+            // TODO: gọi BUS khi bạn hoàn thiện
+            // String result = nganhBUS.importFromCSV(fis);
+            // if (result.startsWith("Lỗi")) {
+            //     lblImportStatus.setStyle("-fx-text-fill: #c62828;");
+            //     lblImportStatus.setText(result);
+            // } else {
+            //     lblImportStatus.setText(result);
+            //     loadData();
+            // }
+
+            // --- Tạm thời: chỉ thông báo chọn file thành công ---
+            lblImportStatus.setText("Đã chọn: " + file.getName() + " (chưa import)");
+        } catch (Exception ex) {
+            lblImportStatus.setStyle("-fx-text-fill: #c62828;");
+            lblImportStatus.setText("Lỗi đọc file: " + ex.getMessage());
         }
-        public String getMaNganh()   { return maNganh; }
-        public String getTenNganh()  { return tenNganh; }
-        public String getKhoa()      { return khoa; }
-        public String getChiTieu()   { return chiTieu; }
-        public String getDaDangKy()  { return daDangKy; }
-        public void setTenNganh(String v)  { tenNganh=v; }
-        public void setKhoa(String v)      { khoa=v; }
-        public void setChiTieu(String v)   { chiTieu=v; }
+    }
+
+    public ObservableList<NganhRow> getAllData() { return allData; }
+
+    // ── Row ───────────────────────────────────────────
+    public static class NganhRow {
+        private int id;
+        private String maNganh, tenNganh, toHopGoc, chiTieu, diemSan, diemTrungTuyen;
+        private boolean tuyenThang, dgnl, thpt, vsat;
+
+        public NganhRow(int id, String maNganh, String tenNganh, String toHopGoc,
+                        String chiTieu, String diemSan, String diemTrungTuyen,
+                        boolean tuyenThang, boolean dgnl, boolean thpt, boolean vsat) {
+            this.id=id; this.maNganh=maNganh; this.tenNganh=tenNganh;
+            this.toHopGoc=toHopGoc; this.chiTieu=chiTieu;
+            this.diemSan=diemSan; this.diemTrungTuyen=diemTrungTuyen;
+            this.tuyenThang=tuyenThang; this.dgnl=dgnl; this.thpt=thpt; this.vsat=vsat;
+        }
+
+        public int    getId()             { return id; }
+        public String getMaNganh()        { return maNganh; }
+        public String getTenNganh()       { return tenNganh; }
+        public String getToHopGoc()       { return toHopGoc; }
+        public String getChiTieu()        { return chiTieu; }
+        public String getDiemSan()        { return diemSan; }
+        public String getDiemTrungTuyen() { return diemTrungTuyen; }
+        public boolean isTuyenThang()     { return tuyenThang; }
+        public boolean isDgnl()           { return dgnl; }
+        public boolean isThpt()           { return thpt; }
+        public boolean isVsat()           { return vsat; }
+
+        public String getPhuongThuc() {
+            List<String> methods = new ArrayList<>();
+            if (tuyenThang) methods.add("Tuyển thẳng");
+            if (dgnl)       methods.add("ĐGNL");
+            if (thpt)       methods.add("THPT");
+            if (vsat)       methods.add("V-SAT");
+            return methods.isEmpty() ? "—" : String.join(", ", methods);
+        }
+
+        public void setTenNganh(String v)       { tenNganh=v; }
+        public void setToHopGoc(String v)       { toHopGoc=v; }
+        public void setChiTieu(String v)        { chiTieu=v; }
+        public void setDiemSan(String v)        { diemSan=v; }
+        public void setDiemTrungTuyen(String v) { diemTrungTuyen=v; }
     }
 }

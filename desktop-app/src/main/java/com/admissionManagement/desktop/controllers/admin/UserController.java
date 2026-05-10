@@ -166,7 +166,7 @@ public class UserController implements Initializable {
     private void loadData() {
         List<UserDTO> users = userBUS.getAllUsers();
         List<UserRow> rows = new ArrayList<>();
-        for (int i = 0; i < users.size(); i++) {
+        for (int i = users.size() - 1; i >= 0; i--) {
             UserDTO u = users.get(i);
             rows.add(new UserRow(
                     String.valueOf(i + 1), u.getId(),

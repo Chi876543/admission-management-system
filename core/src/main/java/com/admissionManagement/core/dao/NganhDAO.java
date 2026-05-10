@@ -36,6 +36,6 @@ public class NganhDAO {
     }
 
     public void deleteWithSession(Session session, Nganh nganh) {
-        session.detach(nganh);
+        session.remove(nganh);
     }
 }

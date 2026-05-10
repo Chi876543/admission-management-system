@@ -45,6 +45,6 @@ public class ToHopMonThiDAO {
 
 
     public void deleteWithSession(Session session, ToHopMonThi toHopMonThi) {
-        session.detach(toHopMonThi);
+        session.remove(toHopMonThi);
     }
 }
