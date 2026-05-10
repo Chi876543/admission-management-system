@@ -3,9 +3,12 @@ package com.admissionManagement.core.helper;
 import com.admissionManagement.core.dto.BangQuyDoiDTO;
 import com.admissionManagement.core.dto.NganhToHopDTO;
 import com.admissionManagement.core.dto.ThiSinhDTO;
+import com.admissionManagement.core.entity.ToHopMonThi;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class DatabaseHelper {
     public static BigDecimal quyDoiDiemVSATVaDGNL(BigDecimal diem, BangQuyDoiDTO bangQuyDoi) {
@@ -53,7 +56,7 @@ public class DatabaseHelper {
 
         BigDecimal mucDiemUuTienKV = switch (khuVuc) {
             case "KV1" -> new BigDecimal("0.75");
-            case "KV2-NT" -> new BigDecimal("0.50");
+            case "KV2NT" -> new BigDecimal("0.50");
             case "KV2" -> new BigDecimal("0.25");
             default -> BigDecimal.ZERO;
         };
@@ -91,6 +94,69 @@ public class DatabaseHelper {
             String cleanedValue = value.trim().replace(",", ".");
             return new BigDecimal(cleanedValue);
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static final Map<String, String> DICTIONARY_MON_THI = Map.ofEntries(
+            Map.entry("TO", "Toán"),
+            Map.entry("VA", "Văn"),
+            Map.entry("LI", "Lý"),
+            Map.entry("HO", "Hóa"),
+            Map.entry("SI", "Sinh"),
+            Map.entry("SU", "Sử"),
+            Map.entry("DI", "Địa"),
+            Map.entry("N1", "Tiếng Anh"),
+            Map.entry("TI", "Tin học"),
+            Map.entry("CNCN", "Công nghệ công nghiệp"),
+            Map.entry("CNNN", "Công nghệ nông nghiệp"),
+            Map.entry("NK1", "Kể chuyện - Đọc diễn cảm"),
+            Map.entry("NK2", "Hát - nhạc"),
+            Map.entry("NK3", "Hình họa"),
+            Map.entry("NK4", "Trang trí"),
+            Map.entry("NK5", "Hát - Nhạc cụ"),
+            Map.entry("NK6", "Xướng âm - Thẩm âm - Tiết tấu"),
+            Map.entry("KTPL", "Giáo dục pháp luật và kinh tế")
+    );
+
+    public static String dichTenMon(String maMon) {
+        if (maMon == null) return "Không xác định";
+        return DICTIONARY_MON_THI.getOrDefault(maMon.trim().toUpperCase(), maMon.trim());
+    }
+
+    public static ToHopMonThi parseToHopEntity(String chuoiToHop) {
+        if (chuoiToHop == null || chuoiToHop.trim().isEmpty()) {
+            return null;
+        }
+
+        try {
+            int viTriMoNgoac = chuoiToHop.indexOf("(");
+            int viTriDongNgoac = chuoiToHop.indexOf(")");
+
+            if (viTriMoNgoac == -1 || viTriDongNgoac == -1) {
+                return null;
+            }
+            String maToHop = chuoiToHop.substring(0, viTriMoNgoac).trim();
+            String phanLoi = chuoiToHop.substring(viTriMoNgoac + 1, viTriDongNgoac).trim();
+            String[] cacMon = phanLoi.split(",");
+            if (cacMon.length < 3) {
+                return null;
+            }
+            String mon1 = cacMon[0].split("-")[0].trim();
+            String mon2 = cacMon[1].split("-")[0].trim();
+            String mon3 = cacMon[2].split("-")[0].trim();
+
+            ToHopMonThi entity = new ToHopMonThi();
+            entity.setMaToHop(maToHop);
+            entity.setMon1(mon1);
+            entity.setMon2(mon2);
+            entity.setMon3(mon3);
+            entity.setTenToHop(dichTenMon(mon1) + ", " + dichTenMon(mon2) + ", " + dichTenMon(mon3));
+
+            return entity;
+
+        } catch (Exception e) {
+            System.out.println("Lỗi bóc tách tổ hợp: " + chuoiToHop);
             return null;
         }
     }

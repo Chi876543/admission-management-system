@@ -5,15 +5,25 @@ import com.admissionManagement.core.dao.ToHopMonThiDAO;
 import com.admissionManagement.core.dto.BangQuyDoiDTO;
 import com.admissionManagement.core.dto.ToHopMonThiDTO;
 import com.admissionManagement.core.entity.BangQuyDoi;
+import com.admissionManagement.core.entity.DiemThiXetTuyen;
 import com.admissionManagement.core.entity.ThiSinh;
 import com.admissionManagement.core.entity.ToHopMonThi;
+import com.admissionManagement.core.helper.DatabaseHelper;
 import com.admissionManagement.core.util.HibernateUtil;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ToHopMonThiBUS {
@@ -61,6 +71,49 @@ public class ToHopMonThiBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
+        }
+    }
+
+    public String importCsvData(File file) {
+        int successCount = 0;
+
+        try (Reader reader = Files.newBufferedReader(file.toPath());
+             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+             Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            Transaction tx = session.beginTransaction();
+
+            List<String> listMaDaCo = dao.getAllMaToHop(session);
+            Set<String> cacheMaToHop = new HashSet<>(listMaDaCo);
+
+            String[] line;
+
+            while ((line = csvReader.readNext()) != null) {
+                try {
+                    if (line.length <= 3) continue;
+                    ToHopMonThi entity = DatabaseHelper.parseToHopEntity(line[3].trim());
+
+                    if (entity != null) {
+                        if (!cacheMaToHop.contains(entity.getMaToHop())) {
+                            session.persist(entity);
+                            cacheMaToHop.add(entity.getMaToHop());
+                            successCount++;
+                        }
+                    }
+                } catch (Exception e) {
+                    // Ghi log lỗi dòng
+                    System.out.println("Lỗi parse dòng tổ hợp: " + e.getMessage());
+                }
+            }
+
+            if (tx.isActive()) {
+                tx.commit();
+            }
+
+            return "Import thành công " + successCount + " tổ hợp môn thi mới!";
+
+        } catch (Exception e) {
+            return "Lỗi đọc file: " + e.getMessage();
         }
     }
 
