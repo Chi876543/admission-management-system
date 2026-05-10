@@ -21,7 +21,7 @@ public class Nganh {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idnganh")
+    @Column(name = "idnganh", nullable = false)
     private int idNganh;
 
     @Column(name = "manganh", length = 45, nullable = false)

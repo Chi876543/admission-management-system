@@ -17,7 +17,7 @@ public class DiemThiXetTuyen {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iddiemthi")
+    @Column(name = "iddiemthi", nullable = false)
     private int idDiemThi;
 
     @OneToOne(fetch = FetchType.LAZY)

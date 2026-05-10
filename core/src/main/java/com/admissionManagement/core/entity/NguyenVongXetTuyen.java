@@ -16,7 +16,7 @@ public class NguyenVongXetTuyen {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idnv")
+    @Column(name = "idnv", nullable = false)
     private int idNv;
 
     @ManyToOne(fetch = FetchType.LAZY)
