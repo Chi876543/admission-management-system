@@ -14,6 +14,10 @@ import java.util.List;
         name = "xt_nganh",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_nganh_manganh", columnNames = {"manganh"})
+        },
+        indexes = {
+                @Index(name = "idx_ma_nganh", columnList = "manganh"),
+                @Index(name = "idx_ten_nganh", columnList = "tennganh"),
         }
 )
 

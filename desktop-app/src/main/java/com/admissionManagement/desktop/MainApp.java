@@ -12,7 +12,6 @@ import java.util.Objects;
 public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Load màn hình login trước
         Parent root = FXMLLoader.load(
                 Objects.requireNonNull(getClass().getResource("/com/admissionManagement/desktop/views/admin/login.fxml"))
         );

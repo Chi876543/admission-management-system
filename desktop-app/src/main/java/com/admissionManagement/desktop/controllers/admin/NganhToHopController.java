@@ -251,18 +251,15 @@ public class NganhToHopController extends BaseController implements Initializabl
         File file = chooser.showOpenDialog(tblNganh.getScene().getWindow());
         if (file == null) return;
 
-        try (FileInputStream fis = new FileInputStream(file)) {
-            // TODO: gọi BUS khi bạn hoàn thiện
-            // String result = nganhToHopBUS.importFromCSV(fis);
-            // if (result.startsWith("Lỗi")) {
-            //     lblImportStatus.setStyle("-fx-text-fill: #c62828;");
-            //     lblImportStatus.setText(result);
-            // } else {
-            //     lblImportStatus.setText(result);
-            //     loadAllData();
-            // }
-
-            lblImportStatus.setText("Đã chọn: " + file.getName() + " (chưa import)");
+        try {
+             String result = nganhToHopBUS.importCsvData(file);
+             if (result.startsWith("Lỗi")) {
+                 lblImportStatus.setStyle("-fx-text-fill: #c62828;");
+                 lblImportStatus.setText(result);
+             } else {
+                 lblImportStatus.setText(result);
+                 loadAllData();
+             }
         } catch (Exception ex) {
             lblImportStatus.setStyle("-fx-text-fill: #c62828;");
             lblImportStatus.setText("Lỗi đọc file: " + ex.getMessage());

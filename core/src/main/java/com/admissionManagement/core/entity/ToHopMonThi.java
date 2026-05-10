@@ -11,6 +11,9 @@ import java.util.List;
         name = "xt_tohop_monthi",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_tohopmonthi_matohop", columnNames = {"matohop"})
+        },
+        indexes = {
+                @Index(name = "idx_ma_to_hop", columnList = "matohop")
         }
 )
 @Data
