@@ -23,8 +23,6 @@ public class NganhToHopDAO {
         return nganhToHop;
     }
 
-
-
     public List<NganhToHop> getAllWithSession(Session session){
         String query = "FROM NganhToHop ";
         List listNganhToHop = session.createQuery(query).list();
