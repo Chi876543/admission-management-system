@@ -2,6 +2,7 @@ package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.ThiSinhDAO;
 import com.admissionManagement.core.dto.ThiSinhDTO;
+import com.admissionManagement.core.entity.DiemThiXetTuyen;
 import com.admissionManagement.core.entity.ThiSinh;
 import com.admissionManagement.core.helper.DatabaseHelper;
 import com.admissionManagement.core.util.HibernateUtil;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.Reader;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
@@ -104,10 +106,36 @@ public class ThiSinhBUS {
                     entity.setEmail(null);
                     entity.setPassword("123456");
                     entity.setNoiSinh(line[35].trim());
-                    entity.setDoiTuong(line[5].trim());
-                    entity.setKhuVuc(line[6].trim());
+                    String doiTuong = switch (line[5].trim()) {
+                        case "01" -> "UT1";
+                        case "06a" -> "UT2";
+                        default -> null;
+                    };
+                    entity.setDoiTuong(doiTuong);
+                    entity.setKhuVuc("KV" + line[6].trim());
                     entity.setUpdatedAt(LocalDate.now());
                     entity.setGioiTinh(ThiSinh.GioiTinh.fromLabel(line[4].trim()));
+
+                    DiemThiXetTuyen diem = new DiemThiXetTuyen();
+                    diem.setDiemToan(DatabaseHelper.parseDiem(line[7].trim()));
+                    diem.setDiemVan(DatabaseHelper.parseDiem(line[8].trim()));
+                    diem.setDiemLy(DatabaseHelper.parseDiem(line[9].trim()));
+                    diem.setDiemHoa(DatabaseHelper.parseDiem(line[10].trim()));
+                    diem.setDiemSinh(DatabaseHelper.parseDiem(line[11].trim()));
+                    diem.setDiemSu(DatabaseHelper.parseDiem(line[12].trim()));
+                    diem.setDiemDia(DatabaseHelper.parseDiem(line[13].trim()));
+                    diem.setN1Thi(DatabaseHelper.parseDiem(line[15].trim()));
+                    diem.setDiemKtpl(DatabaseHelper.parseDiem(line[17].trim()));
+                    diem.setDiemTin(DatabaseHelper.parseDiem(line[18].trim()));
+                    diem.setCncn(DatabaseHelper.parseDiem(line[19].trim()));
+                    diem.setCnnn(DatabaseHelper.parseDiem(line[20].trim()));
+                    diem.setNk1(DatabaseHelper.parseDiem(line[22].trim()));
+                    diem.setNk2(DatabaseHelper.parseDiem(line[23].trim()));
+                    diem.setNk3(DatabaseHelper.parseDiem(line[24].trim()));
+                    diem.setNk4(DatabaseHelper.parseDiem(line[25].trim()));
+                    diem.setNk5(DatabaseHelper.parseDiem(line[26].trim()));
+                    diem.setNk6(DatabaseHelper.parseDiem(line[27].trim()));
+                    entity.asyncDiemThi(diem);
 
                     session.persist(entity);
                     successCount++;

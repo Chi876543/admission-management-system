@@ -82,4 +82,16 @@ public class DatabaseHelper {
                     .divide(new BigDecimal("7.5"), 5, RoundingMode.HALF_UP);
         }
     }
+
+    public static BigDecimal parseDiem(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            String cleanedValue = value.trim().replace(",", ".");
+            return new BigDecimal(cleanedValue);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

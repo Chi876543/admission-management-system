@@ -71,4 +71,8 @@ public class DiemThiXetTuyen {
     //Năng khiếu
     @Column(name = "NK1", precision = 8, scale = 2) private BigDecimal nk1;
     @Column(name = "NK2", precision = 8, scale = 2) private BigDecimal nk2;
+    @Column(name = "NK3", precision = 8, scale = 2) private BigDecimal nk3;
+    @Column(name = "NK4", precision = 8, scale = 2) private BigDecimal nk4;
+    @Column(name = "NK5", precision = 8, scale = 2) private BigDecimal nk5;
+    @Column(name = "NK6", precision = 8, scale = 2) private BigDecimal nk6;
 }
