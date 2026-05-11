@@ -1,6 +1,7 @@
 package com.admissionManagement.core.dao;
 
 import com.admissionManagement.core.entity.Nganh;
+import com.admissionManagement.core.entity.NganhToHop;
 import com.admissionManagement.core.entity.ThiSinh;
 import org.hibernate.Session;
 import jakarta.persistence.criteria.*;
@@ -38,6 +39,12 @@ public class ThiSinhDAO {
         int offset = pageIndex * pageSize;
 
         return session.createQuery(cq).setFirstResult(offset).setMaxResults(pageSize).getResultList();
+    }
+
+    public List<ThiSinh> getAll(Session session){
+        String query = "FROM ThiSinh ";
+        List listThiSinh = session.createQuery(query).list();
+        return listThiSinh;
     }
 
     public void updateWithSession(Session session, ThiSinh newThiSinh) {

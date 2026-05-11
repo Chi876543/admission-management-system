@@ -29,6 +29,7 @@ public class ThiSinhController extends BaseController implements Initializable {
     private final NganhBUS nganhBUS = new NganhBUS();
     private final NganhToHopBUS nganhToHopBUS = new NganhToHopBUS();
     private final DiemThiXetTuyenBUS diemThiXetTuyenBUS = new DiemThiXetTuyenBUS();
+    private final DiemCongXetTuyenBUS diemCongXetTuyenBUS = new DiemCongXetTuyenBUS();
 
     // Giao diện View
     @FXML private TextField tfSearch;
@@ -159,7 +160,7 @@ public class ThiSinhController extends BaseController implements Initializable {
             Task<String> importTask = new Task<>() {
                 @Override
                 protected String call() throws Exception {
-                    return diemThiXetTuyenBUS.importDGNLCsvData(selectedFile);
+                    return diemCongXetTuyenBUS.importUtxtCsvData(selectedFile);
                 }
             };
 
