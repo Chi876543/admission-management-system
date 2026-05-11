@@ -18,36 +18,30 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:5173")
 public class TraCuuController {
 
-    @Autowired
-    private ThiSinhBUS thiSinhBUS;
+    @Autowired private ThiSinhBUS thiSinhBUS;
+    @Autowired private NguyenVongXetTuyenBUS nguyenVongBUS;
+    @Autowired private NganhBUS nganhBUS;
 
-    @Autowired
-    private NguyenVongXetTuyenBUS nguyenVongXetTuyenBUS;
-
-    @Autowired
-    private NganhBUS nganhBUS;
-
-    // Dashboard.jsx gọi: GET /api/tra-cuu?sbd=123456&ngaySinh=01012005
+    /**
+     * GET /api/tra-cuu?sbd=123456&ngaySinh=01012005
+     * Trả về: { thiSinh, nguyenVong }
+     */
     @GetMapping
     public ResponseEntity<?> traCuu(
-            @RequestParam String sbd,
-            @RequestParam String ngaySinh
-    ) {
-        ThiSinhDTO thiSinh = thiSinhBUS.findBySbd(sbd, ngaySinh);
-        if (thiSinh == null) {
-            return ResponseEntity.status(404).body("Không tìm thấy thí sinh");
-        }
-
-        List<NguyenVongXetTuyenDTO> nguyenVong =
-                nguyenVongXetTuyenBUS.getByThiSinhCccd(thiSinh.getCccd());
-
-        return ResponseEntity.ok(Map.of(
-                "thiSinh", thiSinh,
-                "nguyenVong", nguyenVong
-        ));
+            @RequestParam(name = "sbd") String sbd,
+            @RequestParam(name = "ngaySinh") String ngaySinh) {
+        String ngaySinhFormatted = ngaySinh.replaceAll("(\\d{2})(\\d{2})(\\d{4})", "$1/$2/$3");
+        ThiSinhDTO thiSinh = thiSinhBUS.findBySbd(sbd, ngaySinhFormatted);
+        if (thiSinh == null)
+            return ResponseEntity.status(404).body("Không tìm thấy thí sinh với SBD: " + sbd);
+        List<NguyenVongXetTuyenDTO> nguyenVong = nguyenVongBUS.getByThiSinhCccd(thiSinh.getCccd());
+        return ResponseEntity.ok(Map.of("thiSinh", thiSinh, "nguyenVong", nguyenVong));
     }
 
-    // Dashboard.jsx cần danh sách ngành để hiển thị trong dropdown công cụ tính điểm
+    /**
+     * GET /api/tra-cuu/nganh
+     * Danh sách ngành cho dropdown tính điểm
+     */
     @GetMapping("/nganh")
     public ResponseEntity<List<NganhDTO>> getAllNganh() {
         return ResponseEntity.ok(nganhBUS.getAllNganh());
