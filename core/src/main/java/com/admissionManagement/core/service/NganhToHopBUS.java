@@ -57,6 +57,7 @@ public class NganhToHopBUS {
                 entity.getThMon3(),
                 entity.getHsMon3(),
                 entity.getTbKeys(),
+
                 entity.getAnh(),
                 entity.getToan(),
                 entity.getLy(),
@@ -66,16 +67,21 @@ public class NganhToHopBUS {
                 entity.getSu(),
                 entity.getDia(),
                 entity.getTin(),
+
                 entity.getNk1(),
                 entity.getNk2(),
                 entity.getNk3(),
                 entity.getNk4(),
                 entity.getNk5(),
                 entity.getNk6(),
+
                 entity.getCncn(),
                 entity.getCnnn(),
+
                 entity.getKhac(),
+
                 entity.getKtpl(),
+
                 entity.getDoLech()
         );
     }
@@ -108,6 +114,7 @@ public class NganhToHopBUS {
             nganhToHop.setThMon2(nganhToHopDTO.getThMon2());
             nganhToHop.setThMon3(nganhToHopDTO.getThMon3());
             nganhToHop.setTbKeys(nganhToHopDTO.getTbKeys());
+
             nganhToHop.setAnh(nganhToHopDTO.getAnh());
             nganhToHop.setToan(nganhToHopDTO.getToan());
             nganhToHop.setLy(nganhToHopDTO.getLy());
@@ -117,8 +124,21 @@ public class NganhToHopBUS {
             nganhToHop.setSu(nganhToHopDTO.getSu());
             nganhToHop.setDia(nganhToHopDTO.getDia());
             nganhToHop.setTin(nganhToHopDTO.getTin());
+
+            nganhToHop.setNk1(nganhToHopDTO.getNk1());
+            nganhToHop.setNk2(nganhToHopDTO.getNk2());
+            nganhToHop.setNk3(nganhToHopDTO.getNk3());
+            nganhToHop.setNk4(nganhToHopDTO.getNk4());
+            nganhToHop.setNk5(nganhToHopDTO.getNk5());
+            nganhToHop.setNk6(nganhToHopDTO.getNk6());
+
+            nganhToHop.setCncn(nganhToHopDTO.getCncn());
+            nganhToHop.setCnnn(nganhToHopDTO.getCnnn());
+
             nganhToHop.setKhac(nganhToHopDTO.getKhac());
+
             nganhToHop.setKtpl(nganhToHopDTO.getKtpl());
+
             nganhToHop.setDoLech(nganhToHopDTO.getDoLech());
 
             dao.addWithSession(session, nganhToHop);
@@ -248,6 +268,7 @@ public class NganhToHopBUS {
             nganhToHop.setThMon2(newNganhToHopDTO.getThMon2());
             nganhToHop.setThMon3(newNganhToHopDTO.getThMon3());
             nganhToHop.setTbKeys(newNganhToHopDTO.getTbKeys());
+
             nganhToHop.setAnh(newNganhToHopDTO.getAnh());
             nganhToHop.setToan(newNganhToHopDTO.getToan());
             nganhToHop.setLy(newNganhToHopDTO.getLy());
@@ -257,8 +278,21 @@ public class NganhToHopBUS {
             nganhToHop.setSu(newNganhToHopDTO.getSu());
             nganhToHop.setDia(newNganhToHopDTO.getDia());
             nganhToHop.setTin(newNganhToHopDTO.getTin());
+
+            nganhToHop.setNk1(newNganhToHopDTO.getNk1());
+            nganhToHop.setNk2(newNganhToHopDTO.getNk2());
+            nganhToHop.setNk3(newNganhToHopDTO.getNk3());
+            nganhToHop.setNk4(newNganhToHopDTO.getNk4());
+            nganhToHop.setNk5(newNganhToHopDTO.getNk5());
+            nganhToHop.setNk6(newNganhToHopDTO.getNk6());
+
+            nganhToHop.setCncn(newNganhToHopDTO.getCncn());
+            nganhToHop.setCnnn(newNganhToHopDTO.getCnnn());
+
             nganhToHop.setKhac(newNganhToHopDTO.getKhac());
+
             nganhToHop.setKtpl(newNganhToHopDTO.getKtpl());
+
             nganhToHop.setDoLech(newNganhToHopDTO.getDoLech());
 
             dao.updateWithSession(session, nganhToHop);

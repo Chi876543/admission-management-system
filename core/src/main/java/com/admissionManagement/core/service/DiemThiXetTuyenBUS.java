@@ -94,6 +94,7 @@ public class DiemThiXetTuyenBUS {
             diemThiXetTuyen.setThiSinh(thiSinhGoc);
             diemThiXetTuyen.setSoBaoDanh(diemThiXetTuyenDTO.getSoBaoDanh());
             diemThiXetTuyen.setPhuongThuc(diemThiXetTuyenDTO.getPhuongThuc());
+
             diemThiXetTuyen.setDiemToan(diemThiXetTuyenDTO.getDiemToan());
             diemThiXetTuyen.setDiemLy(diemThiXetTuyenDTO.getDiemLy());
             diemThiXetTuyen.setDiemHoa(diemThiXetTuyenDTO.getDiemHoa());
@@ -108,8 +109,22 @@ public class DiemThiXetTuyenBUS {
             diemThiXetTuyen.setCncn(diemThiXetTuyenDTO.getCncn());
             diemThiXetTuyen.setCnnn(diemThiXetTuyenDTO.getCnnn());
             diemThiXetTuyen.setNl1(diemThiXetTuyenDTO.getNl1());
+
+            diemThiXetTuyen.setDiemToanVSAT(diemThiXetTuyenDTO.getDiemToanVSAT());
+            diemThiXetTuyen.setDiemLyVSAT(diemThiXetTuyenDTO.getDiemLyVSAT());
+            diemThiXetTuyen.setDiemHoaVSAT(diemThiXetTuyenDTO.getDiemHoaVSAT());
+            diemThiXetTuyen.setDiemSinhVSAT(diemThiXetTuyenDTO.getDiemSinhVSAT());
+            diemThiXetTuyen.setDiemSuVSAT(diemThiXetTuyenDTO.getDiemSuVSAT());
+            diemThiXetTuyen.setDiemDiaVSAT(diemThiXetTuyenDTO.getDiemDiaVSAT());
+            diemThiXetTuyen.setDiemVanVSAT(diemThiXetTuyenDTO.getDiemVanVSAT());
+            diemThiXetTuyen.setN1VSAT(diemThiXetTuyenDTO.getN1VSAT());
+
             diemThiXetTuyen.setNk1(diemThiXetTuyenDTO.getNk1());
             diemThiXetTuyen.setNk2(diemThiXetTuyenDTO.getNk2());
+            diemThiXetTuyen.setNk3(diemThiXetTuyenDTO.getNk3());
+            diemThiXetTuyen.setNk4(diemThiXetTuyenDTO.getNk4());
+            diemThiXetTuyen.setNk5(diemThiXetTuyenDTO.getNk5());
+            diemThiXetTuyen.setNk6(diemThiXetTuyenDTO.getNk6());
 
             dao.addWithSession(session, diemThiXetTuyen);
 
@@ -301,6 +316,7 @@ public class DiemThiXetTuyenBUS {
             diemThiXetTuyen.setThiSinh(thiSinhGoc);
             diemThiXetTuyen.setSoBaoDanh(newDiemThiXetTuyenDTO.getSoBaoDanh());
             diemThiXetTuyen.setPhuongThuc(newDiemThiXetTuyenDTO.getPhuongThuc());
+
             diemThiXetTuyen.setDiemToan(newDiemThiXetTuyenDTO.getDiemToan());
             diemThiXetTuyen.setDiemLy(newDiemThiXetTuyenDTO.getDiemLy());
             diemThiXetTuyen.setDiemHoa(newDiemThiXetTuyenDTO.getDiemHoa());
@@ -315,8 +331,22 @@ public class DiemThiXetTuyenBUS {
             diemThiXetTuyen.setCncn(newDiemThiXetTuyenDTO.getCncn());
             diemThiXetTuyen.setCnnn(newDiemThiXetTuyenDTO.getCnnn());
             diemThiXetTuyen.setNl1(newDiemThiXetTuyenDTO.getNl1());
+
+            diemThiXetTuyen.setDiemToanVSAT(newDiemThiXetTuyenDTO.getDiemToanVSAT());
+            diemThiXetTuyen.setDiemLyVSAT(newDiemThiXetTuyenDTO.getDiemLyVSAT());
+            diemThiXetTuyen.setDiemHoaVSAT(newDiemThiXetTuyenDTO.getDiemHoaVSAT());
+            diemThiXetTuyen.setDiemSinhVSAT(newDiemThiXetTuyenDTO.getDiemSinhVSAT());
+            diemThiXetTuyen.setDiemSuVSAT(newDiemThiXetTuyenDTO.getDiemSuVSAT());
+            diemThiXetTuyen.setDiemDiaVSAT(newDiemThiXetTuyenDTO.getDiemDiaVSAT());
+            diemThiXetTuyen.setDiemVanVSAT(newDiemThiXetTuyenDTO.getDiemVanVSAT());
+            diemThiXetTuyen.setN1VSAT(newDiemThiXetTuyenDTO.getN1VSAT());
+
             diemThiXetTuyen.setNk1(newDiemThiXetTuyenDTO.getNk1());
             diemThiXetTuyen.setNk2(newDiemThiXetTuyenDTO.getNk2());
+            diemThiXetTuyen.setNk3(newDiemThiXetTuyenDTO.getNk3());
+            diemThiXetTuyen.setNk4(newDiemThiXetTuyenDTO.getNk4());
+            diemThiXetTuyen.setNk5(newDiemThiXetTuyenDTO.getNk5());
+            diemThiXetTuyen.setNk6(newDiemThiXetTuyenDTO.getNk6());
 
             dao.updateWithSession(session, diemThiXetTuyen);
 
@@ -397,17 +427,17 @@ public class DiemThiXetTuyenBUS {
                 "SELECT 'VSAT' as loai, 'Ngoại ngữ' as mon, COUNT(N1_VSAT), MIN(N1_VSAT), MAX(N1_VSAT), AVG(N1_VSAT) FROM xt_diemthixettuyen WHERE N1_VSAT IS NOT NULL " +
                 "UNION ALL " +
                 //Năng khiếu
-                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 1' as mon, COUNT(NK1), MIN(NK1), MAX(NK1), AVG(NK1) FROM xt_diemthixettuyen WHERE NK1 IS NOT NULL " +
+                "SELECT 'Năng khiếu' as loai, 'Kể chuyện - Đọc diễn cảm' as mon, COUNT(NK1), MIN(NK1), MAX(NK1), AVG(NK1) FROM xt_diemthixettuyen WHERE NK1 IS NOT NULL " +
                 "UNION ALL " +
-                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 2' as mon, COUNT(NK2), MIN(NK2), MAX(NK2), AVG(NK2) FROM xt_diemthixettuyen WHERE NK2 IS NOT NULL " +
+                "SELECT 'Năng khiếu' as loai, 'Hát - Nhạc' as mon, COUNT(NK2), MIN(NK2), MAX(NK2), AVG(NK2) FROM xt_diemthixettuyen WHERE NK2 IS NOT NULL " +
                 "UNION ALL " +
-                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 3' as mon, COUNT(NK3), MIN(NK3), MAX(NK3), AVG(NK3) FROM xt_diemthixettuyen WHERE NK3 IS NOT NULL " +
+                "SELECT 'Năng khiếu' as loai, 'Hình họa' as mon, COUNT(NK3), MIN(NK3), MAX(NK3), AVG(NK3) FROM xt_diemthixettuyen WHERE NK3 IS NOT NULL " +
                 "UNION ALL " +
-                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 4' as mon, COUNT(NK4), MIN(NK4), MAX(NK4), AVG(NK4) FROM xt_diemthixettuyen WHERE NK4 IS NOT NULL " +
+                "SELECT 'Năng khiếu' as loai, 'Trang trí' as mon, COUNT(NK4), MIN(NK4), MAX(NK4), AVG(NK4) FROM xt_diemthixettuyen WHERE NK4 IS NOT NULL " +
                 "UNION ALL " +
-                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 5' as mon, COUNT(NK5), MIN(NK5), MAX(NK5), AVG(NK5) FROM xt_diemthixettuyen WHERE NK5 IS NOT NULL " +
+                "SELECT 'Năng khiếu' as loai, 'Hát - Nhạc cụ' as mon, COUNT(NK5), MIN(NK5), MAX(NK5), AVG(NK5) FROM xt_diemthixettuyen WHERE NK5 IS NOT NULL " +
                 "UNION ALL " +
-                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 6' as mon, COUNT(NK6), MIN(NK6), MAX(NK6), AVG(NK6) FROM xt_diemthixettuyen WHERE NK6 IS NOT NULL " +
+                "SELECT 'Năng khiếu' as loai, 'Xướng âm - Thẩm âm - Tiết tấu' as mon, COUNT(NK6), MIN(NK6), MAX(NK6), AVG(NK6) FROM xt_diemthixettuyen WHERE NK6 IS NOT NULL " +
                 "UNION ALL " +
                 //ĐGNL
                 "SELECT 'ĐGNL', 'Đánh giá năng lực', COUNT(NL1), MIN(NL1), MAX(NL1), AVG(NL1) FROM xt_diemthixettuyen WHERE NL1 IS NOT NULL";
