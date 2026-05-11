@@ -16,8 +16,10 @@ import java.io.File;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,14 +44,11 @@ public class DiemCongXetTuyenBUS {
         return new DiemCongXetTuyenDTO(
                 entity.getIdDiemCong(),
                 entity.getThiSinh().getCccd(),
-                entity.getNganh().getMaNganh(),
-                entity.getToHopMonThi().getMaToHop(),
+                entity.getMon(),
                 entity.getPhuongThuc(),
-                entity.getDiemCC(),
-                entity.getDiemUtxt(),
-                entity.getDiemTong(),
-                entity.getGhiChu(),
-                entity.getDcKeys()
+                entity.getDiemCongToHopXetTuyen(),
+                entity.getDiemCongKhongXetToHopXetTuyen(),
+                entity.getGhiChu()
         );
     }
 
@@ -64,28 +63,17 @@ public class DiemCongXetTuyenBUS {
             tx = session.beginTransaction();
 
             ThiSinh thiSinhGoc = thisinhdao.getByCccdWithSesstion(session, diemCongXetTuyenDTO.getTsCccd());
-            Nganh nganhGoc = nganhdao.getByMaNganhWithSession(session, diemCongXetTuyenDTO.getMaNganh());
-            ToHopMonThi toHopGoc = tohopdao.getByMaToHopWithSession(session, diemCongXetTuyenDTO.getMaToHop());
             if (thiSinhGoc == null) {
                 return "Lỗi: Không tìm thấy Thí sinh có cccd " + diemCongXetTuyenDTO.getTsCccd();
-            }
-            if (toHopGoc == null) {
-                return "Lỗi: Không tìm thấy Tổ hợp có mã " + diemCongXetTuyenDTO.getMaToHop();
-            }
-            if (nganhGoc == null) {
-                return "Lỗi: Không tìm thấy Ngành có mã " + diemCongXetTuyenDTO.getMaNganh();
             }
 
             DiemCongXetTuyen diemCongXetTuyen = new DiemCongXetTuyen();
             diemCongXetTuyen.setThiSinh(thiSinhGoc);
-            diemCongXetTuyen.setNganh(nganhGoc);
-            diemCongXetTuyen.setToHopMonThi(toHopGoc);
+            diemCongXetTuyen.setMon(diemCongXetTuyenDTO.getMon());
             diemCongXetTuyen.setPhuongThuc(diemCongXetTuyenDTO.getPhuongThuc());
-            diemCongXetTuyen.setDiemCC(diemCongXetTuyenDTO.getDiemCC());
-            diemCongXetTuyen.setDiemUtxt(diemCongXetTuyenDTO.getDiemUtxt());
-            diemCongXetTuyen.setDiemTong(diemCongXetTuyenDTO.getDiemTong());
+            diemCongXetTuyen.setDiemCongToHopXetTuyen(diemCongXetTuyenDTO.getDiemCongToHopXetTuyen());
+            diemCongXetTuyen.setDiemCongKhongXetToHopXetTuyen(diemCongXetTuyenDTO.getDiemCongKhongXetToHopXetTuyen());
             diemCongXetTuyen.setGhiChu(diemCongXetTuyenDTO.getGhiChu());
-            diemCongXetTuyen.setDcKeys(diemCongXetTuyenDTO.getDcKeys());
 
             dao.addWithSession(session, diemCongXetTuyen);
 
@@ -108,49 +96,34 @@ public class DiemCongXetTuyenBUS {
              CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
              Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            Map<String, NganhToHop> cacheNganhToHop = nganhtohopdao.getAllWithSession(session).stream()
-                    .collect(Collectors.toMap(NganhToHop::getTbKeys, n -> n));
             Map<String, ThiSinh> cacheThiSinh = thisinhdao.getAll(session).stream()
                     .collect(Collectors.toMap(ThiSinh::getCccd, n -> n));
 
             String[] line;
             Transaction tx = session.beginTransaction();
 
+            String[] danhSachPhuongThuc = {"THPT", "VSAT"};
+
             while ((line = csvReader.readNext()) != null) {
                 try {
                     ThiSinh thiSinh = cacheThiSinh.get(line[1].trim());
-                    if (thiSinh == null) {
-                        continue;
-                    }
+                    if (thiSinh == null) continue;
 
+                    String cap = line[2].trim().toLowerCase();
+                    String monDoatGiai = line[4].trim();
+                    String loaiGiai = line[5].trim().toLowerCase();
                     String ghiChu = line[5].trim() + " - " + line[3].trim() + " cấp " + line[2].trim();
-                    String monDoatGiai = DatabaseHelper.dichTenMon(line[4].trim());
 
-                    BigDecimal diemDoatGiai = new BigDecimal(line[6].trim().replace(",", "."));
-                    BigDecimal diemKhongDoatGiai = new BigDecimal(line[7].trim().replace(",", "."));
+                    for (String pt : danhSachPhuongThuc) {
+                        BigDecimal[] diemQuyDinh = DatabaseHelper.tinhDiemUtxt(cap, loaiGiai, pt);
 
-                    for (NganhToHop nganhToHop : cacheNganhToHop.values()) {
                         DiemCongXetTuyen entity = new DiemCongXetTuyen();
-
                         entity.setThiSinh(thiSinh);
+                        entity.setMon(monDoatGiai);
+                        entity.setPhuongThuc(pt);
+                        entity.setDiemCongToHopXetTuyen(diemQuyDinh[0]);
+                        entity.setDiemCongKhongXetToHopXetTuyen(diemQuyDinh[1]);
                         entity.setGhiChu(ghiChu);
-                        entity.setToHopMonThi(nganhToHop.getToHopMonThi());
-                        entity.setNganh(nganhToHop.getNganh());
-                        entity.setPhuongThuc("THPT");
-                        entity.setDcKeys(thiSinh.getCccd() + "_" + nganhToHop.getNganh().getMaNganh() + "_" + nganhToHop.getToHopMonThi().getMaToHop());
-                        entity.setDiemCC(BigDecimal.ZERO);
-
-                        String mon1 = DatabaseHelper.dichTenMon(nganhToHop.getThMon1());
-                        String mon2 = DatabaseHelper.dichTenMon(nganhToHop.getThMon2());
-                        String mon3 = DatabaseHelper.dichTenMon(nganhToHop.getThMon3());
-
-                        if (monDoatGiai.equals(mon1) || monDoatGiai.equals(mon2) || monDoatGiai.equals(mon3)) {
-                            entity.setDiemUtxt(diemDoatGiai);
-                            entity.setDiemTong(diemDoatGiai);
-                        } else {
-                            entity.setDiemUtxt(diemKhongDoatGiai);
-                            entity.setDiemTong(diemKhongDoatGiai);
-                        }
 
                         session.persist(entity);
                         successCount++;
@@ -177,6 +150,92 @@ public class DiemCongXetTuyenBUS {
         }
     }
 
+    public String importCcCsvData(File file) {
+        int batchSize = 1000;
+        int successCount = 0;
+
+        try (Reader reader = Files.newBufferedReader(file.toPath());
+             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+             Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            Map<String, ThiSinh> cacheThiSinh = thisinhdao.getAll(session).stream()
+                    .collect(Collectors.toMap(ThiSinh::getCccd, n -> n));
+
+            String[] line;
+            Transaction tx = session.beginTransaction();
+            String[] danhSachPhuongThuc = {"THPT", "DGNL", "VSAT"};
+
+            while ((line = csvReader.readNext()) != null) {
+                try {
+                    ThiSinh thiSinh = cacheThiSinh.get(line[1].trim());
+                    if (thiSinh == null) continue;
+
+                    String ghiChuMoi = line[2].trim();
+                    String mucDiemQuyDoi = line[4].trim();
+                    String monMoi = "TA";
+
+                    List<DiemCongXetTuyen> listDiemCu = dao.getListByCccdWithSession(session, thiSinh.getCccd());
+
+                    Map<String, DiemCongXetTuyen> mapDiemCu = listDiemCu.stream()
+                            .collect(Collectors.toMap(d -> d.getPhuongThuc() + "_" + d.getMon(), d -> d));
+
+                    for (String pt : danhSachPhuongThuc) {
+                        BigDecimal diemQuyDoi = DatabaseHelper.tinhDiemChungChiTiengAnh(mucDiemQuyDoi, pt);
+
+                        String searchKey = pt + "_" + monMoi;
+                        DiemCongXetTuyen entity = mapDiemCu.get(searchKey);
+                        boolean isNew = false;
+
+                        if (entity == null) {
+                            entity = new DiemCongXetTuyen();
+                            entity.setThiSinh(thiSinh);
+                            entity.setPhuongThuc(pt);
+                            entity.setMon(monMoi);
+                            entity.setGhiChu(ghiChuMoi);
+
+                            entity.setDiemCongToHopXetTuyen(BigDecimal.ZERO);
+                            entity.setDiemCongKhongXetToHopXetTuyen(BigDecimal.ZERO);
+                            isNew = true;
+                        }
+                        else {
+                            String ghiChuCu = entity.getGhiChu() == null ? "" : entity.getGhiChu() + ", ";
+                            if (!ghiChuCu.contains(ghiChuMoi)) {
+                                entity.setGhiChu(ghiChuCu + ghiChuMoi);
+                            }
+                        }
+
+                        BigDecimal diemKhongToHopHienTai = entity.getDiemCongKhongXetToHopXetTuyen() != null ? entity.getDiemCongKhongXetToHopXetTuyen() : BigDecimal.ZERO;
+                        entity.setDiemCongKhongXetToHopXetTuyen(diemKhongToHopHienTai.add(diemQuyDoi));
+
+                        // Lưu xuống DB (Dòng cũ thì Hibernate tự Update, dòng mới thì Persist)
+                        if (isNew) {
+                            session.persist(entity);
+                        }
+                    }
+
+                    successCount++;
+
+                    if (successCount % batchSize == 0) {
+                        tx.commit();
+                        session.clear();
+                        tx = session.beginTransaction();
+                    }
+                } catch (Exception e) {
+                    // System.out.println("Lỗi dòng CSV: " + e.getMessage());
+                }
+            }
+
+            if (tx.isActive()) {
+                tx.commit();
+            }
+
+            return "Import thành công " + successCount + " bản ghi Chứng chỉ!";
+
+        } catch (Exception e) {
+            return "Lỗi đọc file: " + e.getMessage();
+        }
+    }
+
     public DiemCongXetTuyenDTO getDiemCongXetTuyen(int id){
         try(Session session = factory.openSession()){
             return toDTO(dao.getWithSession(session, id));
@@ -196,16 +255,8 @@ public class DiemCongXetTuyenBUS {
             tx = session.beginTransaction();
 
             ThiSinh thiSinhGoc = thisinhdao.getByCccdWithSesstion(session, newDiemCongXetTuyenDTO.getTsCccd());
-            Nganh nganhGoc = nganhdao.getByMaNganhWithSession(session, newDiemCongXetTuyenDTO.getMaNganh());
-            ToHopMonThi toHopGoc = tohopdao.getByMaToHopWithSession(session, newDiemCongXetTuyenDTO.getMaToHop());
             if (thiSinhGoc == null) {
                 return "Lỗi: Không tìm thấy Thí sinh có cccd " + newDiemCongXetTuyenDTO.getTsCccd();
-            }
-            if (toHopGoc == null) {
-                return "Lỗi: Không tìm thấy Tổ hợp có mã " + newDiemCongXetTuyenDTO.getMaToHop();
-            }
-            if (nganhGoc == null) {
-                return "Lỗi: Không tìm thấy Ngành có mã " + newDiemCongXetTuyenDTO.getMaNganh();
             }
 
             DiemCongXetTuyen diemCongXetTuyen = dao.getWithSession(session, id);
@@ -215,14 +266,11 @@ public class DiemCongXetTuyenBUS {
             }
 
             diemCongXetTuyen.setThiSinh(thiSinhGoc);
-            diemCongXetTuyen.setNganh(nganhGoc);
-            diemCongXetTuyen.setToHopMonThi(toHopGoc);
+            diemCongXetTuyen.setMon(newDiemCongXetTuyenDTO.getMon());
             diemCongXetTuyen.setPhuongThuc(newDiemCongXetTuyenDTO.getPhuongThuc());
-            diemCongXetTuyen.setDiemCC(newDiemCongXetTuyenDTO.getDiemCC());
-            diemCongXetTuyen.setDiemUtxt(newDiemCongXetTuyenDTO.getDiemUtxt());
-            diemCongXetTuyen.setDiemTong(newDiemCongXetTuyenDTO.getDiemTong());
+            diemCongXetTuyen.setDiemCongToHopXetTuyen(newDiemCongXetTuyenDTO.getDiemCongToHopXetTuyen());
+            diemCongXetTuyen.setDiemCongKhongXetToHopXetTuyen(newDiemCongXetTuyenDTO.getDiemCongKhongXetToHopXetTuyen());
             diemCongXetTuyen.setGhiChu(newDiemCongXetTuyenDTO.getGhiChu());
-            diemCongXetTuyen.setDcKeys(newDiemCongXetTuyenDTO.getDcKeys());
 
             dao.updateWithSession(session, diemCongXetTuyen);
 

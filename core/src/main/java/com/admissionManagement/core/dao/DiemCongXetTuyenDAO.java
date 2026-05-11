@@ -24,6 +24,12 @@ public class DiemCongXetTuyenDAO {
         return listDiemCongXetTuyen;
     }
 
+    public List<DiemCongXetTuyen> getListByCccdWithSession(Session session, String cccd){
+        return session.createQuery("FROM DiemCongXetTuyen WHERE thiSinh.cccd = :cccd", DiemCongXetTuyen.class)
+                .setParameter("cccd", cccd)
+                .getResultList();
+    }
+
     public void updateWithSession(Session session, DiemCongXetTuyen newdiemCongXetTuyen) {
         session.merge(newdiemCongXetTuyen);
     }

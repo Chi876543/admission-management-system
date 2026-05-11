@@ -57,8 +57,5 @@ public class Nganh {
     @Column(name = "sl_thpt", length = 45) private String slThpt;
 
     @OneToMany(mappedBy = "nganh", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DiemCongXetTuyen> danhSachDiemCongCuaNganh = new ArrayList<>();
-
-    @OneToMany(mappedBy = "nganh", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NguyenVongXetTuyen> danhSachNguyenVongCuaNganh = new ArrayList<>();
 }

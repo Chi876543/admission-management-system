@@ -40,8 +40,5 @@ public class ToHopMonThi {
     private String tenToHop;
 
     @OneToMany(mappedBy = "toHopMonThi", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DiemCongXetTuyen> danhSachDiemCongCuaToHop = new ArrayList<>();
-
-    @OneToMany(mappedBy = "toHopMonThi", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NguyenVongXetTuyen> danhSachNguyenVongCuaToHop = new ArrayList<>();
 }

@@ -29,40 +29,19 @@ public class DiemCongXetTuyen {
     )
     private ThiSinh thiSinh;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "manganh",
-            referencedColumnName = "manganh",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_diemcongxettuyen_nganh")
-    )
-    private Nganh nganh;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "matohop",
-            referencedColumnName = "matohop",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_diemcongxettuyen_tohopmonthi")
-    )
-    private ToHopMonThi toHopMonThi;
+    @Column(name = "mon", length = 10)
+    private String mon;
 
     @Column(name = "phuongthuc", length = 45)
     private String phuongThuc;
 
-    @Column(name = "diemCC", precision = 6, scale = 2)
-    private BigDecimal diemCC;
+    @Column(name = "diemCongToHopXetTuyen", precision = 6, scale = 2)
+    private BigDecimal diemCongToHopXetTuyen;
 
-    @Column(name = "diemUtxt", precision = 6, scale = 2)
-    private BigDecimal diemUtxt;
-
-    @Column(name = "diemTong", precision = 6, scale = 2)
-    private BigDecimal diemTong;
+    @Column(name = "diemCongKhongXetToHopXetTuyen", precision = 6, scale = 2)
+    private BigDecimal diemCongKhongXetToHopXetTuyen;
 
     @Lob // Dùng cho kiểu TEXT trong SQL
     @Column(name = "ghichu")
     private String ghiChu;
-
-    @Column(name = "dc_keys", length = 45, nullable = false)
-    private String dcKeys;
 }
