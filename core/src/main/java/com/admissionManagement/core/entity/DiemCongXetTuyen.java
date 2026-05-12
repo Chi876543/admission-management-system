@@ -35,11 +35,20 @@ public class DiemCongXetTuyen {
     @Column(name = "phuongthuc", length = 45)
     private String phuongThuc;
 
-    @Column(name = "diemCongToHopXetTuyen", precision = 6, scale = 2)
-    private BigDecimal diemCongToHopXetTuyen;
+    @Column(name = "diemUtxtToHop", precision = 6, scale = 2)
+    private BigDecimal diemUtxtToHop;
 
-    @Column(name = "diemCongKhongXetToHopXetTuyen", precision = 6, scale = 2)
-    private BigDecimal diemCongKhongXetToHopXetTuyen;
+    @Column(name = "diemUtxtKhongXetToHop", precision = 6, scale = 2)
+    private BigDecimal diemUtxtKhongXetToHop;
+
+    @Column(name = "diemCc", precision = 6, scale = 2)
+    private BigDecimal diemCc;
+
+    @Column(name = "diemTongThxt", precision = 6, scale = 2)
+    private BigDecimal diemTongThxt;
+
+    @Column(name = "diemTongKhongXetThxt", precision = 6, scale = 2)
+    private BigDecimal diemTongKhongXetThxt;
 
     @Lob // Dùng cho kiểu TEXT trong SQL
     @Column(name = "ghichu")

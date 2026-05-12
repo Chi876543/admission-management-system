@@ -276,7 +276,7 @@ public class DatabaseHelper {
             else if (phuongThuc.equals("DGNL")) {
                 diemKhongToHop = new BigDecimal("40.0");
             }
-            else if (phuongThuc.equals("V-SAT")) {
+            else if (phuongThuc.equals("VSAT")) {
                 diemKhongToHop = new BigDecimal("15.0");
             }
         }
@@ -287,7 +287,7 @@ public class DatabaseHelper {
             else if (phuongThuc.equals("DGNL")) {
                 diemKhongToHop = new BigDecimal("60.0");
             }
-            else if (phuongThuc.equals("V-SAT")) {
+            else if (phuongThuc.equals("VSAT")) {
                 diemKhongToHop = new BigDecimal("22.5");
             }
         }
@@ -298,7 +298,7 @@ public class DatabaseHelper {
             else if (phuongThuc.equals("DGNL")) {
                 diemKhongToHop = new BigDecimal("80.0");
             }
-            else if (phuongThuc.equals("V-SAT")) {
+            else if (phuongThuc.equals("VSAT")) {
                 diemKhongToHop = new BigDecimal("30.0");
             }
         }

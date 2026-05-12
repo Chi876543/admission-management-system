@@ -46,8 +46,11 @@ public class DiemCongXetTuyenBUS {
                 entity.getThiSinh().getCccd(),
                 entity.getMon(),
                 entity.getPhuongThuc(),
-                entity.getDiemCongToHopXetTuyen(),
-                entity.getDiemCongKhongXetToHopXetTuyen(),
+                entity.getDiemUtxtToHop(),
+                entity.getDiemUtxtKhongXetToHop(),
+                entity.getDiemCc(),
+                entity.getDiemTongThxt(),
+                entity.getDiemTongKhongXetThxt(),
                 entity.getGhiChu()
         );
     }
@@ -71,8 +74,11 @@ public class DiemCongXetTuyenBUS {
             diemCongXetTuyen.setThiSinh(thiSinhGoc);
             diemCongXetTuyen.setMon(diemCongXetTuyenDTO.getMon());
             diemCongXetTuyen.setPhuongThuc(diemCongXetTuyenDTO.getPhuongThuc());
-            diemCongXetTuyen.setDiemCongToHopXetTuyen(diemCongXetTuyenDTO.getDiemCongToHopXetTuyen());
-            diemCongXetTuyen.setDiemCongKhongXetToHopXetTuyen(diemCongXetTuyenDTO.getDiemCongKhongXetToHopXetTuyen());
+            diemCongXetTuyen.setDiemUtxtToHop(diemCongXetTuyenDTO.getDiemUtxtToHop());
+            diemCongXetTuyen.setDiemUtxtKhongXetToHop(diemCongXetTuyenDTO.getDiemUtxtKhongXetToHop());
+            diemCongXetTuyen.setDiemCc(diemCongXetTuyenDTO.getDiemCc());
+            diemCongXetTuyen.setDiemTongThxt(diemCongXetTuyenDTO.getDiemTongThxt());
+            diemCongXetTuyen.setDiemTongKhongXetThxt(diemCongXetTuyenDTO.getDiemTongKhongXetThxt());
             diemCongXetTuyen.setGhiChu(diemCongXetTuyenDTO.getGhiChu());
 
             dao.addWithSession(session, diemCongXetTuyen);
@@ -121,8 +127,11 @@ public class DiemCongXetTuyenBUS {
                         entity.setThiSinh(thiSinh);
                         entity.setMon(monDoatGiai);
                         entity.setPhuongThuc(pt);
-                        entity.setDiemCongToHopXetTuyen(diemQuyDinh[0]);
-                        entity.setDiemCongKhongXetToHopXetTuyen(diemQuyDinh[1]);
+                        entity.setDiemUtxtToHop(diemQuyDinh[0]);
+                        entity.setDiemUtxtKhongXetToHop(diemQuyDinh[1]);
+                        entity.setDiemCc(BigDecimal.ZERO);
+                        entity.setDiemTongThxt(entity.getDiemUtxtToHop());
+                        entity.setDiemTongKhongXetThxt(entity.getDiemUtxtKhongXetToHop().add(entity.getDiemCc()));
                         entity.setGhiChu(ghiChu);
 
                         session.persist(entity);
@@ -193,8 +202,11 @@ public class DiemCongXetTuyenBUS {
                             entity.setMon(monMoi);
                             entity.setGhiChu(ghiChuMoi);
 
-                            entity.setDiemCongToHopXetTuyen(BigDecimal.ZERO);
-                            entity.setDiemCongKhongXetToHopXetTuyen(BigDecimal.ZERO);
+                            entity.setDiemUtxtToHop(BigDecimal.ZERO);
+                            entity.setDiemUtxtKhongXetToHop(BigDecimal.ZERO);
+                            entity.setDiemCc(BigDecimal.ZERO);
+                            entity.setDiemTongThxt(BigDecimal.ZERO);
+                            entity.setDiemTongKhongXetThxt(BigDecimal.ZERO);
                             isNew = true;
                         }
                         else {
@@ -204,10 +216,13 @@ public class DiemCongXetTuyenBUS {
                             }
                         }
 
-                        BigDecimal diemKhongToHopHienTai = entity.getDiemCongKhongXetToHopXetTuyen() != null ? entity.getDiemCongKhongXetToHopXetTuyen() : BigDecimal.ZERO;
-                        entity.setDiemCongKhongXetToHopXetTuyen(diemKhongToHopHienTai.add(diemQuyDoi));
+                        entity.setDiemCc(diemQuyDoi.max(entity.getDiemCc()));
 
-                        // Lưu xuống DB (Dòng cũ thì Hibernate tự Update, dòng mới thì Persist)
+                        BigDecimal utxtKhongToHop = entity.getDiemUtxtKhongXetToHop() != null ? entity.getDiemUtxtKhongXetToHop() : BigDecimal.ZERO;
+                        BigDecimal diemCC = entity.getDiemCc() != null ? entity.getDiemCc() : BigDecimal.ZERO;
+
+                        entity.setDiemTongKhongXetThxt(utxtKhongToHop.add(diemCC));
+
                         if (isNew) {
                             session.persist(entity);
                         }
@@ -268,8 +283,11 @@ public class DiemCongXetTuyenBUS {
             diemCongXetTuyen.setThiSinh(thiSinhGoc);
             diemCongXetTuyen.setMon(newDiemCongXetTuyenDTO.getMon());
             diemCongXetTuyen.setPhuongThuc(newDiemCongXetTuyenDTO.getPhuongThuc());
-            diemCongXetTuyen.setDiemCongToHopXetTuyen(newDiemCongXetTuyenDTO.getDiemCongToHopXetTuyen());
-            diemCongXetTuyen.setDiemCongKhongXetToHopXetTuyen(newDiemCongXetTuyenDTO.getDiemCongKhongXetToHopXetTuyen());
+            diemCongXetTuyen.setDiemUtxtToHop(newDiemCongXetTuyenDTO.getDiemUtxtToHop());
+            diemCongXetTuyen.setDiemUtxtKhongXetToHop(newDiemCongXetTuyenDTO.getDiemUtxtKhongXetToHop());
+            diemCongXetTuyen.setDiemCc(newDiemCongXetTuyenDTO.getDiemCc());
+            diemCongXetTuyen.setDiemTongThxt(newDiemCongXetTuyenDTO.getDiemTongThxt());
+            diemCongXetTuyen.setDiemTongKhongXetThxt(newDiemCongXetTuyenDTO.getDiemTongKhongXetThxt());
             diemCongXetTuyen.setGhiChu(newDiemCongXetTuyenDTO.getGhiChu());
 
             dao.updateWithSession(session, diemCongXetTuyen);

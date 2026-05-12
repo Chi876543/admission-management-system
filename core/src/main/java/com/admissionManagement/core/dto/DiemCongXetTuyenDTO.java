@@ -22,9 +22,15 @@ public class DiemCongXetTuyenDTO {
 
     private String phuongThuc;
 
-    private BigDecimal diemCongToHopXetTuyen;
+    private BigDecimal diemUtxtToHop;
 
-    private BigDecimal diemCongKhongXetToHopXetTuyen;
+    private BigDecimal diemUtxtKhongXetToHop;
+
+    private BigDecimal diemCc;
+
+    private BigDecimal diemTongThxt;
+
+    private BigDecimal diemTongKhongXetThxt;
 
     private String ghiChu;
 }
