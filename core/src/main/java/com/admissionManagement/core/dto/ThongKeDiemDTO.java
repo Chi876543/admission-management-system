@@ -8,7 +8,7 @@ import lombok.NonNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ThongKeDTO {
+public class ThongKeDiemDTO {
     @NonNull
     private String loaiKyThi;   // VSAT, THPT, ĐGNL
     @NonNull

@@ -1,6 +1,6 @@
 package com.admissionManagement.core.service;
 
-import com.admissionManagement.core.dto.ThongKeDTO;
+import com.admissionManagement.core.dto.ThongKeDiemDTO;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public class TestService {
         DiemThiXetTuyenBUS diemThiBUS = new DiemThiXetTuyenBUS();
 
         // 2. Gọi hàm lấy dữ liệu
-        List<ThongKeDTO> ketQua = diemThiBUS.getThongKeDiem();
+        List<ThongKeDiemDTO> ketQua = diemThiBUS.getThongKeDiem();
 
         // 3. In tiêu đề bảng ra terminal
         System.out.println("\n--- KẾT QUẢ THỐNG KÊ ĐIỂM THÍ SINH ---");
@@ -19,7 +19,7 @@ public class TestService {
         System.out.println("---------------------------------------------------------------------------------------------");
 
         // 4. Duyệt danh sách và in dữ liệu
-        for (ThongKeDTO dto : ketQua) {
+        for (ThongKeDiemDTO dto : ketQua) {
             System.out.printf("%-12s | %-30s | %-8d | %-8.2f | %-8.2f | %-8.2f%n",
                     dto.getLoaiKyThi(),
                     dto.getTenMon(),
