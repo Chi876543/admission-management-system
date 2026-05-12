@@ -37,6 +37,6 @@ public class DiemThiXetTuyenDAO {
     }
 
     public void deleteWithSession(Session session, DiemThiXetTuyen diemThiXetTuyen) {
-        session.detach(diemThiXetTuyen);
+        session.remove(diemThiXetTuyen);
     }
 }
