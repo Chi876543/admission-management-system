@@ -2,9 +2,7 @@ package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.BangQuyDoiDAO;
 import com.admissionManagement.core.dto.BangQuyDoiDTO;
-import com.admissionManagement.core.dto.ThiSinhDTO;
 import com.admissionManagement.core.entity.BangQuyDoi;
-import com.admissionManagement.core.entity.ThiSinh;
 import com.admissionManagement.core.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -75,25 +73,24 @@ public class BangQuyDoiBUS {
         }
     }
 
-
-    public List<BangQuyDoiDTO> getAllBangQuyDoi(String keyWord){
-        String phuongthuc = null;
-        String tohop = null;
+    public List<BangQuyDoiDTO> getAllBangQuyDoi(String keyWord) {
+        String phuongThuc = null;
+        String toHop = null;
         String mon = null;
 
-        if(keyWord != null && !keyWord.trim().isEmpty()){
-            if(keyWord.matches("/^[A-Z]\\d{2}$")){
-                tohop = keyWord;
-            }else if(keyWord.equals("DGNL") || keyWord.equals("VSAT")){
-                phuongthuc = keyWord;
-            }else{
-                mon = keyWord;
+        if (keyWord != null && !keyWord.trim().isEmpty()) {
+            String key = keyWord.trim().toUpperCase();
+            if (key.matches("[A-Z]\\d{2}")) {
+                toHop = keyWord.trim();
+            } else if (key.equals("DGNL") || key.equals("VSAT") || key.equals("THPT")) {
+                phuongThuc = keyWord.trim();
+            } else {
+                mon = keyWord.trim();
             }
         }
 
-        try(Session session = factory.openSession()){
-            List<BangQuyDoi> listBangQuyDoi = dao.getAllWithSession(session, phuongthuc, tohop, mon);
-            return mapListEntityToListDTO(listBangQuyDoi);
+        try (Session session = factory.openSession()) {
+            return mapListEntityToListDTO(dao.getAllWithSession(session, phuongThuc, toHop, mon));
         }
     }
 
@@ -151,7 +148,7 @@ public class BangQuyDoiBUS {
 
     public BangQuyDoiDTO getBangQuyDoiWithScore(String phuongThuc, BigDecimal diem, String mon, String toHop){
         try(Session session = factory.openSession()) {
-            return toDTO(dao.getLuatQuyDoiWithSession(session, phuongThuc, diem ,mon, toHop));
+            return toDTO(dao.getLuatQuyDoiWithSession(session, phuongThuc, diem, mon, toHop));
         }
     }
 }
