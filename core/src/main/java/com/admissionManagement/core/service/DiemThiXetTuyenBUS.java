@@ -4,6 +4,7 @@ import com.admissionManagement.core.dao.DiemThiXetTuyenDAO;
 import com.admissionManagement.core.dao.ThiSinhDAO;
 import com.admissionManagement.core.dto.BangQuyDoiDTO;
 import com.admissionManagement.core.dto.DiemThiXetTuyenDTO;
+import com.admissionManagement.core.dto.ThongKeDTO;
 import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.DiemThiXetTuyen;
 import com.admissionManagement.core.entity.ThiSinh;
@@ -21,6 +22,7 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -346,6 +348,87 @@ public class DiemThiXetTuyenBUS {
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
         }
+    }
+
+    public List<ThongKeDTO> getThongKeDiem(){
+        List<ThongKeDTO> listThongKe = new ArrayList<>();
+
+        String sql =
+                //THPT
+                "SELECT 'THPT' as loai, 'Toán' as mon, COUNT(`TO`), MIN(`TO`), MAX(`TO`), AVG(`TO`) FROM xt_diemthixettuyen WHERE `TO` IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'THPT' as loai, 'Vật lý' as mon, COUNT(LI), MIN(LI), MAX(LI), AVG(LI) FROM xt_diemthixettuyen WHERE LI IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'THPT' as loai, 'Hóa học' as mon, COUNT(HO), MIN(HO), MAX(HO), AVG(HO) FROM xt_diemthixettuyen WHERE HO IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'THPT' as loai, 'Sinh học' as mon, COUNT(SI), MIN(SI), MAX(SI), AVG(SI) FROM xt_diemthixettuyen WHERE SI IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'THPT' as loai, 'Lịch sử' as mon, COUNT(SU), MIN(SU), MAX(SU), AVG(SU) FROM xt_diemthixettuyen WHERE SU IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'THPT' as loai, 'Địa lý' as mon, COUNT(DI), MIN(DI), MAX(DI), AVG(DI) FROM xt_diemthixettuyen WHERE DI IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'THPT' as loai, 'Ngữ văn' as mon, COUNT(VA), MIN(VA), MAX(VA), AVG(VA) FROM xt_diemthixettuyen WHERE VA IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'THPT' as loai, 'Tin học' as mon, COUNT(TI), MIN(TI), MAX(TI), AVG(TI) FROM xt_diemthixettuyen WHERE TI IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'THPT' as loai, 'Ngoại ngữ' as mon, COUNT(N1_THI), MIN(N1_THI), MAX(N1_THI), AVG(N1_THI) FROM xt_diemthixettuyen WHERE N1_THI IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'THPT' as loai, 'Giáo dục Kinh tế và Pháp luât' as mon, COUNT(KTPL), MIN(KTPL), MAX(KTPL), AVG(KTPL) FROM xt_diemthixettuyen WHERE KTPL IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'THPT' as loai, 'Công nghệ Công nghiệp' as mon, COUNT(CNCN), MIN(CNCN), MAX(CNCN), AVG(CNCN) FROM xt_diemthixettuyen WHERE CNCN IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'THPT' as loai, 'Công nghệ Nông nghiệp' as mon, COUNT(CNNN), MIN(CNNN), MAX(CNNN), AVG(CNNN) FROM xt_diemthixettuyen WHERE CNNN IS NOT NULL " +
+                "UNION ALL " +
+                //VSAT
+                "SELECT 'VSAT' as loai, 'Toán' as mon, COUNT(TO_VSAT), MIN(TO_VSAT), MAX(TO_VSAT), AVG(TO_VSAT) FROM xt_diemthixettuyen WHERE TO_VSAT IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'VSAT' as loai, 'Vật lý' as mon, COUNT(LI_VSAT), MIN(LI_VSAT), MAX(LI_VSAT), AVG(LI_VSAT) FROM xt_diemthixettuyen WHERE LI_VSAT IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'VSAT' as loai, 'Hóa học' as mon, COUNT(HO_VSAT), MIN(HO_VSAT), MAX(HO_VSAT), AVG(HO_VSAT) FROM xt_diemthixettuyen WHERE HO_VSAT IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'VSAT' as loai, 'Sinh học' as mon, COUNT(SI_VSAT), MIN(SI_VSAT), MAX(SI_VSAT), AVG(SI_VSAT) FROM xt_diemthixettuyen WHERE SI_VSAT IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'VSAT' as loai, 'Lịch sử' as mon, COUNT(SU_VSAT), MIN(SU_VSAT), MAX(SU_VSAT), AVG(SU_VSAT) FROM xt_diemthixettuyen WHERE SU_VSAT IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'VSAT' as loai, 'Địa lý' as mon, COUNT(DI_VSAT), MIN(DI_VSAT), MAX(DI_VSAT), AVG(DI_VSAT) FROM xt_diemthixettuyen WHERE DI_VSAT IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'VSAT' as loai, 'Ngữ văn' as mon, COUNT(VA_VSAT), MIN(VA_VSAT), MAX(VA_VSAT), AVG(VA_VSAT) FROM xt_diemthixettuyen WHERE VA_VSAT IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'VSAT' as loai, 'Ngoại ngữ' as mon, COUNT(N1_VSAT), MIN(N1_VSAT), MAX(N1_VSAT), AVG(N1_VSAT) FROM xt_diemthixettuyen WHERE N1_VSAT IS NOT NULL " +
+                "UNION ALL " +
+                //Năng khiếu
+                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 1' as mon, COUNT(NK1), MIN(NK1), MAX(NK1), AVG(NK1) FROM xt_diemthixettuyen WHERE NK1 IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 2' as mon, COUNT(NK2), MIN(NK2), MAX(NK2), AVG(NK2) FROM xt_diemthixettuyen WHERE NK2 IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 3' as mon, COUNT(NK3), MIN(NK3), MAX(NK3), AVG(NK3) FROM xt_diemthixettuyen WHERE NK3 IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 4' as mon, COUNT(NK4), MIN(NK4), MAX(NK4), AVG(NK4) FROM xt_diemthixettuyen WHERE NK4 IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 5' as mon, COUNT(NK5), MIN(NK5), MAX(NK5), AVG(NK5) FROM xt_diemthixettuyen WHERE NK5 IS NOT NULL " +
+                "UNION ALL " +
+                "SELECT 'Năng khiếu' as loai, 'Năng khiếu 6' as mon, COUNT(NK6), MIN(NK6), MAX(NK6), AVG(NK6) FROM xt_diemthixettuyen WHERE NK6 IS NOT NULL " +
+                "UNION ALL " +
+                //ĐGNL
+                "SELECT 'ĐGNL', 'Đánh giá năng lực', COUNT(NL1), MIN(NL1), MAX(NL1), AVG(NL1) FROM xt_diemthixettuyen WHERE NL1 IS NOT NULL";
+
+        try(Session session = factory.openSession()){
+            List<Object[]> results = session.createNativeQuery(sql, Object[].class).list();
+
+            for(Object[] row : results){
+                listThongKe.add(new ThongKeDTO(
+                        row[0].toString(),
+                        row[1].toString(),
+                        ((Number) row[2]).longValue(),
+                        ((Number) row[3]).doubleValue(),
+                        ((Number) row[4]).doubleValue(),
+                        ((Number) row[5]).doubleValue()
+                ));
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listThongKe;
     }
 
 }

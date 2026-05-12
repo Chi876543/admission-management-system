@@ -17,7 +17,7 @@ public class DiemThiXetTuyen {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iddiemthi")
+    @Column(name = "iddiemthi", nullable = false)
     private int idDiemThi;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -46,6 +46,9 @@ public class DiemThiXetTuyen {
     @Column(name = "VA", precision = 8, scale = 2) private BigDecimal diemVan;
     @Column(name = "TI", precision = 8, scale = 2) private BigDecimal diemTin;
     @Column(name = "N1_THI", precision = 8, scale = 2) private BigDecimal n1Thi;
+    @Column(name = "KTPL", precision = 8, scale = 2) private BigDecimal diemKtpl;
+    @Column(name = "CNCN", precision = 8, scale = 2) private BigDecimal cncn;
+    @Column(name = "CNNN", precision = 8, scale = 2) private BigDecimal cnnn;
 
     //VSAT
     @Column(name = "TO_VSAT", precision = 8, scale = 2) private BigDecimal diemToanVSAT;
@@ -62,11 +65,6 @@ public class DiemThiXetTuyen {
 
     //DGNL
     @Column(name = "NL1", precision = 8, scale = 2) private BigDecimal nl1;
-
-    //Khác
-    @Column(name = "KTPL", precision = 8, scale = 2) private BigDecimal diemKtpl;
-    @Column(name = "CNCN", precision = 8, scale = 2) private BigDecimal cncn;
-    @Column(name = "CNNN", precision = 8, scale = 2) private BigDecimal cnnn;
 
     //Năng khiếu
     @Column(name = "NK1", precision = 8, scale = 2) private BigDecimal nk1;

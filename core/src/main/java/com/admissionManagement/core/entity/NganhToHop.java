@@ -12,6 +12,9 @@ import java.math.BigDecimal;
         name = "xt_nganh_tohop",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_nganhtohop_keys", columnNames = {"tb_keys"})
+        },
+        indexes = {
+                @Index(name = "idx_nganh_id", columnList = "manganh")
         }
 )
 
@@ -19,6 +22,7 @@ public class NganhToHop {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,6 +65,14 @@ public class NganhToHop {
     @Column(name = "SU") private Boolean su;
     @Column(name = "DI") private Boolean dia;
     @Column(name = "TI") private Boolean tin;
+    @Column(name = "NK1") private Boolean nk1;
+    @Column(name = "NK2") private Boolean nk2;
+    @Column(name = "NK3") private Boolean nk3;
+    @Column(name = "NK4") private Boolean nk4;
+    @Column(name = "NK5") private Boolean nk5;
+    @Column(name = "NK6") private Boolean nk6;
+    @Column(name = "CNCN") private Boolean cncn;
+    @Column(name = "CNNN") private Boolean cnnn;
     @Column(name = "KHAC") private Boolean khac;
     @Column(name = "KTPL") private Boolean ktpl;
 

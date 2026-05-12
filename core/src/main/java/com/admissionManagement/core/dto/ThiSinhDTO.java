@@ -11,12 +11,10 @@ import lombok.NonNull;
 public class ThiSinhDTO {
     @NonNull
     private int idThiSinh;
-
     String soBaoDanh;
 
     @NonNull
     private String cccd;
-
     private String ho;
     private String ten;
     private String ngaySinh;

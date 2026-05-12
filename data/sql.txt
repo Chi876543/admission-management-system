@@ -1,136 +1,332 @@
--- 100 tài khoản: 3 Admin + 97 User
--- Password: 123456
--- Status: Hoạt động / Đã khóa
+-- ================================================================
+-- DỮ LIỆU MẪU ĐẦY ĐỦ - HỆ THỐNG TUYỂN SINH
+-- Chạy theo thứ tự: bảng cha trước, bảng con sau
+-- INDEX: KHÔNG thêm thủ công vì Hibernate (@Index) tự tạo khi ddl-auto=update
+-- ================================================================
 
+-- ================================================================
+-- 1. xt_users (độc lập - không FK)
+-- ================================================================
 INSERT INTO xt_users (username, ho_ten, email, password, role, status) VALUES
-('admin01', 'Nguyễn Văn An', 'admin01@edu.vn', '123456', 'Admin', 'Hoạt động'),
-('admin02', 'Trần Thị Bình', 'admin02@edu.vn', '123456', 'Admin', 'Hoạt động'),
-('admin03', 'Lê Quốc Cường', 'admin03@edu.vn', '123456', 'Admin', 'Hoạt động'),
+('admin01', 'Nguyễn Văn An',    'admin01@edu.vn', '123456', 'Admin', 'Hoạt động'),
+('admin02', 'Trần Thị Bình',    'admin02@edu.vn', '123456', 'Admin', 'Hoạt động'),
+('admin03', 'Lê Quốc Cường',    'admin03@edu.vn', '123456', 'Admin', 'Hoạt động'),
+('user001', 'Phạm Minh Dũng',   'user001@edu.vn', '123456', 'User',  'Hoạt động'),
+('user002', 'Hoàng Thị Én',     'user002@edu.vn', '123456', 'User',  'Hoạt động'),
+('user003', 'Vũ Đức Phong',     'user003@edu.vn', '123456', 'User',  'Hoạt động'),
+('user004', 'Đặng Thị Giang',   'user004@edu.vn', '123456', 'User',  'Hoạt động'),
+('user005', 'Bùi Văn Hùng',     'user005@edu.vn', '123456', 'User',  'Đã khóa'),
+('user006', 'Ngô Thị Iris',     'user006@edu.vn', '123456', 'User',  'Hoạt động'),
+('user007', 'Đinh Công Kiên',   'user007@edu.vn', '123456', 'User',  'Hoạt động'),
+('user008', 'Lý Thị Lan',       'user008@edu.vn', '123456', 'User',  'Hoạt động'),
+('user009', 'Tô Văn Minh',      'user009@edu.vn', '123456', 'User',  'Đã khóa'),
+('user010', 'Cao Thị Ngân',     'user010@edu.vn', '123456', 'User',  'Hoạt động');
 
-('user001', 'Phạm Minh Dũng', 'user001@edu.vn', '123456', 'User', 'Hoạt động'),
-('user002', 'Hoàng Thị Én', 'user002@edu.vn', '123456', 'User', 'Hoạt động'),
-('user003', 'Vũ Đức Phong', 'user003@edu.vn', '123456', 'User', 'Hoạt động'),
-('user004', 'Đặng Thị Giang', 'user004@edu.vn', '123456', 'User', 'Hoạt động'),
-('user005', 'Bùi Văn Hùng', 'user005@edu.vn', '123456', 'User', 'Đã khóa'),
-('user006', 'Ngô Thị Iris', 'user006@edu.vn', '123456', 'User', 'Hoạt động'),
-('user007', 'Đinh Công Kiên', 'user007@edu.vn', '123456', 'User', 'Hoạt động'),
-('user008', 'Lý Thị Lan', 'user008@edu.vn', '123456', 'User', 'Hoạt động'),
-('user009', 'Tô Văn Minh', 'user009@edu.vn', '123456', 'User', 'Đã khóa'),
-('user010', 'Cao Thị Ngân', 'user010@edu.vn', '123456', 'User', 'Hoạt động'),
-('user011', 'Trịnh Văn Oanh', 'user011@edu.vn', '123456', 'User', 'Hoạt động'),
-('user012', 'Phan Thị Phương', 'user012@edu.vn', '123456', 'User', 'Hoạt động'),
-('user013', 'Hà Văn Quân', 'user013@edu.vn', '123456', 'User', 'Hoạt động'),
-('user014', 'Mai Thị Rạng', 'user014@edu.vn', '123456', 'User', 'Hoạt động'),
-('user015', 'Lưu Đức Sơn', 'user015@edu.vn', '123456', 'User', 'Đã khóa'),
-('user016', 'Đỗ Thị Tâm', 'user016@edu.vn', '123456', 'User', 'Hoạt động'),
-('user017', 'Kiều Văn Uy', 'user017@edu.vn', '123456', 'User', 'Hoạt động'),
-('user018', 'Quách Thị Vân', 'user018@edu.vn', '123456', 'User', 'Hoạt động'),
-('user019', 'Thái Bá Xuyên', 'user019@edu.vn', '123456', 'User', 'Hoạt động'),
-('user020', 'Dương Thị Yến', 'user020@edu.vn', '123456', 'User', 'Đã khóa'),
-('user021', 'Nông Văn Zung', 'user021@edu.vn', '123456', 'User', 'Hoạt động'),
-('user022', 'Tạ Thị Ánh', 'user022@edu.vn', '123456', 'User', 'Hoạt động'),
-('user023', 'Vương Văn Bắc', 'user023@edu.vn', '123456', 'User', 'Hoạt động'),
-('user024', 'Chu Thị Cẩm', 'user024@edu.vn', '123456', 'User', 'Hoạt động'),
-('user025', 'La Văn Dần', 'user025@edu.vn', '123456', 'User', 'Đã khóa'),
-('user026', 'Mã Thị Ếch', 'user026@edu.vn', '123456', 'User', 'Hoạt động'),
-('user027', 'Khổng Minh Phát', 'user027@edu.vn', '123456', 'User', 'Hoạt động'),
-('user028', 'Lạc Thị Giàu', 'user028@edu.vn', '123456', 'User', 'Hoạt động'),
-('user029', 'Đoàn Văn Hải', 'user029@edu.vn', '123456', 'User', 'Hoạt động'),
-('user030', 'Thiều Thị Ích', 'user030@edu.vn', '123456', 'User', 'Đã khóa'),
-('user031', 'Nhâm Văn Kha', 'user031@edu.vn', '123456', 'User', 'Hoạt động'),
-('user032', 'Bạch Thị Liên', 'user032@edu.vn', '123456', 'User', 'Hoạt động'),
-('user033', 'Tiêu Văn Mạnh', 'user033@edu.vn', '123456', 'User', 'Hoạt động'),
-('user034', 'Cung Thị Nhi', 'user034@edu.vn', '123456', 'User', 'Hoạt động'),
-('user035', 'Hứa Văn Ổn', 'user035@edu.vn', '123456', 'User', 'Đã khóa'),
-('user036', 'Quế Thị Phúc', 'user036@edu.vn', '123456', 'User', 'Hoạt động'),
-('user037', 'Ôn Văn Quý', 'user037@edu.vn', '123456', 'User', 'Hoạt động'),
-('user038', 'Sầm Thị Rin', 'user038@edu.vn', '123456', 'User', 'Hoạt động'),
-('user039', 'Từ Văn Sang', 'user039@edu.vn', '123456', 'User', 'Hoạt động'),
-('user040', 'Âu Thị Tuyết', 'user040@edu.vn', '123456', 'User', 'Đã khóa'),
-('user041', 'Diệp Văn Ước', 'user041@edu.vn', '123456', 'User', 'Hoạt động'),
-('user042', 'Trương Thị Vui', 'user042@edu.vn', '123456', 'User', 'Hoạt động'),
-('user043', 'Liễu Văn Xuân', 'user043@edu.vn', '123456', 'User', 'Hoạt động'),
-('user044', 'Khưu Thị Yên', 'user044@edu.vn', '123456', 'User', 'Hoạt động'),
-('user045', 'Mạc Văn Ẩn', 'user045@edu.vn', '123456', 'User', 'Đã khóa'),
-('user046', 'Doãn Thị Bảo', 'user046@edu.vn', '123456', 'User', 'Hoạt động'),
-('user047', 'Giáp Văn Chiến', 'user047@edu.vn', '123456', 'User', 'Hoạt động'),
-('user048', 'Thạch Thị Diệu', 'user048@edu.vn', '123456', 'User', 'Hoạt động'),
-('user049', 'Khuất Văn Đạt', 'user049@edu.vn', '123456', 'User', 'Hoạt động'),
-('user050', 'Vừ Thị Êm', 'user050@edu.vn', '123456', 'User', 'Đã khóa'),
-('user051', 'Mùa Văn Phong', 'user051@edu.vn', '123456', 'User', 'Hoạt động'),
-('user052', 'Sùng Thị Gái', 'user052@edu.vn', '123456', 'User', 'Hoạt động'),
-('user053', 'Thào Văn Hòa', 'user053@edu.vn', '123456', 'User', 'Hoạt động'),
-('user054', 'Giàng Thị Inh', 'user054@edu.vn', '123456', 'User', 'Hoạt động'),
-('user055', 'Lầu Văn Kết', 'user055@edu.vn', '123456', 'User', 'Đã khóa'),
-('user056', 'Hờ Thị Lụa', 'user056@edu.vn', '123456', 'User', 'Hoạt động'),
-('user057', 'Cứ Văn Mưu', 'user057@edu.vn', '123456', 'User', 'Hoạt động'),
-('user058', 'Vàng Thị Nụ', 'user058@edu.vn', '123456', 'User', 'Hoạt động'),
-('user059', 'Tráng Văn Oanh', 'user059@edu.vn', '123456', 'User', 'Hoạt động'),
-('user060', 'Lò Thị Pía', 'user060@edu.vn', '123456', 'User', 'Đã khóa'),
-('user061', 'Quàng Văn Quế', 'user061@edu.vn', '123456', 'User', 'Hoạt động'),
-('user062', 'Hạng Thị Rồng', 'user062@edu.vn', '123456', 'User', 'Hoạt động'),
-('user063', 'Bế Văn Sáng', 'user063@edu.vn', '123456', 'User', 'Hoạt động'),
-('user064', 'Nông Thị Thắm', 'user064@edu.vn', '123456', 'User', 'Hoạt động'),
-('user065', 'Vi Văn Ước', 'user065@edu.vn', '123456', 'User', 'Đã khóa'),
-('user066', 'Hoàng Thị Vàng', 'user066@edu.vn', '123456', 'User', 'Hoạt động'),
-('user067', 'Triệu Văn Xuân', 'user067@edu.vn', '123456', 'User', 'Hoạt động'),
-('user068', 'Ma Thị Yến', 'user068@edu.vn', '123456', 'User', 'Hoạt động'),
-('user069', 'Chảo Văn Zẩm', 'user069@edu.vn', '123456', 'User', 'Hoạt động'),
-('user070', 'Phùng Thị An', 'user070@edu.vn', '123456', 'User', 'Đã khóa'),
-('user071', 'Đàm Văn Bình', 'user071@edu.vn', '123456', 'User', 'Hoạt động'),
-('user072', 'Linh Thị Cúc', 'user072@edu.vn', '123456', 'User', 'Hoạt động'),
-('user073', 'Tống Văn Duy', 'user073@edu.vn', '123456', 'User', 'Hoạt động'),
-('user074', 'Dịch Thị Đào', 'user074@edu.vn', '123456', 'User', 'Hoạt động'),
-('user075', 'Giang Văn Em', 'user075@edu.vn', '123456', 'User', 'Đã khóa'),
-('user076', 'Tăng Thị Fern', 'user076@edu.vn', '123456', 'User', 'Hoạt động'),
-('user077', 'Lương Văn Gia', 'user077@edu.vn', '123456', 'User', 'Hoạt động'),
-('user078', 'Thân Thị Huệ', 'user078@edu.vn', '123456', 'User', 'Hoạt động'),
-('user079', 'Tiền Văn Ích', 'user079@edu.vn', '123456', 'User', 'Hoạt động'),
-('user080', 'Sử Thị Kiều', 'user080@edu.vn', '123456', 'User', 'Đã khóa'),
-('user081', 'Hình Văn Long', 'user081@edu.vn', '123456', 'User', 'Hoạt động'),
-('user082', 'Lạng Thị Mai', 'user082@edu.vn', '123456', 'User', 'Hoạt động'),
-('user083', 'Đông Văn Nam', 'user083@edu.vn', '123456', 'User', 'Hoạt động'),
-('user084', 'Thụy Thị Oanh', 'user084@edu.vn', '123456', 'User', 'Hoạt động'),
-('user085', 'Hải Văn Phát', 'user085@edu.vn', '123456', 'User', 'Đã khóa'),
-('user086', 'Giao Thị Quỳnh', 'user086@edu.vn', '123456', 'User', 'Hoạt động'),
-('user087', 'Kỳ Văn Rực', 'user087@edu.vn', '123456', 'User', 'Hoạt động'),
-('user088', 'Lâm Thị Sen', 'user088@edu.vn', '123456', 'User', 'Hoạt động'),
-('user089', 'Mỹ Văn Tài', 'user089@edu.vn', '123456', 'User', 'Hoạt động'),
-('user090', 'Nhi Thị Uyên', 'user090@edu.vn', '123456', 'User', 'Đã khóa'),
-('user091', 'Oanh Văn Vinh', 'user091@edu.vn', '123456', 'User', 'Hoạt động'),
-('user092', 'Phúc Thị Xuân', 'user092@edu.vn', '123456', 'User', 'Hoạt động'),
-('user093', 'Quân Văn Yên', 'user093@edu.vn', '123456', 'User', 'Hoạt động'),
-('user094', 'Rạng Thị Bông', 'user094@edu.vn', '123456', 'User', 'Hoạt động'),
-('user095', 'Sáng Văn Cảnh', 'user095@edu.vn', '123456', 'User', 'Đã khóa'),
-('user096', 'Thủy Thị Dịu', 'user096@edu.vn', '123456', 'User', 'Hoạt động'),
-('user097', 'Uyển Văn Đức', 'user097@edu.vn', '123456', 'User', 'Hoạt động');
+-- ================================================================
+-- 2. xt_nganh (bảng cha - không FK)
+-- Các cột: maNganh, tenNganh, n_tohopgoc, n_chitieu, n_diemsan,
+--          n_diemtrungtuyen, n_tuyenthang, n_dgnl, n_thpt, n_vsat,
+--          sl_xtt, sl_dgnl, sl_vsat, sl_thpt
+-- ================================================================
+INSERT INTO xt_nganh (manganh, tennganh, n_tohopgoc, n_chitieu, n_diemsan, n_diemtrungtuyen,
+                      n_tuyenthang, n_dgnl, n_thpt, n_vsat,
+                      sl_xtt, sl_dgnl, sl_vsat, sl_thpt) VALUES
+('7480201', 'Công nghệ thông tin',                    'A00', 200, 18.00, 24.50, '1', '1', '1', '1', 10, 80,  30,  '80'),
+('7480101', 'Khoa học máy tính',                      'A01', 150, 18.00, 26.00, '1', '1', '1', '0', 8,  60,  0,   '82'),
+('7340101', 'Quản trị kinh doanh',                    'A00', 300, 16.00, 22.00, '0', '1', '1', '0', 0,  100, 0,   '200'),
+('7310101', 'Kinh tế',                                'C14', 250, 16.00, 21.50, '0', '1', '1', '0', 0,  80,  0,   '170'),
+('7220201', 'Ngôn ngữ Anh',                           'D01', 180, 17.00, 25.00, '1', '1', '1', '0', 5,  60,  0,   '115'),
+('7520216', 'Kỹ thuật điều khiển và tự động hóa',     'A00', 120, 17.00, 22.50, '0', '1', '1', '0', 0,  40,  0,   '80'),
+('7580201', 'Xây dựng',                               'A00', 100, 15.00, 20.00, '0', '1', '1', '0', 0,  30,  0,   '70'),
+('7720201', 'Dược học',                               'B00', 150, 20.00, 27.00, '1', '1', '1', '0', 10, 50,  0,   '90'),
+('7380101', 'Luật',                                   'C00', 200, 17.00, 23.50, '0', '1', '1', '0', 0,  60,  0,   '140'),
+('7210403', 'Thiết kế đồ họa',                        'H00', 100, 15.00, 21.00, '0', '0', '1', '0', 0,  0,   0,   '100'),
+('7140201', 'Sư phạm Giáo dục mầm non',               'M00', 100, 16.00, 20.50, '0', '0', '1', '0', 0,  0,   0,   '100');
 
--- Tổng: 100 tài khoản (3 Admin + 97 User)
--- Password tất cả: 123456
--- ~16 tài khoản Đã khóa, còn lại Hoạt động
+-- ================================================================
+-- 3. xt_tohop_monthi (bảng cha - không FK)
+-- Các cột: maToHop, mon1, mon2, mon3, tenToHop
+-- ================================================================
+INSERT INTO xt_tohop_monthi (matohop, mon1, mon2, mon3, tentohop) VALUES
+('A00', 'TO',  'LI',  'HO',  'Toán - Lý - Hóa'),
+('A01', 'TO',  'LI',  'TI',  'Toán - Lý - Tin'),
+('A02', 'TO',  'LI',  'SI',  'Toán - Lý - Sinh'),
+('B00', 'TO',  'HO',  'SI',  'Toán - Hóa - Sinh'),
+('C00', 'VA',  'SU',  'DI',  'Văn - Sử - Địa'),
+('D01', 'TO',  'VA',  'N1',  'Toán - Văn - Anh'),
+('D07', 'TO',  'HO',  'N1',  'Toán - Hóa - Anh'),
+('C14', 'TO',  'VA',  'KTPL','Toán - Văn - KTPL'),
+('M00', 'VA',  'TO',  'NK1', 'Văn - Toán - Năng khiếu 1'),
+('H00', 'VA',  'NK1', 'NK2', 'Văn - Năng khiếu 1 - Năng khiếu 2');
 
--- Tối ưu tìm kiếm theo username (Unique nếu có thể)
-ALTER TABLE xt_users ADD INDEX idx_username (username);
-ALTER TABLE xt_users ADD INDEX idx_ho_ten (ho_ten);
+-- ================================================================
+-- 4. xt_nganh_tohop (FK → xt_nganh.manganh + xt_tohop_monthi.matohop)
+-- Boolean columns: TO, LI, HO, SI, VA, SU, DI, TI, N1, KTPL,
+--                  NK1, NK2, NK3, NK4, NK5, NK6, CNCN, CNNN, KHAC
+-- ================================================================
+INSERT INTO xt_nganh_tohop
+    (manganh, matohop, tb_keys,
+     th_mon1, hsmon1, th_mon2, hsmon2, th_mon3, hsmon3,
+     `TO`, LI, HO, SI, VA, SU, DI, TI, N1, KTPL,
+     NK1, NK2, NK3, NK4, NK5, NK6, CNCN, CNNN, KHAC,
+     dolech)
+VALUES
+-- CNTT (7480201)
+('7480201','A00','7480201_A00','TO',1,'LI',1,'HO',1, 1,1,1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0, 0.00),
+('7480201','A01','7480201_A01','TO',1,'LI',1,'TI',1, 1,1,0,0,0,0,0,1,0,0, 0,0,0,0,0,0,0,0,0, 0.00),
+('7480201','D01','7480201_D01','TO',1,'VA',1,'N1',1, 1,0,0,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0,0, 1.50),
 
+-- Khoa học máy tính (7480101)
+('7480101','A00','7480101_A00','TO',1,'LI',1,'HO',1, 1,1,1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0, 0.00),
+('7480101','A01','7480101_A01','TO',1,'LI',1,'TI',1, 1,1,0,0,0,0,0,1,0,0, 0,0,0,0,0,0,0,0,0, 0.00),
 
--- 10 thí sinh mẫu cho bảng xt_thi_sinh
+-- Quản trị kinh doanh (7340101)
+('7340101','A00','7340101_A00','TO',1,'LI',1,'HO',1, 1,1,1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0, 0.00),
+('7340101','D01','7340101_D01','TO',1,'VA',1,'N1',1, 1,0,0,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0,0, 1.00),
 
-INSERT INTO xt_thisinhxettuyen25 (cccd, dien_thoai, doi_tuong, email, gioi_tinh, ho, khu_vuc, ngay_sinh, noi_sinh, password, sobaodanh, ten, updated_at) VALUES
-('001234567890', '0912345678', 'KV1', 'thiSinh001@edu.vn', 'NAM', 'Nguyễn', 'Hà Nội', '2005-01-15', 'Hà Nội', '123456', 'SBD001', 'Văn An', NOW()),
-('001234567891', '0912345679', 'KV2', 'thiSinh002@edu.vn', 'NỮ', 'Trần', 'TP.HCM', '2005-03-20', 'TP.HCM', '123456', 'SBD002', 'Thị Bình', NOW()),
-('001234567892', '0912345680', 'KV1', 'thiSinh003@edu.vn', 'NAM', 'Lê', 'Hải Phòng', '2005-05-10', 'Hải Phòng', '123456', 'SBD003', 'Quốc Cường', NOW()),
-('001234567893', '0912345681', 'KV3', 'thiSinh004@edu.vn', 'NỮ', 'Phạm', 'Đà Nẵng', '2005-07-22', 'Đà Nẵng', '123456', 'SBD004', 'Minh Dũng', NOW()),
-('001234567894', '0912345682', 'KV2', 'thiSinh005@edu.vn', 'NAM', 'Hoàng', 'Cần Thơ', '2005-02-14', 'Cần Thơ', '123456', 'SBD005', 'Đức Phong', NOW()),
-('001234567895', '0912345683', 'KV1', 'thiSinh006@edu.vn', 'NỮ', 'Đặng', 'Hà Nội', '2005-04-18', 'Hà Nội', '123456', 'SBD006', 'Thị Giang', NOW()),
-('001234567896', '0912345684', 'KV2', 'thiSinh007@edu.vn', 'NAM', 'Bùi', 'TP.HCM', '2005-06-25', 'TP.HCM', '123456', 'SBD007', 'Văn Hùng', NOW()),
-('001234567897', '0912345685', 'KV3', 'thiSinh008@edu.vn', 'NỮ', 'Ngô', 'Hải Phòng', '2005-08-30', 'Hải Phòng', '123456', 'SBD008', 'Thị Iris', NOW()),
-('001234567898', '0912345686', 'KV1', 'thiSinh009@edu.vn', 'NAM', 'Đinh', 'Đà Nẵng', '2005-09-12', 'Đà Nẵng', '123456', 'SBD009', 'Công Kiên', NOW()),
-('001234567899', '0912345687', 'KV2', 'thiSinh010@edu.vn', 'NỮ', 'Lý', 'Cần Thơ', '2005-10-05', 'Cần Thơ', '123456', 'SBD010', 'Thị Lan', NOW());
+-- Kinh tế (7310101)
+('7310101','C14','7310101_C14','TO',1,'VA',1,'KTPL',1, 1,0,0,0,1,0,0,0,0,1, 0,0,0,0,0,0,0,0,0, 0.00),
+('7310101','D01','7310101_D01','TO',1,'VA',1,'N1',1,  1,0,0,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0,0, 0.50),
 
--- Tối ưu tìm kiếm theo CCCD và Số báo danh (Unique nếu có thể)
-ALTER TABLE xt_thisinhxettuyen25 ADD INDEX idx_cccd (cccd);
-ALTER TABLE xt_thisinhxettuyen25 ADD INDEX idx_sbd (sobaodanh);
+-- Ngôn ngữ Anh (7220201)
+('7220201','D01','7220201_D01','TO',1,'VA',1,'N1',2, 1,0,0,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0,0, 0.00),
+('7220201','D07','7220201_D07','TO',1,'HO',1,'N1',2, 1,0,1,0,0,0,0,0,1,0, 0,0,0,0,0,0,0,0,0, 1.00),
 
--- Tối ưu tìm kiếm theo Họ và Tên (Dùng cho lệnh LIKE 'Ten%')
-ALTER TABLE xt_thisinhxettuyen25 ADD INDEX idx_ho_ten (ho, ten);
+-- Kỹ thuật điều khiển (7520216)
+('7520216','A00','7520216_A00','TO',1,'LI',1,'HO',1, 1,1,1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0, 0.00),
+
+-- Xây dựng (7580201)
+('7580201','A00','7580201_A00','TO',1,'LI',1,'HO',1, 1,1,1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0, 0.00),
+('7580201','A02','7580201_A02','TO',1,'LI',1,'SI',1, 1,1,0,1,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0, 0.50),
+
+-- Dược học (7720201)
+('7720201','B00','7720201_B00','TO',1,'HO',1,'SI',1, 1,0,1,1,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0, 0.00),
+('7720201','A00','7720201_A00','TO',1,'LI',1,'HO',1, 1,1,1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0, 0.50),
+
+-- Luật (7380101)
+('7380101','C00','7380101_C00','VA',1,'SU',1,'DI',1, 0,0,0,0,1,1,1,0,0,0, 0,0,0,0,0,0,0,0,0, 0.00),
+('7380101','D01','7380101_D01','TO',1,'VA',1,'N1',1, 1,0,0,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0,0, 1.00),
+
+-- Thiết kế đồ họa (7210403)
+('7210403','H00','7210403_H00','VA',1,'NK1',2,'NK2',1, 0,0,0,0,1,0,0,0,0,0, 1,1,0,0,0,0,0,0,0, 1.00),
+('7210403','M00','7210403_M00','VA',1,'TO',1,'NK1',2,  1,0,0,0,1,0,0,0,0,0, 1,0,0,0,0,0,0,0,0, 1.50),
+
+-- Sư phạm Mầm non (7140201)
+('7140201','M00','7140201_M00','VA',1,'TO',1,'NK1',2, 1,0,0,0,1,0,0,0,0,0, 1,0,0,0,0,0,0,0,0, 2.00),
+('7140201','C00','7140201_C00','VA',1,'SU',1,'DI',1,  0,0,0,0,1,1,1,0,0,0, 0,0,0,0,0,0,0,0,0, 1.00);
+
+-- ================================================================
+-- 5. xt_thisinhxettuyen25 (bảng cha cho các bảng điểm + nguyện vọng)
+-- gioi_tinh là ENUM: NAM, NU, KHAC
+-- ngay_sinh là VARCHAR (lưu dạng chuỗi theo entity)
+-- doi_tuong là mã ưu tiên: 01-07 hoặc null
+-- ================================================================
+INSERT INTO xt_thisinhxettuyen25
+    (cccd, sobaodanh, ho, ten, ngay_sinh, dien_thoai, password,
+     gioi_tinh, email, noi_sinh, doi_tuong, khu_vuc, updated_at) VALUES
+('001234567890','SBD001','Nguyễn','Văn An',    '15/01/2005','0912345678','123456','NAM','thiSinh001@edu.vn','Hà Nội',    '01','KV1','2025-01-01'),
+('001234567891','SBD002','Trần',  'Thị Bình',  '20/03/2005','0912345679','123456','NU', 'thiSinh002@edu.vn','TP.HCM',   '05','KV2','2025-01-01'),
+('001234567892','SBD003','Lê',    'Quốc Cường','10/05/2005','0912345680','123456','NAM','thiSinh003@edu.vn','Hải Phòng', NULL,'KV1','2025-01-01'),
+('001234567893','SBD004','Phạm',  'Minh Dũng', '22/07/2005','0912345681','123456','NAM','thiSinh004@edu.vn','Đà Nẵng',  NULL,'KV3','2025-01-01'),
+('001234567894','SBD005','Hoàng', 'Đức Phong', '14/02/2005','0912345682','123456','NAM','thiSinh005@edu.vn','Cần Thơ',  '05','KV2','2025-01-01'),
+('001234567895','SBD006','Đặng',  'Thị Giang', '18/04/2005','0912345683','123456','NU', 'thiSinh006@edu.vn','Hà Nội',   '01','KV1','2025-01-01'),
+('001234567896','SBD007','Bùi',   'Văn Hùng',  '25/06/2005','0912345684','123456','NAM','thiSinh007@edu.vn','TP.HCM',   NULL,'KV2','2025-01-01'),
+('001234567897','SBD008','Ngô',   'Thị Iris',  '30/08/2005','0912345685','123456','NU', 'thiSinh008@edu.vn','Hải Phòng',NULL,'KV3','2025-01-01'),
+('001234567898','SBD009','Đinh',  'Công Kiên', '12/09/2005','0912345686','123456','NAM','thiSinh009@edu.vn','Đà Nẵng',  '05','KV1','2025-01-01'),
+('001234567899','SBD010','Lý',    'Thị Lan',   '05/10/2005','0912345687','123456','NU', 'thiSinh010@edu.vn','Cần Thơ',  NULL,'KV2','2025-01-01');
+
+-- ================================================================
+-- 6. xt_diemthixettuyen (FK → xt_thisinhxettuyen25.cccd, 1-1)
+-- Tất cả cột điểm đều nullable — chỉ điền môn thi liên quan
+-- ================================================================
+INSERT INTO xt_diemthixettuyen
+    (cccd, sobaodanh, d_phuongthuc,
+     `TO`, LI, HO, SI, VA, SU, DI, TI, N1_THI, KTPL, CNCN, CNNN,
+     TO_VSAT, LI_VSAT, HO_VSAT, SI_VSAT, SU_VSAT, DI_VSAT, VA_VSAT, N1_VSAT,
+     N1_CC, NL1,
+     NK1, NK2, NK3, NK4, NK5, NK6)
+VALUES
+-- SBD001: THPT + ĐGNL
+('001234567890','SBD001','THPT',
+ 8.00, 8.50, 9.00, NULL, 6.50, NULL, NULL, NULL, 7.50, NULL, NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL),
+
+-- SBD002: THPT
+('001234567891','SBD002','THPT',
+ 7.00, 7.50, 8.00, NULL, 7.00, NULL, NULL, NULL, 8.50, NULL, NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL),
+
+-- SBD003: THPT
+('001234567892','SBD003','THPT',
+ 9.00, 8.75, 8.50, NULL, 6.00, NULL, NULL, NULL, 7.00, NULL, NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL),
+
+-- SBD004: THPT (Văn Sử Địa)
+('001234567893','SBD004','THPT',
+ NULL, NULL, NULL, NULL, 8.00, 7.50, 7.00, NULL, NULL, NULL, NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL),
+
+-- SBD005: THPT + ĐGNL
+('001234567894','SBD005','THPT',
+ 8.50, NULL, 8.00, 8.25, NULL, NULL, NULL, NULL, 7.00, NULL, NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ NULL, 950.00,
+ NULL, NULL, NULL, NULL, NULL, NULL),
+
+-- SBD006: THPT
+('001234567895','SBD006','THPT',
+ 7.50, 7.00, 7.50, NULL, 8.00, NULL, NULL, NULL, 9.00, NULL, NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL),
+
+-- SBD007: V-SAT
+('001234567896','SBD007','VSAT',
+ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ 105.00, 95.00, 110.00, NULL, NULL, NULL, NULL, NULL,
+ NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL),
+
+-- SBD008: THPT Năng khiếu (Thiết kế đồ họa)
+('001234567897','SBD008','THPT',
+ NULL, NULL, NULL, NULL, 8.50, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ NULL, NULL,
+ 85.00, 78.00, NULL, NULL, NULL, NULL),
+
+-- SBD009: ĐGNL
+('001234567898','SBD009','DGNL',
+ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ NULL, 1050.00,
+ NULL, NULL, NULL, NULL, NULL, NULL),
+
+-- SBD010: THPT
+('001234567899','SBD010','THPT',
+ 7.00, 6.50, 7.00, 7.50, NULL, NULL, NULL, NULL, 8.00, NULL, NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+ NULL, NULL,
+ NULL, NULL, NULL, NULL, NULL, NULL);
+
+-- ================================================================
+-- 7. xt_diemcongxetuyen (FK → ThiSinh.cccd + Nganh.manganh + ToHop.matohop)
+-- Điểm cộng ưu tiên khu vực + đối tượng của thí sinh cho từng NV
+-- ================================================================
+INSERT INTO xt_diemcongxetuyen
+    (ts_cccd, manganh, matohop, phuongthuc, diemCC, diemUtxt, diemTong, ghichu, dc_keys)
+VALUES
+-- SBD001 (KV1+UT1 = 0.75+2.0 = 2.75) - CNTT A00
+('001234567890','7480201','A00','THPT', 2.75, 0.00, 2.75, 'KV1 + Đối tượng 01', 'DC_SBD001_7480201_A00'),
+-- SBD002 (KV2+UT2 = 0.25+1.0 = 1.25) - CNTT D01
+('001234567891','7480201','D01','THPT', 1.25, 0.00, 1.25, 'KV2 + Đối tượng 05', 'DC_SBD002_7480201_D01'),
+-- SBD003 (KV1 = 0.75) - CNTT A00
+('001234567892','7480201','A00','THPT', 0.75, 0.00, 0.75, 'KV1', 'DC_SBD003_7480201_A00'),
+-- SBD004 (KV3 = 0) - Luật C00
+('001234567893','7380101','C00','THPT', 0.00, 0.00, 0.00, 'KV3 không ưu tiên', 'DC_SBD004_7380101_C00'),
+-- SBD005 (KV2+UT2 = 0.25+1.0 = 1.25) - Dược B00
+('001234567894','7720201','B00','THPT', 1.25, 0.00, 1.25, 'KV2 + Đối tượng 05', 'DC_SBD005_7720201_B00'),
+-- SBD006 (KV1+UT1 = 0.75+2.0 = 2.75) - Ngôn ngữ Anh D01
+('001234567895','7220201','D01','THPT', 2.75, 0.00, 2.75, 'KV1 + Đối tượng 01', 'DC_SBD006_7220201_D01'),
+-- SBD007 (KV2 = 0.25) - CNTT A00
+('001234567896','7480201','A00','VSAT', 0.25, 0.00, 0.25, 'KV2', 'DC_SBD007_7480201_A00'),
+-- SBD008 (KV3 = 0) - Thiết kế đồ họa H00
+('001234567897','7210403','H00','THPT', 0.00, 0.00, 0.00, 'KV3 không ưu tiên', 'DC_SBD008_7210403_H00'),
+-- SBD009 (KV1+UT2 = 0.75+1.0 = 1.75) - Khoa học máy tính A01
+('001234567898','7480101','A01','DGNL', 1.75, 0.00, 1.75, 'KV1 + Đối tượng 05', 'DC_SBD009_7480101_A01'),
+-- SBD010 (KV2 = 0.25) - Dược B00
+('001234567899','7720201','B00','THPT', 0.25, 0.00, 0.25, 'KV2', 'DC_SBD010_7720201_B00');
+
+-- ================================================================
+-- 8. xt_nguyenvongxettuyen (FK → ThiSinh.cccd + Nganh.manganh + ToHop.matohop)
+-- Thứ tự NV (nv_tt): 1 = NV1, 2 = NV2...
+-- phuongthuc: THPT, DGNL, VSAT
+-- ================================================================
+INSERT INTO xt_nguyenvongxettuyen
+    (nn_cccd, nv_manganh, tt_thm, nv_tt, diem_thxt, diem_utqd, diem_cong,
+     diem_xettuyen, nv_ketqua, tt_phuongthuc, nv_keys)
+VALUES
+-- SBD001: 2 nguyện vọng
+('001234567890','7480201','A00',1, 25.50, 2.75, 2.75, 28.25, 'Trúng tuyển', 'THPT', 'NV_SBD001_7480201_A00_1'),
+('001234567890','7480101','A01',2, 24.00, 2.75, 2.75, 26.75, NULL,          'THPT', 'NV_SBD001_7480101_A01_2'),
+
+-- SBD002: 2 nguyện vọng
+('001234567891','7480201','D01',1, 22.50, 1.25, 1.25, 23.75, NULL,          'THPT', 'NV_SBD002_7480201_D01_1'),
+('001234567891','7220201','D01',2, 22.50, 1.25, 1.25, 23.75, NULL,          'THPT', 'NV_SBD002_7220201_D01_2'),
+
+-- SBD003: 2 nguyện vọng
+('001234567892','7480201','A00',1, 26.25, 0.75, 0.75, 27.00, 'Trúng tuyển', 'THPT', 'NV_SBD003_7480201_A00_1'),
+('001234567892','7480101','A00',2, 26.25, 0.75, 0.75, 27.00, 'Trúng tuyển', 'THPT', 'NV_SBD003_7480101_A00_2'),
+
+-- SBD004: 1 nguyện vọng
+('001234567893','7380101','C00',1, 22.50, 0.00, 0.00, 22.50, NULL,          'THPT', 'NV_SBD004_7380101_C00_1'),
+
+-- SBD005: 2 nguyện vọng
+('001234567894','7720201','B00',1, 24.75, 1.25, 1.25, 26.00, NULL,          'THPT', 'NV_SBD005_7720201_B00_1'),
+('001234567894','7480201','A00',2, 24.75, 1.25, 1.25, 26.00, NULL,          'DGNL', 'NV_SBD005_7480201_A00_2'),
+
+-- SBD006: 2 nguyện vọng
+('001234567895','7220201','D01',1, 24.50, 2.75, 2.75, 27.25, 'Trúng tuyển', 'THPT', 'NV_SBD006_7220201_D01_1'),
+('001234567895','7340101','D01',2, 24.50, 2.75, 2.75, 27.25, NULL,          'THPT', 'NV_SBD006_7340101_D01_2'),
+
+-- SBD007: 1 nguyện vọng (V-SAT)
+('001234567896','7480201','A00',1, 23.33, 0.25, 0.25, 23.58, NULL,          'VSAT', 'NV_SBD007_7480201_A00_1'),
+
+-- SBD008: 1 nguyện vọng (Năng khiếu)
+('001234567897','7210403','H00',1, 21.00, 0.00, 0.00, 21.00, 'Trúng tuyển', 'THPT', 'NV_SBD008_7210403_H00_1'),
+
+-- SBD009: 2 nguyện vọng (ĐGNL)
+('001234567898','7480101','A01',1, 26.25, 1.75, 1.75, 28.00, 'Trúng tuyển', 'DGNL', 'NV_SBD009_7480101_A01_1'),
+('001234567898','7480201','A00',2, 26.25, 1.75, 1.75, 28.00, NULL,          'DGNL', 'NV_SBD009_7480201_A00_2'),
+
+-- SBD010: 2 nguyện vọng
+('001234567899','7720201','B00',1, 21.50, 0.25, 0.25, 21.75, NULL,          'THPT', 'NV_SBD010_7720201_B00_1'),
+('001234567899','7340101','A00',2, 21.50, 0.25, 0.25, 21.75, NULL,          'THPT', 'NV_SBD010_7340101_A00_2');
+
+-- ================================================================
+-- 9. xt_bangquydoi (độc lập - không FK)
+-- Bảng quy đổi điểm V-SAT / ĐGNL / chứng chỉ sang thang 10/30
+-- d_maquydoi = phuongthuc_tohop_mon_phanvi (unique key)
+-- ================================================================
+INSERT INTO xt_bangquydoi
+    (d_phuongthuc, d_tohop, d_mon, d_diema, d_diemb, d_diemc, d_diemd, d_maquydoi, d_phanvi)
+VALUES
+-- ĐGNL → thang 30 (diemA=điểm ĐGNL min, diemB=max, diemC=quy đổi thang 30)
+('DGNL', NULL, NULL, 600.00, 699.00, 15.00, NULL, 'DGNL_NULL_NULL_600_699', '600-699'),
+('DGNL', NULL, NULL, 700.00, 799.00, 17.50, NULL, 'DGNL_NULL_NULL_700_799', '700-799'),
+('DGNL', NULL, NULL, 800.00, 899.00, 20.00, NULL, 'DGNL_NULL_NULL_800_899', '800-899'),
+('DGNL', NULL, NULL, 900.00, 999.00, 22.50, NULL, 'DGNL_NULL_NULL_900_999', '900-999'),
+('DGNL', NULL, NULL, 1000.00,1099.00,25.00, NULL, 'DGNL_NULL_NULL_1000_1099','1000-1099'),
+('DGNL', NULL, NULL, 1100.00,1200.00,27.50, NULL, 'DGNL_NULL_NULL_1100_1200','1100-1200'),
+
+-- V-SAT Toán → thang 10
+('VSAT', 'A00', 'TO', 0.00,  50.00,  3.33, NULL, 'VSAT_A00_TO_0_50',   '0-50'),
+('VSAT', 'A00', 'TO', 51.00, 100.00, 6.67, NULL, 'VSAT_A00_TO_51_100', '51-100'),
+('VSAT', 'A00', 'TO', 101.00,150.00, 10.00,NULL, 'VSAT_A00_TO_101_150','101-150'),
+
+-- V-SAT Lý → thang 10
+('VSAT', 'A00', 'LI', 0.00,  50.00,  3.33, NULL, 'VSAT_A00_LI_0_50',   '0-50'),
+('VSAT', 'A00', 'LI', 51.00, 100.00, 6.67, NULL, 'VSAT_A00_LI_51_100', '51-100'),
+('VSAT', 'A00', 'LI', 101.00,150.00, 10.00,NULL, 'VSAT_A00_LI_101_150','101-150'),
+
+-- V-SAT Hóa → thang 10
+('VSAT', 'A00', 'HO', 0.00,  50.00,  3.33, NULL, 'VSAT_A00_HO_0_50',   '0-50'),
+('VSAT', 'A00', 'HO', 51.00, 100.00, 6.67, NULL, 'VSAT_A00_HO_51_100', '51-100'),
+('VSAT', 'A00', 'HO', 101.00,150.00, 10.00,NULL, 'VSAT_A00_HO_101_150','101-150'),
+
+-- Chứng chỉ Anh ngữ → điểm quy đổi (IELTS)
+('CC', NULL, 'N1', 4.00,  4.49,  6.00,  NULL, 'CC_NULL_N1_4_449',   'IELTS 4.0-4.49'),
+('CC', NULL, 'N1', 4.50,  4.99,  6.50,  NULL, 'CC_NULL_N1_45_499',  'IELTS 4.5-4.99'),
+('CC', NULL, 'N1', 5.00,  5.49,  7.00,  NULL, 'CC_NULL_N1_5_549',   'IELTS 5.0-5.49'),
+('CC', NULL, 'N1', 5.50,  5.99,  7.50,  NULL, 'CC_NULL_N1_55_599',  'IELTS 5.5-5.99'),
+('CC', NULL, 'N1', 6.00,  6.49,  8.00,  NULL, 'CC_NULL_N1_6_649',   'IELTS 6.0-6.49'),
+('CC', NULL, 'N1', 6.50,  6.99,  8.50,  NULL, 'CC_NULL_N1_65_699',  'IELTS 6.5-6.99'),
+('CC', NULL, 'N1', 7.00,  7.49,  9.00,  NULL, 'CC_NULL_N1_7_749',   'IELTS 7.0-7.49'),
+('CC', NULL, 'N1', 7.50,  9.99,  10.00, NULL, 'CC_NULL_N1_75_999',  'IELTS 7.5+');

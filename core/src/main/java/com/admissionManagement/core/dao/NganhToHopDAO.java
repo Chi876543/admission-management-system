@@ -34,6 +34,6 @@ public class NganhToHopDAO {
     }
 
     public void deleteWithSession(Session session, NganhToHop nganhToHop) {
-        session.detach(nganhToHop);
+        session.remove(nganhToHop);
     }
 }

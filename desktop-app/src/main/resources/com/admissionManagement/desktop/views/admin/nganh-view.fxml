@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.admissionManagement.desktop.controllers.admin.NganhController"
       styleClass="screen-root" spacing="12">
-
     <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
 
-    <!-- Inline form -->
     <VBox styleClass="inline-form-card" spacing="10">
         <Label fx:id="lblFormTitle" text="Thêm ngành mới" styleClass="inline-form-title"/>
         <HBox spacing="12">
@@ -23,6 +19,10 @@
                 <Label text="Tên ngành *" styleClass="field-label"/>
                 <TextField fx:id="tfTenNganh" promptText="VD: Công nghệ thông tin" styleClass="field-input"/>
             </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Tổ hợp gốc" styleClass="field-label"/>
+                <TextField fx:id="tfToHopGoc" promptText="VD: A00" styleClass="field-input"/>
+            </VBox>
         </HBox>
         <HBox spacing="12">
             <VBox HBox.hgrow="ALWAYS" spacing="4">
@@ -30,34 +30,50 @@
                 <TextField fx:id="tfChiTieu" promptText="VD: 100" styleClass="field-input"/>
             </VBox>
             <VBox HBox.hgrow="ALWAYS" spacing="4">
-                <Label text="Khoa / Viện" styleClass="field-label"/>
-                <TextField fx:id="tfKhoa" promptText="VD: Khoa CNTT" styleClass="field-input"/>
+                <Label text="Điểm sàn" styleClass="field-label"/>
+                <TextField fx:id="tfDiemSan" promptText="VD: 15.0" styleClass="field-input"/>
             </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm trúng tuyển" styleClass="field-label"/>
+                <TextField fx:id="tfDiemTrungTuyen" promptText="VD: 22.5" styleClass="field-input"/>
+            </VBox>
+        </HBox>
+        <HBox spacing="24" alignment="CENTER_LEFT">
+            <Label text="Phương thức:" styleClass="field-label"/>
+            <CheckBox fx:id="cbTuyenThang" text="Tuyển thẳng"/>
+            <CheckBox fx:id="cbDgnl"       text="ĐGNL"/>
+            <CheckBox fx:id="cbThpt"       text="THPT"/>
+            <CheckBox fx:id="cbVsat"       text="V-SAT"/>
         </HBox>
         <Label fx:id="lblError" text="" styleClass="error-label"/>
         <HBox spacing="8">
-            <Button text="Lưu"         styleClass="btn-primary" onAction="#onSave"/>
-            <Button text="Hủy / Mới"   styleClass="btn-default" onAction="#onReset"/>
-            <Button text="⬆ Import CSV" styleClass="btn-primary" onAction="#onImport"/>
+            <Button text="Lưu"       styleClass="btn-primary" onAction="#onSave"/>
+            <Button text="Hủy / Mới" styleClass="btn-default" onAction="#onReset"/>
         </HBox>
     </VBox>
 
-    <!-- Table -->
+    <!-- Toolbar: tìm kiếm + nút Import CSV -->
     <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
         <TextField fx:id="tfSearch" promptText="Tìm theo mã, tên ngành..."
-                   styleClass="search-box" prefWidth="260" onKeyReleased="#onSearch"/>
+                   styleClass="search-box" prefWidth="280" onKeyReleased="#onSearch"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnImport" text="⬆ Import CSV"
+                styleClass="btn-default" onAction="#onImportCSV"/>
+        <Label fx:id="lblImportStatus" text="" styleClass="record-count"
+               style="-fx-text-fill: #2e7d32;"/>
     </HBox>
 
     <VBox VBox.vgrow="ALWAYS" styleClass="table-card">
-        <TableView fx:id="tblNganh" VBox.vgrow="ALWAYS" styleClass="main-table"
-                   onMouseClicked="#onTableClick">
+        <TableView fx:id="tblNganh" VBox.vgrow="ALWAYS" styleClass="main-table" onMouseClicked="#onTableClick">
             <columns>
-                <TableColumn fx:id="colMa"       text="Mã ngành"    prefWidth="110"/>
-                <TableColumn fx:id="colTen"       text="Tên ngành"   prefWidth="240"/>
-                <TableColumn fx:id="colKhoa"      text="Khoa / Viện" prefWidth="180"/>
-                <TableColumn fx:id="colChiTieu"   text="Chỉ tiêu"    prefWidth="90" style="-fx-alignment:CENTER;"/>
-                <TableColumn fx:id="colDaDangKy"  text="Đã đăng ký"  prefWidth="100" style="-fx-alignment:CENTER;"/>
-                <TableColumn fx:id="colAction"    text="Thao tác"    prefWidth="120" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colMa"             text="Mã ngành"       prefWidth="100"/>
+                <TableColumn fx:id="colTen"            text="Tên ngành"       prefWidth="200"/>
+                <TableColumn fx:id="colToHopGoc"       text="TH Gốc"         prefWidth="75" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colChiTieu"        text="Chỉ tiêu"        prefWidth="75" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colDiemSan"        text="Điểm sàn"        prefWidth="85" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colDiemTrungTuyen" text="Điểm TT"         prefWidth="80" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colPhuongThuc"     text="Phương thức"     prefWidth="180"/>
+                <TableColumn fx:id="colAction"         text="Thao tác"        prefWidth="120" style="-fx-alignment:CENTER;"/>
             </columns>
             <placeholder><Label text="Không có dữ liệu" styleClass="table-placeholder"/></placeholder>
         </TableView>

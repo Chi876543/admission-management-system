@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.admissionManagement.desktop.controllers.admin.ToHopController"
       styleClass="screen-root" spacing="12">
-
     <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
 
     <VBox styleClass="inline-form-card" spacing="10">
@@ -19,30 +16,52 @@
                 <TextField fx:id="tfMaToHop" promptText="VD: A00" styleClass="field-input"/>
             </VBox>
             <VBox HBox.hgrow="ALWAYS" spacing="4">
-                <Label text="Tên tổ hợp *" styleClass="field-label"/>
+                <Label text="Tên tổ hợp" styleClass="field-label"/>
                 <TextField fx:id="tfTenToHop" promptText="VD: Toán - Lý - Hóa" styleClass="field-input"/>
             </VBox>
         </HBox>
-        <VBox spacing="4">
-            <Label text="Danh sách môn (phân cách dấu phẩy) *" styleClass="field-label"/>
-            <TextField fx:id="tfMonHoc" promptText="VD: Toán, Vật lý, Hóa học" styleClass="field-input"/>
-        </VBox>
+        <!-- 3 ComboBox môn -->
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Môn 1 *" styleClass="field-label"/>
+                <ComboBox fx:id="cbMon1" promptText="Chọn môn..." maxWidth="Infinity" styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Môn 2 *" styleClass="field-label"/>
+                <ComboBox fx:id="cbMon2" promptText="Chọn môn..." maxWidth="Infinity" styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Môn 3 *" styleClass="field-label"/>
+                <ComboBox fx:id="cbMon3" promptText="Chọn môn..." maxWidth="Infinity" styleClass="field-input"/>
+            </VBox>
+        </HBox>
         <Label fx:id="lblError" text="" styleClass="error-label"/>
         <HBox spacing="8">
-            <Button text="Lưu"         styleClass="btn-primary" onAction="#onSave"/>
-            <Button text="Hủy / Mới"   styleClass="btn-default" onAction="#onReset"/>
-            <Button text="⬆ Import CSV" styleClass="btn-primary" onAction="#onImport"/>
+            <Button text="Lưu"       styleClass="btn-primary" onAction="#onSave"/>
+            <Button text="Hủy / Mới" styleClass="btn-default" onAction="#onReset"/>
         </HBox>
     </VBox>
 
+    <!-- Toolbar: tìm kiếm + nút Import CSV -->
+    <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
+        <TextField fx:id="tfSearch" promptText="Tìm theo mã, tên tổ hợp..."
+                   styleClass="search-box" prefWidth="260" onKeyReleased="#onSearch"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnImport" text="⬆ Import CSV"
+                styleClass="btn-default" onAction="#onImportCSV"/>
+        <Label fx:id="lblImportStatus" text="" styleClass="record-count"
+               style="-fx-text-fill: #2e7d32;"/>
+    </HBox>
+
     <VBox VBox.vgrow="ALWAYS" styleClass="table-card">
-        <TableView fx:id="tblToHop" VBox.vgrow="ALWAYS" styleClass="main-table"
-                   onMouseClicked="#onTableClick">
+        <TableView fx:id="tblToHop" VBox.vgrow="ALWAYS" styleClass="main-table" onMouseClicked="#onTableClick">
             <columns>
-                <TableColumn fx:id="colMa"    text="Mã TH"     prefWidth="90"/>
-                <TableColumn fx:id="colTen"   text="Tên tổ hợp" prefWidth="180"/>
-                <TableColumn fx:id="colMon"   text="Môn thi"    prefWidth="320"/>
-                <TableColumn fx:id="colAction" text="Thao tác"  prefWidth="120" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colMa"     text="Mã TH"      prefWidth="90"/>
+                <TableColumn fx:id="colTen"    text="Tên tổ hợp"  prefWidth="200"/>
+                <TableColumn fx:id="colMon1"   text="Môn 1"       prefWidth="100"/>
+                <TableColumn fx:id="colMon2"   text="Môn 2"       prefWidth="100"/>
+                <TableColumn fx:id="colMon3"   text="Môn 3"       prefWidth="100"/>
+                <TableColumn fx:id="colAction" text="Thao tác"    prefWidth="120" style="-fx-alignment:CENTER;"/>
             </columns>
             <placeholder><Label text="Không có dữ liệu" styleClass="table-placeholder"/></placeholder>
         </TableView>

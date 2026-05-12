@@ -43,6 +43,14 @@ public class NganhToHopDTO {
     private Boolean su;
     private Boolean dia;
     private Boolean tin;
+    private Boolean nk1;
+    private Boolean nk2;
+    private Boolean nk3;
+    private Boolean nk4;
+    private Boolean nk5;
+    private Boolean nk6;
+    private Boolean cncn;
+    private Boolean cncc;
     private Boolean khac;
     private Boolean ktpl;
 

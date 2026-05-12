@@ -14,6 +14,10 @@ import java.util.List;
         name = "xt_nganh",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_nganh_manganh", columnNames = {"manganh"})
+        },
+        indexes = {
+                @Index(name = "idx_ma_nganh", columnList = "manganh"),
+                @Index(name = "idx_ten_nganh", columnList = "tennganh"),
         }
 )
 
@@ -21,7 +25,7 @@ public class Nganh {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idnganh")
+    @Column(name = "idnganh", nullable = false)
     private int idNganh;
 
     @Column(name = "manganh", length = 45, nullable = false)

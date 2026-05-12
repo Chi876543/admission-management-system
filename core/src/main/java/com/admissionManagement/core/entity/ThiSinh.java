@@ -50,7 +50,7 @@ public class ThiSinh {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idthisinh")
+    @Column(name = "idthisinh", nullable = false)
     private int idThiSinh;
 
     @Column(name = "cccd", length = 20, nullable = false)

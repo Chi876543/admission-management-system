@@ -294,7 +294,9 @@ public class ThiSinhBUS {
     public ThiSinhDTO findBySbd(String sbd, String ngaySinh) {
         try (Session session = factory.openSession()) {
             ThiSinh thiSinh = dao.getBySbdWithSession(session, sbd);
-
+            if(thiSinh != null){
+                System.out.println(ngaySinh + " " + thiSinh.getNgaySinh());
+            }
             if (thiSinh == null || !thiSinh.getNgaySinh().equals(ngaySinh)) {
                 return null;
             }
