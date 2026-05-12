@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.DiemThiXetTuyenDialogController"
+      styleClass="screen-root" spacing="12" prefWidth="600">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <Label fx:id="lblDialogTitle" text="Thêm bảng điểm mới" styleClass="inline-form-title"/>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+        <VBox styleClass="inline-form-card" spacing="10">
+
+            <!-- Thông tin chung -->
+            <Label text="── Thông tin chung ──" styleClass="field-label"/>
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="CCCD *" styleClass="field-label"/>
+                    <TextField fx:id="tfCccd" promptText="VD: 012345678901" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Số báo danh" styleClass="field-label"/>
+                    <TextField fx:id="tfSbd" promptText="VD: 01000001" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Phương thức" styleClass="field-label"/>
+                    <TextField fx:id="tfPhuongThuc" promptText="VD: THPT" styleClass="field-input"/>
+                </VBox>
+            </HBox>
+
+            <!-- Điểm THPT -->
+            <Label text="── Điểm THPT ──" styleClass="field-label"/>
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Toán" styleClass="field-label"/>
+                    <TextField fx:id="tfToan" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Vật lý" styleClass="field-label"/>
+                    <TextField fx:id="tfLy" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Hóa học" styleClass="field-label"/>
+                    <TextField fx:id="tfHoa" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Sinh học" styleClass="field-label"/>
+                    <TextField fx:id="tfSinh" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+            </HBox>
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Lịch sử" styleClass="field-label"/>
+                    <TextField fx:id="tfSu" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Địa lý" styleClass="field-label"/>
+                    <TextField fx:id="tfDia" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Ngữ văn" styleClass="field-label"/>
+                    <TextField fx:id="tfVan" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Tin học" styleClass="field-label"/>
+                    <TextField fx:id="tfTin" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+            </HBox>
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="KTPL" styleClass="field-label"/>
+                    <TextField fx:id="tfKtpl" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Ngoại ngữ (thi)" styleClass="field-label"/>
+                    <TextField fx:id="tfN1Thi" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Ngoại ngữ (CC)" styleClass="field-label"/>
+                    <TextField fx:id="tfN1Cc" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="CN Công nghiệp" styleClass="field-label"/>
+                    <TextField fx:id="tfCncn" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+            </HBox>
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="CN Nông nghiệp" styleClass="field-label"/>
+                    <TextField fx:id="tfCnnn" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4"/>
+                <VBox HBox.hgrow="ALWAYS" spacing="4"/>
+                <VBox HBox.hgrow="ALWAYS" spacing="4"/>
+            </HBox>
+
+            <!-- Điểm VSAT -->
+            <Label text="── Điểm VSAT ──" styleClass="field-label"/>
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Toán" styleClass="field-label"/>
+                    <TextField fx:id="tfToanVsat" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Vật lý" styleClass="field-label"/>
+                    <TextField fx:id="tfLyVsat" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Hóa học" styleClass="field-label"/>
+                    <TextField fx:id="tfHoaVsat" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Sinh học" styleClass="field-label"/>
+                    <TextField fx:id="tfSinhVsat" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+            </HBox>
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Lịch sử" styleClass="field-label"/>
+                    <TextField fx:id="tfSuVsat" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Địa lý" styleClass="field-label"/>
+                    <TextField fx:id="tfDiaVsat" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Ngữ văn" styleClass="field-label"/>
+                    <TextField fx:id="tfVanVsat" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="Ngoại ngữ" styleClass="field-label"/>
+                    <TextField fx:id="tfN1Vsat" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+            </HBox>
+
+            <!-- ĐGNL & Năng khiếu -->
+            <Label text="── ĐGNL &amp; Năng khiếu ──" styleClass="field-label"/>
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="ĐGNL (NL1)" styleClass="field-label"/>
+                    <TextField fx:id="tfNl1" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="NK1 - Kể chuyện" styleClass="field-label"/>
+                    <TextField fx:id="tfNk1" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="NK2 - Hát/Nhạc" styleClass="field-label"/>
+                    <TextField fx:id="tfNk2" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="NK3 - Hình họa" styleClass="field-label"/>
+                    <TextField fx:id="tfNk3" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+            </HBox>
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="NK4 - Trang trí" styleClass="field-label"/>
+                    <TextField fx:id="tfNk4" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="NK5 - Nhạc cụ" styleClass="field-label"/>
+                    <TextField fx:id="tfNk5" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label text="NK6 - Xướng âm" styleClass="field-label"/>
+                    <TextField fx:id="tfNk6" promptText="0.00" styleClass="field-input"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="4"/>
+            </HBox>
+
+            <Label fx:id="lblError" text="" styleClass="error-label"/>
+
+            <HBox spacing="8">
+                <Button text="Lưu" styleClass="btn-primary" onAction="#onDialogSave"/>
+                <Button text="Hủy" styleClass="btn-default" onAction="#onDialogCancel"/>
+            </HBox>
+
+        </VBox>
+    </ScrollPane>
+</VBox>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.BangQuyDoiDialogController"
+      styleClass="screen-root" spacing="12" prefWidth="480">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <Label fx:id="lblDialogTitle" text="Thêm luật quy đổi mới" styleClass="inline-form-title"/>
+
+    <VBox styleClass="inline-form-card" spacing="10">
+
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Phương thức *" styleClass="field-label"/>
+                <TextField fx:id="tfPhuongThuc" promptText="VD: DGNL, VSAT"
+                           styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Tổ hợp" styleClass="field-label"/>
+                <TextField fx:id="tfToHop" promptText="VD: A00, B00"
+                           styleClass="field-input"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Môn" styleClass="field-label"/>
+                <TextField fx:id="tfMon" promptText="VD: Toán, Lý"
+                           styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Mã quy đổi *" styleClass="field-label"/>
+                <TextField fx:id="tfMaQuyDoi" promptText="VD: QD001"
+                           styleClass="field-input"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm A (gốc từ) *" styleClass="field-label"/>
+                <TextField fx:id="tfDiemA" promptText="VD: 700"
+                           styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm B (gốc đến) *" styleClass="field-label"/>
+                <TextField fx:id="tfDiemB" promptText="VD: 720"
+                           styleClass="field-input"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm C (quy đổi từ) *" styleClass="field-label"/>
+                <TextField fx:id="tfDiemC" promptText="VD: 24.00"
+                           styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm D (quy đổi đến) *" styleClass="field-label"/>
+                <TextField fx:id="tfDiemD" promptText="VD: 24.50"
+                           styleClass="field-input"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Phân vị" styleClass="field-label"/>
+                <TextField fx:id="tfPhanVi" promptText="VD: 0.5"
+                           styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4"/>
+        </HBox>
+
+        <Label fx:id="lblError" text="" styleClass="error-label"/>
+
+        <HBox spacing="8">
+            <Button text="Lưu"  styleClass="btn-primary" onAction="#onDialogSave"/>
+            <Button text="Hủy"  styleClass="btn-default" onAction="#onDialogCancel"/>
+        </HBox>
+
+    </VBox>
+</VBox>

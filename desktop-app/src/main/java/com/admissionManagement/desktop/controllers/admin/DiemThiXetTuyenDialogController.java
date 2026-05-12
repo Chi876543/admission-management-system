@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 public class DiemThiXetTuyenDialogController extends BaseController {
 
-    private final DiemThiXetTuyenBUS bus = new DiemThiXetTuyenBUS();
+    private DiemThiXetTuyenBUS bus;
     private Stage dialogStage;
     private DiemThiXetTuyenDTO editingRow;
     private boolean isSaved = false;
@@ -19,22 +19,28 @@ public class DiemThiXetTuyenDialogController extends BaseController {
     @FXML private Label lblDialogTitle, lblError;
     @FXML private TextField tfCccd, tfSbd, tfPhuongThuc;
 
-    // Khai báo đầy đủ các TextField cho các loại điểm
-    @FXML private TextField tfToan, tfLy, tfHoa, tfSinh, tfSu, tfDia, tfVan, tfTin, tfKtpl, tfN1Thi, tfN1Cc, tfCncn, tfCnnn;
-    @FXML private TextField tfToanVsat, tfLyVsat, tfHoaVsat, tfSinhVsat, tfSuVsat, tfDiaVsat, tfVanVsat, tfN1Vsat;
+    // THPT
+    @FXML private TextField tfToan, tfLy, tfHoa, tfSinh, tfSu, tfDia,
+            tfVan, tfTin, tfKtpl, tfN1Thi, tfN1Cc, tfCncn, tfCnnn;
+    // VSAT
+    @FXML private TextField tfToanVsat, tfLyVsat, tfHoaVsat, tfSinhVsat,
+            tfSuVsat, tfDiaVsat, tfVanVsat, tfN1Vsat;
+    // ĐGNL & Năng khiếu
     @FXML private TextField tfNl1, tfNk1, tfNk2, tfNk3, tfNk4, tfNk5, tfNk6;
 
-    public void setDialogData(Stage stage, DiemThiXetTuyenDTO row) {
+    public void init(Stage stage, DiemThiXetTuyenDTO row, DiemThiXetTuyenBUS bus) {
         this.dialogStage = stage;
-        this.editingRow = row;
+        this.editingRow  = row;
+        this.bus         = bus;
 
         if (row != null) {
             lblDialogTitle.setText("Sửa điểm thi thí sinh: " + row.getCccd());
             tfCccd.setText(row.getCccd());
-            tfSbd.setText(row.getSoBaoDanh());
-            tfPhuongThuc.setText(row.getPhuongThuc());
+            tfCccd.setEditable(false);
+            tfSbd.setText(row.getSoBaoDanh() != null ? row.getSoBaoDanh() : "");
+            tfPhuongThuc.setText(row.getPhuongThuc() != null ? row.getPhuongThuc() : "");
 
-            // Đổ dữ liệu điểm THPT
+            // THPT
             tfToan.setText(val(row.getDiemToan()));
             tfLy.setText(val(row.getDiemLy()));
             tfHoa.setText(val(row.getDiemHoa()));
@@ -49,7 +55,7 @@ public class DiemThiXetTuyenDialogController extends BaseController {
             tfCncn.setText(val(row.getCncn()));
             tfCnnn.setText(val(row.getCnnn()));
 
-            // Đổ dữ liệu điểm VSAT
+            // VSAT
             tfToanVsat.setText(val(row.getDiemToanVSAT()));
             tfLyVsat.setText(val(row.getDiemLyVSAT()));
             tfHoaVsat.setText(val(row.getDiemHoaVSAT()));
@@ -59,7 +65,7 @@ public class DiemThiXetTuyenDialogController extends BaseController {
             tfVanVsat.setText(val(row.getDiemVanVSAT()));
             tfN1Vsat.setText(val(row.getN1VSAT()));
 
-            // Đổ dữ liệu điểm NL và NK
+            // ĐGNL & Năng khiếu
             tfNl1.setText(val(row.getNl1()));
             tfNk1.setText(val(row.getNk1()));
             tfNk2.setText(val(row.getNk2()));
@@ -67,21 +73,15 @@ public class DiemThiXetTuyenDialogController extends BaseController {
             tfNk4.setText(val(row.getNk4()));
             tfNk5.setText(val(row.getNk5()));
             tfNk6.setText(val(row.getNk6()));
-
-            tfCccd.setEditable(false);
         } else {
             lblDialogTitle.setText("Thêm bảng điểm mới");
         }
     }
 
-    private String val(BigDecimal d) { return d == null ? "" : d.toString(); }
-
-    private BigDecimal parse(String s) {
-        return (s == null || s.trim().isEmpty()) ? BigDecimal.ZERO : new BigDecimal(s.trim());
-    }
-
     @FXML
     private void onDialogSave() {
+        lblError.setText("");
+
         if (tfCccd.getText().trim().isEmpty()) {
             lblError.setText("CCCD không được để trống.");
             return;
@@ -95,7 +95,7 @@ public class DiemThiXetTuyenDialogController extends BaseController {
             dto.setSoBaoDanh(tfSbd.getText().trim());
             dto.setPhuongThuc(tfPhuongThuc.getText().trim());
 
-            // Lấy dữ liệu điểm THPT từ Form
+            // THPT
             dto.setDiemToan(parse(tfToan.getText()));
             dto.setDiemLy(parse(tfLy.getText()));
             dto.setDiemHoa(parse(tfHoa.getText()));
@@ -110,7 +110,7 @@ public class DiemThiXetTuyenDialogController extends BaseController {
             dto.setCncn(parse(tfCncn.getText()));
             dto.setCnnn(parse(tfCnnn.getText()));
 
-            // Lấy dữ liệu điểm VSAT từ Form
+            // VSAT
             dto.setDiemToanVSAT(parse(tfToanVsat.getText()));
             dto.setDiemLyVSAT(parse(tfLyVsat.getText()));
             dto.setDiemHoaVSAT(parse(tfHoaVsat.getText()));
@@ -120,7 +120,7 @@ public class DiemThiXetTuyenDialogController extends BaseController {
             dto.setDiemVanVSAT(parse(tfVanVsat.getText()));
             dto.setN1VSAT(parse(tfN1Vsat.getText()));
 
-            // Lấy dữ liệu điểm NL và NK từ Form
+            // ĐGNL & Năng khiếu
             dto.setNl1(parse(tfNl1.getText()));
             dto.setNk1(parse(tfNk1.getText()));
             dto.setNk2(parse(tfNk2.getText()));
@@ -129,21 +129,41 @@ public class DiemThiXetTuyenDialogController extends BaseController {
             dto.setNk5(parse(tfNk5.getText()));
             dto.setNk6(parse(tfNk6.getText()));
 
-            String result = (editingRow == null) ? bus.addDiemThiXetTuyen(dto) : bus.updateDiemThiXetTuyen(dto.getIdDiemThi(), dto);
+            String result = (editingRow == null)
+                    ? bus.addDiemThiXetTuyen(dto)
+                    : bus.updateDiemThiXetTuyen(dto.getIdDiemThi(), dto);
 
-            if (result.contains("successfully")) {
-                showInfo("Thành công", result);
-                isSaved = true;
-                dialogStage.close();
-            } else {
+            if (result.startsWith("Lỗi")) {
                 lblError.setText(result);
+                return;
             }
+
+            showInfo("Thành công", result);
+            isSaved = true;
+            dialogStage.close();
+
         } catch (NumberFormatException e) {
-            lblError.setText("Lỗi: Các ô điểm phải nhập số hợp lệ.");
+            lblError.setText("Lỗi: Các ô điểm phải nhập số hợp lệ (VD: 8.50).");
         }
     }
 
-    @FXML private void onDialogCancel() { dialogStage.close(); }
+    @FXML
+    private void onDialogCancel() {
+        dialogStage.close();
+    }
 
-    public boolean getIsSaved() { return isSaved; }
+    public boolean getIsSaved() {
+        return isSaved;
+    }
+
+    // --- Helpers ---
+    private String val(BigDecimal d) {
+        return d == null ? "" : d.toPlainString();
+    }
+
+    // Để trống = null (không phải ZERO như code cũ)
+    private BigDecimal parse(String s) {
+        if (s == null || s.trim().isEmpty()) return null;
+        return new BigDecimal(s.trim());
+    }
 }

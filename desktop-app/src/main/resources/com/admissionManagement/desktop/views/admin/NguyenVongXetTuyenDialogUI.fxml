@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.NguyenVongXetTuyenDialogController"
+      styleClass="screen-root" spacing="12" prefWidth="520">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <Label fx:id="lblDialogTitle" text="Thêm nguyện vọng mới" styleClass="inline-form-title"/>
+
+    <VBox styleClass="inline-form-card" spacing="10">
+
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="CCCD *" styleClass="field-label"/>
+                <TextField fx:id="tfCccd" promptText="VD: 012345678901"
+                           styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Mã ngành *" styleClass="field-label"/>
+                <TextField fx:id="tfMaNganh" promptText="VD: 7480201"
+                           styleClass="field-input"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Thứ tự nguyện vọng *" styleClass="field-label"/>
+                <TextField fx:id="tfThuTu" promptText="VD: 1"
+                           styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Tổ hợp *" styleClass="field-label"/>
+                <TextField fx:id="tfToHop" promptText="VD: A00"
+                           styleClass="field-input"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Phương thức" styleClass="field-label"/>
+                <ComboBox fx:id="cbPhuongThuc" maxWidth="Infinity"
+                          styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Kết quả" styleClass="field-label"/>
+                <ComboBox fx:id="cbKetQua" maxWidth="Infinity"
+                          styleClass="field-input"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm THXT" styleClass="field-label"/>
+                <TextField fx:id="tfDiemTHXT" promptText="VD: 24.50"
+                           styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm UTQD" styleClass="field-label"/>
+                <TextField fx:id="tfDiemUTQD" promptText="VD: 1.50"
+                           styleClass="field-input"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm cộng" styleClass="field-label"/>
+                <TextField fx:id="tfDiemCong" promptText="VD: 0.50"
+                           styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="Điểm xét tuyển" styleClass="field-label"/>
+                <TextField fx:id="tfDiemXT" promptText="VD: 26.50"
+                           styleClass="field-input"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="NV Keys *" styleClass="field-label"/>
+                <TextField fx:id="tfNvKeys" promptText="VD: VSAT_A00_7480201"
+                           styleClass="field-input"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="4"/>
+        </HBox>
+
+        <Label fx:id="lblError" text="" styleClass="error-label"/>
+
+        <HBox spacing="8">
+            <Button text="Lưu" styleClass="btn-primary" onAction="#onDialogSave"/>
+            <Button text="Hủy" styleClass="btn-default" onAction="#onDialogCancel"/>
+        </HBox>
+
+    </VBox>
+</VBox>

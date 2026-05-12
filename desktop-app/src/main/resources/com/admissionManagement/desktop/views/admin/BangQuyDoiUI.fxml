@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.BangQuyDoiController"
+      styleClass="screen-root" spacing="12">
+
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+    <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
+        <TextField fx:id="tfSearch" promptText="Tìm theo mã, phương thức, môn..."
+                   styleClass="search-box" prefWidth="260"/>
+        <Button text="+ Thêm mới" styleClass="btn-primary" onAction="#onAdd"/>
+    </HBox>
+
+    <VBox VBox.vgrow="ALWAYS" styleClass="table-card">
+        <TableView fx:id="tblBangQuyDoi" VBox.vgrow="ALWAYS" styleClass="main-table">
+            <columns>
+                <TableColumn fx:id="colId"         text="ID"            prefWidth="60"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colPhuongThuc" text="Phương thức"   prefWidth="120" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colToHop"      text="Tổ hợp"        prefWidth="90"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colMon"        text="Môn"           prefWidth="120" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colDiemA"      text="Điểm A (từ)"   prefWidth="100" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colDiemB"      text="Điểm B (đến)"  prefWidth="100" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colDiemC"      text="Điểm C (từ)"   prefWidth="100" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colDiemD"      text="Điểm D (đến)"  prefWidth="100" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colMaQuyDoi"   text="Mã quy đổi"    prefWidth="110" style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colPhanVi"     text="Phân vị"       prefWidth="90"  style="-fx-alignment:CENTER;"/>
+                <TableColumn fx:id="colAction"     text="Thao tác"      prefWidth="120" style="-fx-alignment:CENTER;"/>
+            </columns>
+            <placeholder>
+                <Label text="Không có dữ liệu" styleClass="table-placeholder"/>
+            </placeholder>
+        </TableView>
+        <HBox styleClass="pagination-bar" alignment="CENTER_RIGHT">
+            <Label fx:id="lblCount" text="0 bản ghi" styleClass="record-count"/>
+        </HBox>
+    </VBox>
+</VBox>

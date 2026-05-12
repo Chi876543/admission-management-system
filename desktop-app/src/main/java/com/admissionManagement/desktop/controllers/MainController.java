@@ -64,10 +64,10 @@ public class MainController implements Initializable {
             {"nganh",       "admin/nganh-view.fxml",        "Quản lý ngành tuyển sinh",    "Thêm, sửa, xóa, import ngành"},
             {"tohop",       "admin/tohop-view.fxml",        "Quản lý tổ hợp môn",          "Thêm, sửa, xóa tổ hợp"},
             {"nganhtohop",  "admin/nganh-tohop-view.fxml",  "Ngành - Tổ hợp",              "Gán tổ hợp xét tuyển cho từng ngành"},
-            {"diem",        "admin/diem-view.fxml",         "Quản lý điểm thí sinh",       "THPT · VSAT · ĐGNL · Thống kê"},
+            {"diem",        "admin/DiemThiXetTuyenUI.fxml",         "Quản lý điểm thí sinh",       "THPT · VSAT · ĐGNL · Thống kê"},
             {"diemcong",    "admin/diemcong-view.fxml",     "Quản lý điểm cộng",           "Ưu tiên đối tượng, khu vực"},
-            {"nguyenvong",  "admin/nguyenvong-view.fxml",   "Nguyện vọng & xét tuyển",     "Chạy xét tuyển · Xem kết quả"},
-            {"quydoi",      "admin/quydoi-view.fxml",       "Bảng quy đổi điểm",           "Quy đổi VSAT / ĐGNL sang thang 30"},
+            {"nguyenvong", "admin/NguyenVongXetTuyenUI.fxml", "Nguyện vọng & xét tuyển", "Chạy xét tuyển · Xem kết quả"},
+            {"quydoi", "admin/BangQuyDoiUI.fxml", "Bảng quy đổi điểm", "Quy đổi VSAT / ĐGNL sang thang 30"},
     };
 
     @Override

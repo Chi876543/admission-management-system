@@ -2,6 +2,7 @@ package com.admissionManagement.desktop.controllers.admin;
 
 import com.admissionManagement.core.dto.NguyenVongXetTuyenDTO;
 import com.admissionManagement.core.service.NguyenVongXetTuyenBUS;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,28 +15,34 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class NguyenVongXetTuyenController extends BaseController implements Initializable {
 
     private final NguyenVongXetTuyenBUS bus = new NguyenVongXetTuyenBUS();
     private final ObservableList<NguyenVongXetTuyenDTO> masterData = FXCollections.observableArrayList();
+    private PauseTransition searchDebounce;
 
-    @FXML private TextField tfSearch; // Tìm theo CCCD hoặc Mã nguyện vọng
+    @FXML private TextField tfSearch;
+    @FXML private Label lblCount;
     @FXML private TableView<NguyenVongXetTuyenDTO> tblNguyenVong;
 
-    @FXML private TableColumn<NguyenVongXetTuyenDTO, Integer> colId, colThuTu;
-    @FXML private TableColumn<NguyenVongXetTuyenDTO, String> colCccd, colMaNganh, colPhuongThuc, colToHop, colKetQua;
+    @FXML private TableColumn<NguyenVongXetTuyenDTO, Integer>    colId, colThuTu;
+    @FXML private TableColumn<NguyenVongXetTuyenDTO, String>     colCccd, colMaNganh, colPhuongThuc, colToHop, colKetQua, colNvKeys;
     @FXML private TableColumn<NguyenVongXetTuyenDTO, BigDecimal> colDiemTHXT, colDiemUTQD, colDiemCong, colDiemXT;
-    @FXML private TableColumn<NguyenVongXetTuyenDTO, Void> colAction;
+    @FXML private TableColumn<NguyenVongXetTuyenDTO, Void>       colAction;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        searchDebounce = new PauseTransition(Duration.millis(300));
+        searchDebounce.setOnFinished(e -> loadData());
+        tfSearch.textProperty().addListener((obs, old, val) -> searchDebounce.playFromStart());
+
         setupTable();
         loadData();
     }
@@ -52,6 +59,7 @@ public class NguyenVongXetTuyenController extends BaseController implements Init
         colDiemCong.setCellValueFactory(new PropertyValueFactory<>("diemCong"));
         colDiemXT.setCellValueFactory(new PropertyValueFactory<>("diemXetTuyen"));
         colKetQua.setCellValueFactory(new PropertyValueFactory<>("ketQua"));
+        colNvKeys.setCellValueFactory(new PropertyValueFactory<>("nvKeys"));
 
         colAction.setCellFactory(col -> new TableCell<>() {
             private final HBox box = makeActionCell(
@@ -64,12 +72,14 @@ public class NguyenVongXetTuyenController extends BaseController implements Init
                         if (item != null) onDelete(item);
                     }
             );
+
             @Override
             protected void updateItem(Void v, boolean empty) {
                 super.updateItem(v, empty);
                 setGraphic(empty ? null : box);
             }
         });
+
         tblNguyenVong.setItems(masterData);
     }
 
@@ -78,13 +88,15 @@ public class NguyenVongXetTuyenController extends BaseController implements Init
         if (key.isEmpty()) {
             masterData.setAll(bus.getAllNganhToHop());
         } else {
-            // Tận dụng hàm tìm kiếm theo CCCD có sẵn trong BUS của bạn
             masterData.setAll(bus.getByThiSinhCccd(key));
         }
+        lblCount.setText(masterData.size() + " bản ghi");
     }
 
-    @FXML private void onSearch() { loadData(); }
-    @FXML private void onAdd() { openDialog(null); }
+    @FXML
+    private void onAdd() {
+        openDialog(null);
+    }
 
     private void onDelete(NguyenVongXetTuyenDTO row) {
         if (confirmDelete("Nguyện vọng ngành " + row.getMaNganh() + " của thí sinh " + row.getCccd())) {
@@ -100,7 +112,11 @@ public class NguyenVongXetTuyenController extends BaseController implements Init
 
     private void openDialog(NguyenVongXetTuyenDTO row) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/admissionManagement/desktop/views/admin/nguyenvong-dialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/com/admissionManagement/desktop/views/admin/NguyenVongXetTuyenDialogUI.fxml"
+                    )
+            );
             Parent root = loader.load();
             NguyenVongXetTuyenDialogController dialogCtrl = loader.getController();
 
@@ -109,10 +125,11 @@ public class NguyenVongXetTuyenController extends BaseController implements Init
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
 
-            dialogCtrl.setDialogData(stage, row);
+            dialogCtrl.init(stage, row, bus);
             stage.showAndWait();
 
             if (dialogCtrl.getIsSaved()) loadData();
+
         } catch (IOException e) {
             showError("Lỗi giao diện: " + e.getMessage());
         }

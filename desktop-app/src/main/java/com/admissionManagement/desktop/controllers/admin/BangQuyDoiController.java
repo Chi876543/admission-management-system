@@ -2,6 +2,7 @@ package com.admissionManagement.desktop.controllers.admin;
 
 import com.admissionManagement.core.dto.BangQuyDoiDTO;
 import com.admissionManagement.core.service.BangQuyDoiBUS;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,27 +15,32 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class BangQuyDoiController extends BaseController implements Initializable {
 
     private final BangQuyDoiBUS bangQuyDoiBUS = new BangQuyDoiBUS();
     private final ObservableList<BangQuyDoiDTO> masterData = FXCollections.observableArrayList();
+    private PauseTransition searchDebounce;
 
     @FXML private TextField tfSearch;
     @FXML private TableView<BangQuyDoiDTO> tblBangQuyDoi;
-    @FXML private TableColumn<BangQuyDoiDTO, Integer> colId;
-    @FXML private TableColumn<BangQuyDoiDTO, String> colPhuongThuc, colToHop, colMon, colMaQuyDoi, colPhanVi;
+    @FXML private TableColumn<BangQuyDoiDTO, Integer>    colId;
+    @FXML private TableColumn<BangQuyDoiDTO, String>     colPhuongThuc, colToHop, colMon, colMaQuyDoi, colPhanVi;
     @FXML private TableColumn<BangQuyDoiDTO, BigDecimal> colDiemA, colDiemB, colDiemC, colDiemD;
-    @FXML private TableColumn<BangQuyDoiDTO, Void> colAction;
+    @FXML private TableColumn<BangQuyDoiDTO, Void>       colAction;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        searchDebounce = new PauseTransition(Duration.millis(300));
+        searchDebounce.setOnFinished(e -> loadData());
+        tfSearch.textProperty().addListener((obs, old, val) -> searchDebounce.playFromStart());
+
         setupTable();
         loadData();
     }
@@ -62,21 +68,25 @@ public class BangQuyDoiController extends BaseController implements Initializabl
                         if (item != null) onDelete(item);
                     }
             );
+
             @Override
             protected void updateItem(Void v, boolean empty) {
                 super.updateItem(v, empty);
                 setGraphic(empty ? null : box);
             }
         });
+
         tblBangQuyDoi.setItems(masterData);
     }
 
     private void loadData() {
-        masterData.setAll(bangQuyDoiBUS.getAllBangQuyDoi(tfSearch.getText()));
+        masterData.setAll(bangQuyDoiBUS.getAllBangQuyDoi(tfSearch.getText().trim()));
     }
 
-    @FXML private void onSearch() { loadData(); }
-    @FXML private void onAdd() { openDialog(null); }
+    @FXML
+    private void onAdd() {
+        openDialog(null);
+    }
 
     private void onDelete(BangQuyDoiDTO row) {
         if (confirmDelete("Luật quy đổi: " + row.getMaQuyDoi())) {
@@ -92,7 +102,11 @@ public class BangQuyDoiController extends BaseController implements Initializabl
 
     private void openDialog(BangQuyDoiDTO row) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/admissionManagement/desktop/views/admin/bangquydoi-dialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/com/admissionManagement/desktop/views/admin/BangQuyDoiDialogUI.fxml"
+                    )
+            );
             Parent root = loader.load();
             BangQuyDoiDialogController dialogCtrl = loader.getController();
 
@@ -101,10 +115,11 @@ public class BangQuyDoiController extends BaseController implements Initializabl
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
 
-            dialogCtrl.setDialogData(stage, row);
+            dialogCtrl.init(stage, row, bangQuyDoiBUS);
             stage.showAndWait();
 
             if (dialogCtrl.getIsSaved()) loadData();
+
         } catch (IOException e) {
             showError("Lỗi giao diện: " + e.getMessage());
         }
