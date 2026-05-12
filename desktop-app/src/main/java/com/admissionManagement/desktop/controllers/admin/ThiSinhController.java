@@ -160,7 +160,7 @@ public class ThiSinhController extends BaseController implements Initializable {
             Task<String> importTask = new Task<>() {
                 @Override
                 protected String call() throws Exception {
-                    return diemCongXetTuyenBUS.importUtxtCsvData(selectedFile);
+                    return diemCongXetTuyenBUS.importCcCsvData(selectedFile);
                 }
             };
 
