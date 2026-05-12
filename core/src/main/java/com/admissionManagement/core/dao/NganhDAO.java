@@ -1,5 +1,7 @@
 package com.admissionManagement.core.dao;
 
+import com.admissionManagement.core.dto.NganhDTO;
+import com.admissionManagement.core.dto.NganhWithRegistryCountDTO;
 import com.admissionManagement.core.entity.Nganh;
 import com.admissionManagement.core.entity.ToHopMonThi;
 import org.hibernate.Session;
@@ -29,6 +31,22 @@ public class NganhDAO {
         String query = "FROM Nganh";
         List listNganh = session.createQuery(query).list();
         return listNganh;
+    }
+
+    public List<NganhWithRegistryCountDTO> getAllWithCountWithSession(Session session){
+        String hql =
+                "SELECT new com.admissionManagement.core.dto.NganhWithRegistryCountDTO(" +
+                "n.idNganh, n.maNganh, n.tenNganh, n.toHopGoc, n.chiTieu, " +
+                "n.diemSan, n.diemTrungTuyen, n.tuyenThang, n.dgnl, n.thpt, n.vsat, " +
+                "n.slXtt, n.slDgnl, n.slVsat, n.slThpt, " +
+                "COUNT(nv.idNv)) " +
+                "FROM Nganh n " +
+                "LEFT JOIN n.danhSachNguyenVongCuaNganh nv " +
+                "GROUP BY n.idNganh, n.maNganh, n.tenNganh, n.toHopGoc, n.chiTieu, " +
+                "n.diemSan, n.diemTrungTuyen, n.tuyenThang, n.dgnl, n.thpt, n.vsat, " +
+                "n.slXtt, n.slDgnl, n.slVsat, n.slThpt";
+
+        return session.createQuery(hql, NganhWithRegistryCountDTO.class).list();
     }
 
     public List<String> getAllMaNganh(Session session) {

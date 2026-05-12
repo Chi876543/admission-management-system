@@ -257,11 +257,19 @@ public class DiemCongXetTuyenBUS {
         }
     }
 
-    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyen(){
-        Session session = factory.openSession();
-        List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAllWithSession(session);
-        session.close();
-        return mapListEntityToListDTO(listDiemCongXetTuyen);
+    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyen(String keyword){
+        String cccd = null;
+
+        if(keyword != null && !keyword.trim().isEmpty()) {
+            if (keyword.matches("^\\d{9,12}$")) {
+                cccd = keyword;
+            }
+        }
+
+        try(Session session = factory.openSession()){
+            List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAllWithSession(session, cccd);
+            return mapListEntityToListDTO(listDiemCongXetTuyen);
+        }
     }
 
     public String updateDiemCongXetTuyen(int id, DiemCongXetTuyenDTO newDiemCongXetTuyenDTO){

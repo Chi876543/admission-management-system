@@ -295,7 +295,7 @@ public class NganhToHopController extends BaseController implements Initializabl
                 editingRow.getSu(),   editingRow.getDia(),  editingRow.getTin(),
                 editingRow.getNk1(),  editingRow.getNk2(),  editingRow.getNk3(),
                 editingRow.getNk4(),  editingRow.getNk5(),  editingRow.getNk6(),
-                editingRow.getCncn(), editingRow.getCncc(),
+                editingRow.getCncn(), editingRow.getCnnn(),
                 editingRow.getKhac(), editingRow.getKtpl(),
                 editingRow.getDoLech()
         );
