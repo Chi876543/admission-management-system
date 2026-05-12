@@ -149,9 +149,17 @@ public class BangQuyDoiBUS {
         }
     }
 
-    public BangQuyDoiDTO getBangQuyDoiWithScore(String phuongThuc, BigDecimal diem, String mon, String toHop){
-        try(Session session = factory.openSession()) {
-            return toDTO(dao.getLuatQuyDoiWithSession(session, phuongThuc, diem ,mon, toHop));
+    public BangQuyDoiDTO getBangQuyDoiWithScore(String phuongThuc, BigDecimal diem, String mon, String toHop) {
+        try (Session session = factory.openSession()) {
+
+            BangQuyDoi entity =
+                    dao.getLuatQuyDoiWithSession(session, phuongThuc, diem, mon, toHop);
+
+            if (entity == null) {
+                return null;
+            }
+
+            return toDTO(entity);
         }
     }
 }
