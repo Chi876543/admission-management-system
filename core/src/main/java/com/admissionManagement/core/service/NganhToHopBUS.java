@@ -327,4 +327,11 @@ public class NganhToHopBUS {
         }
     }
 
+    public List<NganhToHopDTO> getAllByMaNganh(String maNganh){
+        Session session = factory.openSession();
+        List<NganhToHop> listNganhToHop = dao.getAllByMaNganhWithSession(session, maNganh);
+        session.close();
+        return mapListEntityToListDTO(listNganhToHop);
+    }
+
 }
