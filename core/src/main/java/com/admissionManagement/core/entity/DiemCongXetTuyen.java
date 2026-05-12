@@ -7,10 +7,7 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(
-        name = "xt_diemcongxetuyen",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_diemcongxettuyen_keys", columnNames = {"dc_keys"})
-        }
+        name = "xt_diemcongxetuyen"
 )
 
 public class DiemCongXetTuyen {

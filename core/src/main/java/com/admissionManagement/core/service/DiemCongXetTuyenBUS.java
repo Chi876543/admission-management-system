@@ -181,7 +181,7 @@ public class DiemCongXetTuyenBUS {
 
                     String ghiChuMoi = line[2].trim();
                     String mucDiemQuyDoi = line[4].trim();
-                    String monMoi = "TA";
+                    String monMoi = "N1";
 
                     List<DiemCongXetTuyen> listDiemCu = dao.getListByCccdWithSession(session, thiSinh.getCccd());
 
