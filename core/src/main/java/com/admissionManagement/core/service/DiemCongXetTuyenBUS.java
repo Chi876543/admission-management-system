@@ -329,4 +329,19 @@ public class DiemCongXetTuyenBUS {
             return "Lỗi: " + e.getMessage();
         }
     }
+
+    public List<DiemCongXetTuyenDTO> getListByCccd(String cccd) {
+        try (Session session = factory.openSession()) {
+            List<DiemCongXetTuyen> entities = dao.getListByCccdWithSession(session, cccd);
+
+            if (entities == null || entities.isEmpty()) {
+                return java.util.Collections.emptyList();
+            }
+
+            return mapListEntityToListDTO(entities);
+        } catch (Exception e) {
+            System.err.println("Lỗi lấy điểm cộng cho CCCD " + cccd + ": " + e.getMessage());
+            return java.util.Collections.emptyList();
+        }
+    }
 }
