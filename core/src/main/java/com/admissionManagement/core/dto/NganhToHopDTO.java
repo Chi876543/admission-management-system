@@ -50,7 +50,7 @@ public class NganhToHopDTO {
     private Boolean nk5;
     private Boolean nk6;
     private Boolean cncn;
-    private Boolean cncc;
+    private Boolean cnnn;
     private Boolean khac;
     private Boolean ktpl;
 
