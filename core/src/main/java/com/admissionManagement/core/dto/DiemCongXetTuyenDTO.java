@@ -18,22 +18,19 @@ public class DiemCongXetTuyenDTO {
     @NonNull
     private String tsCccd;
 
-    @NonNull
-    private String maNganh;
-
-    @NonNull
-    private String maToHop;
+    private String mon;
 
     private String phuongThuc;
 
-    private BigDecimal diemCC;
+    private BigDecimal diemUtxtToHop;
 
-    private BigDecimal diemUtxt;
+    private BigDecimal diemUtxtKhongXetToHop;
 
-    private BigDecimal diemTong;
+    private BigDecimal diemCc;
+
+    private BigDecimal diemTongThxt;
+
+    private BigDecimal diemTongKhongXetThxt;
 
     private String ghiChu;
-
-    @NonNull
-    private String dcKeys;
 }

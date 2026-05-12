@@ -180,4 +180,129 @@ public class DatabaseHelper {
 
         return noAccent.trim().replaceAll("\\s+", " ");
     }
+
+    public static BigDecimal[] tinhDiemUtxt(String cap, String loaiGiai, String phuongThuc) {
+        BigDecimal diemToHop = BigDecimal.ZERO;
+        BigDecimal diemKhongToHop = BigDecimal.ZERO;
+
+        boolean isQuocGia = cap.contains("quốc gia") || cap.contains("quốc tế");
+        boolean isTinh = cap.contains("tỉnh") || cap.contains("thành phố");
+
+        if (phuongThuc.equals("THPT")) {
+            if (isQuocGia) {
+                if (loaiGiai.contains("nhất")) {
+                    diemToHop = new BigDecimal("3.0");
+                    diemKhongToHop = new BigDecimal("1.0");
+                }
+                else if (loaiGiai.contains("nhì")) {
+                    diemToHop = new BigDecimal("2.0");
+                    diemKhongToHop = new BigDecimal("0.75");
+                }
+                else if (loaiGiai.contains("ba")) {
+                    diemToHop = new BigDecimal("1.5");
+                    diemKhongToHop = new BigDecimal("0.5");
+                }
+                else {
+                    diemToHop = new BigDecimal("1.0");
+                    diemKhongToHop = BigDecimal.ZERO;
+                }
+            } else if (isTinh) {
+                if (loaiGiai.contains("nhất")) {
+                    diemToHop = new BigDecimal("1.0");
+                    diemKhongToHop = new BigDecimal("0.25");
+                }
+                else if (loaiGiai.contains("nhì")) {
+                    diemToHop = new BigDecimal("0.75");
+                    diemKhongToHop = BigDecimal.ZERO;
+                }
+                else if (loaiGiai.contains("ba")) {
+                    diemToHop = new BigDecimal("0.5");
+                    diemKhongToHop = BigDecimal.ZERO;
+                }
+                else {
+                    diemToHop = BigDecimal.ZERO;
+                    diemKhongToHop = BigDecimal.ZERO;
+                }
+            }
+        }
+        else if (phuongThuc.equals("V-SAT") || phuongThuc.equals("VSAT")) {
+            if (isQuocGia) {
+                if (loaiGiai.contains("nhất")) {
+                    diemToHop = new BigDecimal("45.0");
+                    diemKhongToHop = new BigDecimal("15.0");
+                }
+                else if (loaiGiai.contains("nhì")) {
+                    diemToHop = new BigDecimal("30.0");
+                    diemKhongToHop = new BigDecimal("11.25");
+                }
+                else if (loaiGiai.contains("ba")) {
+                    diemToHop = new BigDecimal("22.5");
+                    diemKhongToHop = new BigDecimal("7.5");
+                }
+                else {
+                    diemToHop = new BigDecimal("15.0");
+                    diemKhongToHop = BigDecimal.ZERO;
+                }
+            } else if (isTinh) {
+                if (loaiGiai.contains("nhất")) {
+                    diemToHop = new BigDecimal("15.0");
+                    diemKhongToHop = new BigDecimal("3.75");
+                }
+                else if (loaiGiai.contains("nhì")) {
+                    diemToHop = new BigDecimal("11.25");
+                    diemKhongToHop = BigDecimal.ZERO;
+                }
+                else if (loaiGiai.contains("ba")) {
+                    diemToHop = new BigDecimal("7.5");
+                    diemKhongToHop = BigDecimal.ZERO;
+                }
+                else {
+                    diemToHop = BigDecimal.ZERO;
+                    diemKhongToHop = BigDecimal.ZERO;
+                }
+            }
+        }
+
+        return new BigDecimal[]{diemToHop, diemKhongToHop};
+    }
+
+    public static BigDecimal tinhDiemChungChiTiengAnh(String mucDiem, String phuongThuc) {
+        BigDecimal diemKhongToHop = BigDecimal.ZERO;
+
+        if (mucDiem.contains("8")) {
+            if (phuongThuc.equals("THPT")) {
+                diemKhongToHop = new BigDecimal("1.0");
+            }
+            else if (phuongThuc.equals("DGNL")) {
+                diemKhongToHop = new BigDecimal("40.0");
+            }
+            else if (phuongThuc.equals("VSAT")) {
+                diemKhongToHop = new BigDecimal("15.0");
+            }
+        }
+        else if (mucDiem.contains("9")) {
+            if (phuongThuc.equals("THPT")) {
+                diemKhongToHop = new BigDecimal("1.5");
+            }
+            else if (phuongThuc.equals("DGNL")) {
+                diemKhongToHop = new BigDecimal("60.0");
+            }
+            else if (phuongThuc.equals("VSAT")) {
+                diemKhongToHop = new BigDecimal("22.5");
+            }
+        }
+        else if (mucDiem.contains("10")) {
+            if (phuongThuc.equals("THPT")) {
+                diemKhongToHop = new BigDecimal("2.0");
+            }
+            else if (phuongThuc.equals("DGNL")) {
+                diemKhongToHop = new BigDecimal("80.0");
+            }
+            else if (phuongThuc.equals("VSAT")) {
+                diemKhongToHop = new BigDecimal("30.0");
+            }
+        }
+
+        return diemKhongToHop;
+    }
 }

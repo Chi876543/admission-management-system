@@ -7,10 +7,7 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(
-        name = "xt_diemcongxetuyen",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_diemcongxettuyen_keys", columnNames = {"dc_keys"})
-        }
+        name = "xt_diemcongxetuyen"
 )
 
 public class DiemCongXetTuyen {
@@ -29,40 +26,28 @@ public class DiemCongXetTuyen {
     )
     private ThiSinh thiSinh;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "manganh",
-            referencedColumnName = "manganh",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_diemcongxettuyen_nganh")
-    )
-    private Nganh nganh;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "matohop",
-            referencedColumnName = "matohop",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_diemcongxettuyen_tohopmonthi")
-    )
-    private ToHopMonThi toHopMonThi;
+    @Column(name = "mon", length = 10)
+    private String mon;
 
     @Column(name = "phuongthuc", length = 45)
     private String phuongThuc;
 
-    @Column(name = "diemCC", precision = 6, scale = 2)
-    private BigDecimal diemCC;
+    @Column(name = "diemUtxtToHop", precision = 6, scale = 2)
+    private BigDecimal diemUtxtToHop;
 
-    @Column(name = "diemUtxt", precision = 6, scale = 2)
-    private BigDecimal diemUtxt;
+    @Column(name = "diemUtxtKhongXetToHop", precision = 6, scale = 2)
+    private BigDecimal diemUtxtKhongXetToHop;
 
-    @Column(name = "diemTong", precision = 6, scale = 2)
-    private BigDecimal diemTong;
+    @Column(name = "diemCc", precision = 6, scale = 2)
+    private BigDecimal diemCc;
+
+    @Column(name = "diemTongThxt", precision = 6, scale = 2)
+    private BigDecimal diemTongThxt;
+
+    @Column(name = "diemTongKhongXetThxt", precision = 6, scale = 2)
+    private BigDecimal diemTongKhongXetThxt;
 
     @Lob // Dùng cho kiểu TEXT trong SQL
     @Column(name = "ghichu")
     private String ghiChu;
-
-    @Column(name = "dc_keys", length = 45, nullable = false)
-    private String dcKeys;
 }
