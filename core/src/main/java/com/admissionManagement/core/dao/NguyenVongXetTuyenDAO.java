@@ -23,6 +23,13 @@ public class NguyenVongXetTuyenDAO {
         session.save(nguyenVongXetTuyen);
     }
 
+    public NguyenVongXetTuyen getByKeyWithSession(Session session, String key) {
+            return session.createNativeQuery(
+                            "SELECT * FROM xt_nguyenvongxettuyen WHERE nv_keys = :key",
+                            NguyenVongXetTuyen.class)
+                    .setParameter("key", key)
+                    .uniqueResult();
+    }
 
     public NguyenVongXetTuyen getWithSession(Session session, int id){
         NguyenVongXetTuyen nguyenVongXetTuyen = session.get(NguyenVongXetTuyen.class, id);

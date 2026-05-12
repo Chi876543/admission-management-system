@@ -3,6 +3,7 @@ package com.admissionManagement.core.service;
 import com.admissionManagement.core.dao.NganhDAO;
 import com.admissionManagement.core.dto.BangQuyDoiDTO;
 import com.admissionManagement.core.dto.NganhDTO;
+import com.admissionManagement.core.dto.NganhWithRegistryCountDTO;
 import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.entity.Nganh;
 import com.admissionManagement.core.entity.ToHopMonThi;
@@ -141,10 +142,16 @@ public class NganhBUS {
     }
 
     public List<NganhDTO> getAllNganh(){
-        Session session = factory.openSession();
-        List<Nganh> listNganh = dao.getAllWithSession(session);
-        session.close();
-        return mapListEntityToListDTO(listNganh);
+        try(Session session = factory.openSession()){
+            List<Nganh> listNganh = dao.getAllWithSession(session);
+            return mapListEntityToListDTO(listNganh);
+        }
+    }
+
+    public List<NganhWithRegistryCountDTO> getAllNganhWithRegistryCount(){
+        try(Session session = factory.openSession()){
+            return dao.getAllWithCountWithSession(session);
+        }
     }
 
     public String updateNganh(int id, NganhDTO newNganhDTO){

@@ -39,6 +39,5 @@ public class NguyenVongXetTuyenDTO {
 
     private String phuongThuc;
 
-    @NonNull
     private String thm;
 }
