@@ -27,7 +27,7 @@ public class NguyenVongXetTuyenDialogController extends BaseController {
         this.bus         = bus;
 
         cbPhuongThuc.setItems(FXCollections.observableArrayList("DGNL", "THPT", "VSAT", "XetTuyenThang"));
-        cbKetQua.setItems(FXCollections.observableArrayList("Đỗ", "Trượt", "Đang xét duyệt"));
+        cbKetQua.setItems(FXCollections.observableArrayList("Trúng tuyển", "Trượt", "Đang xét duyệt"));
 
         if (row != null) {
             lblDialogTitle.setText("Sửa nguyện vọng ID: " + row.getIdNv());
