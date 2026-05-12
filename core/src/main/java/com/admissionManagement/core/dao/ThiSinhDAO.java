@@ -98,4 +98,13 @@ public class ThiSinhDAO {
                 .setParameter("sbd", sbd)
                 .uniqueResult();
     }
+
+    public ThiSinh getByCccdWithSession(Session session, String cccd) {
+        return session.createQuery(
+                        "FROM ThiSinh WHERE cccd = :cccd",
+                        ThiSinh.class
+                )
+                .setParameter("cccd", cccd)
+                .uniqueResult();
+    }
 }
