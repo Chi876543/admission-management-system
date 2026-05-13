@@ -217,32 +217,55 @@ VALUES
  NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- ================================================================
--- 7. xt_diemcongxetuyen (FK → ThiSinh.cccd + Nganh.manganh + ToHop.matohop)
--- Điểm cộng ưu tiên khu vực + đối tượng của thí sinh cho từng NV
+-- 7. xt_diemcongxetuyen (FK → xt_thisinhxettuyen25.cccd)
+-- Điểm cộng ưu tiên khu vực + đối tượng của thí sinh theo phương thức xét tuyển
+-- Schema mới: ts_cccd, mon, phuongthuc,
+--             diemUtxtToHop      (điểm cộng khi xét theo tổ hợp - THPT/VSAT),
+--             diemUtxtKhongXetToHop (điểm cộng không theo tổ hợp - DGNL),
+--             diemCc             (điểm cộng chứng chỉ, nếu có),
+--             diemTongThxt       (tổng cộng khi xét tổ hợp),
+--             diemTongKhongXetThxt (tổng cộng không xét tổ hợp - dùng cho DGNL),
+--             ghichu
+-- Công thức ưu tiên:
+--   KV1=0.75 | KV2=0.25 | KV2-NT=0.50 | KV3=0
+--   ĐT nhóm 1 (01-04)=2.0 | ĐT nhóm 2 (05-07)=1.0 | Không=0
 -- ================================================================
 INSERT INTO xt_diemcongxetuyen
-    (ts_cccd, manganh, matohop, phuongthuc, diemCC, diemUtxt, diemTong, ghichu, dc_keys)
+    (ts_cccd, mon, phuongthuc,
+     diemUtxtToHop, diemUtxtKhongXetToHop, diemCc,
+     diemTongThxt, diemTongKhongXetThxt, ghichu)
 VALUES
--- SBD001 (KV1+UT1 = 0.75+2.0 = 2.75) - CNTT A00
-('001234567890','7480201','A00','THPT', 2.75, 0.00, 2.75, 'KV1 + Đối tượng 01', 'DC_SBD001_7480201_A00'),
--- SBD002 (KV2+UT2 = 0.25+1.0 = 1.25) - CNTT D01
-('001234567891','7480201','D01','THPT', 1.25, 0.00, 1.25, 'KV2 + Đối tượng 05', 'DC_SBD002_7480201_D01'),
--- SBD003 (KV1 = 0.75) - CNTT A00
-('001234567892','7480201','A00','THPT', 0.75, 0.00, 0.75, 'KV1', 'DC_SBD003_7480201_A00'),
--- SBD004 (KV3 = 0) - Luật C00
-('001234567893','7380101','C00','THPT', 0.00, 0.00, 0.00, 'KV3 không ưu tiên', 'DC_SBD004_7380101_C00'),
--- SBD005 (KV2+UT2 = 0.25+1.0 = 1.25) - Dược B00
-('001234567894','7720201','B00','THPT', 1.25, 0.00, 1.25, 'KV2 + Đối tượng 05', 'DC_SBD005_7720201_B00'),
--- SBD006 (KV1+UT1 = 0.75+2.0 = 2.75) - Ngôn ngữ Anh D01
-('001234567895','7220201','D01','THPT', 2.75, 0.00, 2.75, 'KV1 + Đối tượng 01', 'DC_SBD006_7220201_D01'),
--- SBD007 (KV2 = 0.25) - CNTT A00
-('001234567896','7480201','A00','VSAT', 0.25, 0.00, 0.25, 'KV2', 'DC_SBD007_7480201_A00'),
--- SBD008 (KV3 = 0) - Thiết kế đồ họa H00
-('001234567897','7210403','H00','THPT', 0.00, 0.00, 0.00, 'KV3 không ưu tiên', 'DC_SBD008_7210403_H00'),
--- SBD009 (KV1+UT2 = 0.75+1.0 = 1.75) - Khoa học máy tính A01
-('001234567898','7480101','A01','DGNL', 1.75, 0.00, 1.75, 'KV1 + Đối tượng 05', 'DC_SBD009_7480101_A01'),
--- SBD010 (KV2 = 0.25) - Dược B00
-('001234567899','7720201','B00','THPT', 0.25, 0.00, 0.25, 'KV2', 'DC_SBD010_7720201_B00');
+-- SBD001: KV1 + ĐT 01 → ưu tiên = 0.75 + 2.00 = 2.75 (THPT)
+('001234567890', NULL, 'THPT', 2.75, 2.75, 0.00, 2.75, 2.75, 'KV1 + Đối tượng 01'),
+
+-- SBD002: KV2 + ĐT 05 → ưu tiên = 0.25 + 1.00 = 1.25 (THPT)
+('001234567891', NULL, 'THPT', 1.25, 1.25, 0.00, 1.25, 1.25, 'KV2 + Đối tượng 05'),
+
+-- SBD003: KV1, không đối tượng → ưu tiên = 0.75 (THPT)
+('001234567892', NULL, 'THPT', 0.75, 0.75, 0.00, 0.75, 0.75, 'KV1'),
+
+-- SBD004: KV3, không đối tượng → ưu tiên = 0.00 (THPT)
+('001234567893', NULL, 'THPT', 0.00, 0.00, 0.00, 0.00, 0.00, 'KV3 không ưu tiên'),
+
+-- SBD005: KV2 + ĐT 05 → ưu tiên = 0.25 + 1.00 = 1.25 (THPT)
+('001234567894', NULL, 'THPT', 1.25, 1.25, 0.00, 1.25, 1.25, 'KV2 + Đối tượng 05'),
+-- SBD005: cũng có điểm ĐGNL
+('001234567894', NULL, 'DGNL', 1.25, 1.25, 0.00, 1.25, 1.25, 'KV2 + Đối tượng 05 (ĐGNL)'),
+
+-- SBD006: KV1 + ĐT 01 → ưu tiên = 0.75 + 2.00 = 2.75 (THPT)
+('001234567895', NULL, 'THPT', 2.75, 2.75, 0.00, 2.75, 2.75, 'KV1 + Đối tượng 01'),
+
+-- SBD007: KV2, không đối tượng → ưu tiên = 0.25 (VSAT)
+('001234567896', NULL, 'VSAT', 0.25, 0.25, 0.00, 0.25, 0.25, 'KV2 (VSAT)'),
+
+-- SBD008: KV3, không đối tượng → ưu tiên = 0.00 (THPT)
+('001234567897', NULL, 'THPT', 0.00, 0.00, 0.00, 0.00, 0.00, 'KV3 không ưu tiên'),
+
+-- SBD009: KV1 + ĐT 05 → ưu tiên = 0.75 + 1.00 = 1.75 (ĐGNL)
+('001234567898', NULL, 'DGNL', 1.75, 1.75, 0.00, 1.75, 1.75, 'KV1 + Đối tượng 05 (ĐGNL)'),
+
+-- SBD010: KV2, không đối tượng → ưu tiên = 0.25 (THPT)
+('001234567899', NULL, 'THPT', 0.25, 0.25, 0.00, 0.25, 0.25, 'KV2');
 
 -- ================================================================
 -- 8. xt_nguyenvongxettuyen (FK → ThiSinh.cccd + Nganh.manganh + ToHop.matohop)

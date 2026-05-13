@@ -258,10 +258,25 @@ public class DiemCongXetTuyenBUS {
     }
 
     public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyen(){
-        Session session = factory.openSession();
-        List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAllWithSession(session);
-        session.close();
-        return mapListEntityToListDTO(listDiemCongXetTuyen);
+        try(Session session = factory.openSession()){
+            List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAll(session);
+            return mapListEntityToListDTO(listDiemCongXetTuyen);
+        }
+    }
+
+    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyenWithCccd(String keyword){
+        String cccd = null;
+
+        if(keyword != null && !keyword.trim().isEmpty()) {
+            if (keyword.matches("^\\d{9,12}$")) {
+                cccd = keyword;
+            }
+        }
+
+        try(Session session = factory.openSession()){
+            List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAllWithSession(session, cccd);
+            return mapListEntityToListDTO(listDiemCongXetTuyen);
+        }
     }
 
     public String updateDiemCongXetTuyen(int id, DiemCongXetTuyenDTO newDiemCongXetTuyenDTO){
@@ -319,6 +334,21 @@ public class DiemCongXetTuyenBUS {
             if(tx != null) tx.rollback();
             e.printStackTrace();
             return "Lỗi: " + e.getMessage();
+        }
+    }
+
+    public List<DiemCongXetTuyenDTO> getListByCccd(String cccd) {
+        try (Session session = factory.openSession()) {
+            List<DiemCongXetTuyen> entities = dao.getListByCccdWithSession(session, cccd);
+
+            if (entities == null || entities.isEmpty()) {
+                return java.util.Collections.emptyList();
+            }
+
+            return mapListEntityToListDTO(entities);
+        } catch (Exception e) {
+            System.err.println("Lỗi lấy điểm cộng cho CCCD " + cccd + ": " + e.getMessage());
+            return java.util.Collections.emptyList();
         }
     }
 }

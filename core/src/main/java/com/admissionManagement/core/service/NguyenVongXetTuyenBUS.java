@@ -1,18 +1,20 @@
 package com.admissionManagement.core.service;
 
-import com.admissionManagement.core.dao.NganhDAO;
-import com.admissionManagement.core.dao.NguyenVongXetTuyenDAO;
-import com.admissionManagement.core.dao.ThiSinhDAO;
-import com.admissionManagement.core.dao.ToHopMonThiDAO;
-import com.admissionManagement.core.dto.BangQuyDoiDTO;
-import com.admissionManagement.core.dto.NguyenVongXetTuyenDTO;
+import com.admissionManagement.core.dao.*;
+import com.admissionManagement.core.dto.*;
 import com.admissionManagement.core.entity.*;
+import com.admissionManagement.core.helper.DatabaseHelper;
 import com.admissionManagement.core.util.HibernateUtil;
+import org.apache.poi.ss.usermodel.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -22,6 +24,7 @@ public class NguyenVongXetTuyenBUS {
     private final ThiSinhDAO thisinhdao;
     private final NganhDAO nganhdao;
     private final ToHopMonThiDAO tohopdao;
+    private final DiemThiXetTuyenDAO diemThiXetTuyenDAO;
     private final SessionFactory factory;
 
     public NguyenVongXetTuyenBUS() {
@@ -29,6 +32,7 @@ public class NguyenVongXetTuyenBUS {
         this.thisinhdao = new ThiSinhDAO();
         this.nganhdao = new NganhDAO();
         this.tohopdao = new ToHopMonThiDAO();
+        this.diemThiXetTuyenDAO = new DiemThiXetTuyenDAO();
         this.factory = HibernateUtil.getSessionFactory();
     }
 
@@ -98,6 +102,17 @@ public class NguyenVongXetTuyenBUS {
     public NguyenVongXetTuyenDTO getNguyenVongXetTuyen(int id){
         try(Session session = factory.openSession()){
             return toDTO(dao.getWithSession(session, id));
+        }
+    }
+
+    public NguyenVongXetTuyenDTO getByKey(String key) {
+        try (Session session = factory.openSession()) {
+            NguyenVongXetTuyen entity =
+                    dao.getByKeyWithSession(session, key);
+            if (entity == null) {
+                return null;
+            }
+            return toDTO(entity);
         }
     }
 
@@ -195,4 +210,432 @@ public class NguyenVongXetTuyenBUS {
             return mapListEntityToListDTO(thiSinh.getDanhSachNguyenVongCuaThiSinh());
         }
     }
+
+    // Import
+    public void importDataProcess(String filePath) {
+        String[] sheets = {"Sheet1", "Sheet2"};
+        int totalSuccess = 0;
+        int totalError = 0;
+
+        try (FileInputStream fis = new FileInputStream(new File(filePath));
+             Workbook workbook = WorkbookFactory.create(fis)) {
+
+            for (String sheetName : sheets) {
+                Sheet sheet = workbook.getSheet(sheetName);
+                if (sheet == null) {
+                    System.out.println("Bỏ qua: Không tìm thấy " + sheetName);
+                    continue;
+                }
+
+                System.out.println("Đang xử lý: " + sheetName);
+
+                // Dữ liệu bắt đầu từ dòng 5 (index 4)
+                for (int i = 4; i <= sheet.getLastRowNum(); i++) {
+                    Row row = sheet.getRow(i);
+                    if (row == null) continue;
+
+                    try {
+                        // Lấy dữ liệu từ các cột theo cấu trúc file của bạn
+                        // Cột 1: CCCD, Cột 2: Thứ tự NV, Cột 5: Mã xét tuyển
+                        String cccd = getCellValue(row.getCell(1));
+                        String strThuTu = getCellValue(row.getCell(2));
+                        String maNganh = getCellValue(row.getCell(5));
+
+                        if (cccd.isEmpty() || maNganh.isEmpty()) continue;
+
+                        int thuTu = Integer.parseInt(strThuTu);
+
+                        // GỌI HÀM NGHIỆP VỤ CỦA BẠN
+                        String result = addNguyenVong(cccd, maNganh, thuTu);
+
+                        if (result.contains("thành công")) {
+                            totalSuccess++;
+                        } else {
+                            totalError++;
+                            System.err.println("Dòng " + (i + 1) + " [" + sheetName + "]: " + result);
+                        }
+                    } catch (Exception e) {
+                        totalError++;
+                        System.err.println("Lỗi dòng " + (i + 1) + " [" + sheetName + "]: " + e.getMessage());
+                    }
+                }
+            }
+
+            System.out.println("=== KẾT THÚC IMPORT ===");
+            System.out.println("Thành công: " + totalSuccess);
+            System.out.println("Thất bại: " + totalError);
+
+        } catch (Exception e) {
+            System.err.println("Lỗi đọc file Excel: " + e.getMessage());
+        }
+    }
+
+    private String getCellValue(Cell cell) {
+        if (cell == null) return "";
+        switch (cell.getCellType()) {
+            case STRING: return cell.getStringCellValue().trim();
+            case NUMERIC:
+                // Tránh số bị format kiểu khoa học (E+) cho CCCD và mã ngành
+                return String.format("%.0f", cell.getNumericCellValue());
+            case BOOLEAN: return String.valueOf(cell.getBooleanCellValue());
+            default: return "";
+        }
+    }
+
+
+    public String addNguyenVong(String cccd, String maNganh, int thuTu) {
+        Transaction tx = null;
+        try (Session session = factory.openSession()) {
+            tx = session.beginTransaction();
+
+            // Kiểm tra thí sinh và điểm thi
+            ThiSinhBUS thiSinhBUS = new ThiSinhBUS();
+            ThiSinhDTO thiSinh = thiSinhBUS.getByCccd(cccd);
+            if (thiSinh == null) return "Lỗi: Thí sinh " + cccd + " không tồn tại.";
+
+            DiemThiXetTuyen diem = diemThiXetTuyenDAO.getByCccdWithSession(session, cccd);
+            if (diem == null) return "Lỗi: Thí sinh " + cccd + " chưa có dữ liệu điểm.";
+
+            // Lấy list tổ hợp của ngành xét tuyển
+            NganhToHopBUS nganhToHopBUS = new NganhToHopBUS();
+            List<NganhToHopDTO> dsToHopDTO = nganhToHopBUS.getAllByMaNganh(maNganh);
+
+            // (Lấy Nganh) chưa dùng dto
+            Nganh nganh = nganhdao.getByMaNganhWithSession(session, maNganh);
+
+            BangQuyDoiBUS bangQuyDoiBUS = new BangQuyDoiBUS();
+
+            // Lấy danh sách điểm cộng của Thí Sinh
+            DiemCongXetTuyenBUS diemCongXetTuyenBUS = new DiemCongXetTuyenBUS();
+            List<DiemCongXetTuyenDTO> dsDiemCong = diemCongXetTuyenBUS.getListByCccd(cccd);
+
+            // Xử lý DGNL (Lưu thành PT2)
+            if (diem.getNl1() != null) {
+                BigDecimal diemCongDGNL = getDiemCongQuyChuan(dsDiemCong, "DGNL", null);
+                if (diemCongDGNL.compareTo(BigDecimal.valueOf(3)) > 0) {
+                    diemCongDGNL = BigDecimal.valueOf(3);
+                }
+                // Điểm sau cộng tra bảng quy đổi sang hệ 30
+                BangQuyDoiDTO quyDoi = bangQuyDoiBUS.getBangQuyDoiWithScore("DGNL", diem.getNl1(), null, nganh.getToHopGoc());
+                BigDecimal diemHe30 = DatabaseHelper.quyDoiDiemVSATVaDGNL(diemCongDGNL, quyDoi);
+
+                BigDecimal diemUuTien = DatabaseHelper.tinhDiemUuTien(thiSinh, diemCongDGNL, diemHe30);
+
+                BigDecimal finalDiem = diemHe30.add(diemCongDGNL).add(diemUuTien);
+                // Điểm không được vượt quá 30 điểm
+                if (finalDiem.compareTo(BigDecimal.valueOf(30)) > 0) {
+                    finalDiem = BigDecimal.valueOf(30);
+                }
+                saveOrUpdateNV(thiSinh, nganh, thuTu, diemHe30, diemCongDGNL, diemUuTien, finalDiem, "PT2", null);
+            }
+
+            // Xử lý VSAT (Lưu thành PT3 - chọn tổ hợp cao nhất)
+            processAndSaveBestToHop(session, thiSinh, nganh, dsToHopDTO, diem, thuTu, "VSAT", "PT3", dsDiemCong, bangQuyDoiBUS);
+
+            // Xử lý THPT (Lưu thành PT4 - chọn tổ hợp cao nhất)
+            processAndSaveBestToHop(session, thiSinh, nganh, dsToHopDTO, diem, thuTu, "THPT", "PT4", dsDiemCong, bangQuyDoiBUS);
+
+            tx.commit();
+            return "Import thành công cho thí sinh " + cccd;
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            return "Lỗi hệ thống: " + e.getMessage();
+        }
+    }
+
+    private BigDecimal getDiemCongQuyChuan(List<DiemCongXetTuyenDTO> dsDiemCong, String phuongThuc, String maMon) {
+        if (dsDiemCong == null || dsDiemCong.isEmpty()) return BigDecimal.ZERO;
+
+        BigDecimal tongCongRaw = BigDecimal.ZERO;
+        for (DiemCongXetTuyenDTO dc : dsDiemCong) {
+
+            if (phuongThuc.equalsIgnoreCase(dc.getPhuongThuc())) {
+                // DGNL
+                if ("DGNL".equalsIgnoreCase(phuongThuc)) {
+                    BigDecimal giaTri = dc.getDiemTongKhongXetThxt();
+                    tongCongRaw = giaTri != null ? giaTri : BigDecimal.ZERO;
+                    return tongCongRaw.divide(new BigDecimal("40"), 5, RoundingMode.HALF_UP);
+                }
+                //VSAT
+                if ("VSAT".equalsIgnoreCase(phuongThuc)) {
+
+                    if (maMon != null && maMon.equalsIgnoreCase(dc.getMon())) {
+                        BigDecimal giaTri = dc.getDiemTongThxt();
+                        tongCongRaw = giaTri != null ? giaTri : BigDecimal.ZERO;
+                    }
+                    else if (dc.getMon() == null) {
+                        BigDecimal giaTri = dc.getDiemTongKhongXetThxt();
+                        tongCongRaw = giaTri != null ? giaTri : BigDecimal.ZERO;
+                    }
+                    return tongCongRaw.divide(new BigDecimal("15"), 5, RoundingMode.HALF_UP);
+
+                }
+                //THPT
+                if ("THPT".equalsIgnoreCase(phuongThuc)) {
+
+                    if (maMon != null && maMon.equalsIgnoreCase(dc.getMon())) {
+                        BigDecimal giaTri = dc.getDiemTongThxt();
+                        tongCongRaw = giaTri != null ? giaTri : BigDecimal.ZERO;
+                    }
+                    else if (dc.getMon() == null) {
+                        BigDecimal giaTri = dc.getDiemTongKhongXetThxt();
+                        tongCongRaw = giaTri != null ? giaTri : BigDecimal.ZERO;
+                    }
+                    return tongCongRaw;
+                }
+            }
+        }
+
+        return BigDecimal.ZERO;
+    }
+
+
+    private void saveOrUpdateNV(ThiSinhDTO ts, Nganh nganh,
+                                int thuTu, BigDecimal diemThxt, BigDecimal diemCong,
+                                BigDecimal diemUt, BigDecimal diemXetTuyen, String phuongThuc, String thm) {
+
+        String key = ts.getCccd() + "_" + nganh.getMaNganh() + "_" + thuTu + "_" + phuongThuc;
+
+        BigDecimal diemSan = nganh.getDiemSan();
+        String ketqua = "duoisan";
+        if (diemSan.compareTo(diemXetTuyen) < 0) {
+            ketqua = "yes";
+        }
+
+        // Kiểm tra xem đã tồn tại chưa để tránh trùng Unique Constraint
+        NguyenVongXetTuyenDTO nv = this.getByKey(key);
+        if (nv == null) nv = new NguyenVongXetTuyenDTO();
+
+        nv.setCccd(ts.getCccd());
+        nv.setMaNganh(nganh.getMaNganh());
+        nv.setThuTu(thuTu);
+        nv.setDiemThxt(diemThxt);
+        nv.setDiemUtqd(diemUt);
+        nv.setDiemCong(diemCong);
+        nv.setDiemXetTuyen(diemXetTuyen); // Điểm đã cộng
+        nv.setKetQua(ketqua);
+        nv.setPhuongThuc(phuongThuc);
+        nv.setThm(thm);
+        nv.setNvKeys(key);
+
+        if (nv.getIdNv() == 0) {
+            this.addNguyenVongXetTuyen(nv);
+        } else {
+            this.updateNguyenVongXetTuyen(nv.getIdNv(), nv);
+        }
+    }
+
+    private void processAndSaveBestToHop(Session session, ThiSinhDTO ts, Nganh nganh, List<NganhToHopDTO> dsToHopDTO,
+                                         DiemThiXetTuyen diem, int thuTu, String phuongThuc, String maPT,
+                                         List<DiemCongXetTuyenDTO> dsDiemCong, BangQuyDoiBUS bangQuyDoiBUS) {
+        // Phương thức VSAT nếu có điểm thì tiếp tục
+        if ("VSAT".equals(phuongThuc) && !checkHasDiemVSAT(diem)) {
+            return;
+        }
+        // Phương thức THPT nếu có điểm thì tiếp tục
+        if ("THPT".equals(phuongThuc) && !checkHasDiemTHPT(diem)) {
+            return;
+        }
+
+        BigDecimal maxDiem = BigDecimal.valueOf(-1);
+        NganhToHopDTO bestToHop = null;
+        BigDecimal diemThxt =BigDecimal.ZERO;
+        BigDecimal tongDiemCong =BigDecimal.ZERO;
+        BigDecimal diemUuTien =BigDecimal.ZERO;
+
+        for (NganhToHopDTO th : dsToHopDTO) {
+            // Tính điểm thxt
+            diemThxt = tinhTHXT(diem, th, phuongThuc, dsDiemCong, bangQuyDoiBUS);
+
+            // Lấy điểm cộng 3 môn nếu có
+            BigDecimal dc_m1 = getDiemCongQuyChuan(dsDiemCong, phuongThuc, th.getThMon1());
+            BigDecimal dc_m2 = getDiemCongQuyChuan(dsDiemCong, phuongThuc, th.getThMon2());
+            BigDecimal dc_m3 = getDiemCongQuyChuan(dsDiemCong, phuongThuc, th.getThMon3());
+            // Tổng điểm cộng 3 môn
+            tongDiemCong = dc_m1.add(dc_m2).add(dc_m3);
+            // Điểm cộng không được vượt quá 3 điểm
+            if (tongDiemCong.compareTo(BigDecimal.valueOf(3)) > 0) {
+                tongDiemCong = BigDecimal.valueOf(3);
+            }
+            // Điểm ưu tiên
+            diemUuTien = DatabaseHelper.tinhDiemUuTien(ts, tongDiemCong, diemThxt);
+
+
+            // Tổng điểm cuối cùng
+            BigDecimal finalDiem = diemThxt.add(tongDiemCong).add(diemUuTien);
+            if (finalDiem != null) {
+
+                // Điểm tối đa 30
+                if (finalDiem.compareTo(BigDecimal.valueOf(30)) > 0) {
+                    finalDiem = BigDecimal.valueOf(30);
+                }
+
+                // Nếu finalDiem > maxDiem Lấy tổ hợp có điểm cao nhất của ngành xét tuyển
+                if (finalDiem.compareTo(maxDiem) > 0) {
+                    maxDiem = finalDiem;
+                    bestToHop = th;
+                }
+            }
+        }
+
+        if (bestToHop != null) {
+            saveOrUpdateNV(ts, nganh, thuTu, diemThxt, tongDiemCong, diemUuTien, maxDiem, maPT, bestToHop.getMaToHop());
+        }
+    }
+
+    private BigDecimal tinhTHXT(DiemThiXetTuyen diem, NganhToHopDTO th, String phuongThuc,
+                                    List<DiemCongXetTuyenDTO> dsDiemCong, BangQuyDoiBUS bangQuyDoiBUS) {
+        // Lấy điểm gốc từng môn theo phương thức (VSAT/THPT)
+        BigDecimal m1 = layDiemTheoMon(diem, th.getThMon1(), phuongThuc, bangQuyDoiBUS);
+        BigDecimal m2 = layDiemTheoMon(diem, th.getThMon2(), phuongThuc, bangQuyDoiBUS);
+        BigDecimal m3 = layDiemTheoMon(diem, th.getThMon3(), phuongThuc, bangQuyDoiBUS);
+
+        if (m1 == null || m2 == null || m3 == null) return null;
+        // Tinh diem
+        BigDecimal diemTHXT = DatabaseHelper.tinhDiemVSATVaTHPT(th, m1,m2,m3);
+
+        return diemTHXT;
+    }
+
+    private BigDecimal layDiemTheoMon(DiemThiXetTuyen d, String maMon, String phuongThuc, BangQuyDoiBUS bangQuyDoiBUS) {
+        if (d == null || maMon == null) return null;
+
+        // 1. Xử lý cho phương thức VSAT
+        if ("VSAT".equalsIgnoreCase(phuongThuc)) {
+            return switch (maMon.toUpperCase()) {
+                case "TO" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                        bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemToanVSAT(), "TO", null));
+                case "VA" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                        bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemVanVSAT(), "VA", null));
+                case "LI" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                        bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemLyVSAT(), "LI", null));
+                case "HO" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                        bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemHoaVSAT(), "HO", null));
+                case "SI" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                        bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemSinhVSAT(), "SI", null));
+                case "SU" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                        bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemSuVSAT(), "SU", null));
+                case "DI" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                        bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemDiaVSAT(), "DI", null));
+                case "N1" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                        bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getN1Thi(), "N1", null));
+                default -> null;
+            };
+        }
+
+        // 2. Xử lý cho phương thức THPT (và mặc định các môn khác)
+        return switch (maMon.toUpperCase()) {
+            // Môn cơ bản THPT
+            case "TO" -> d.getDiemToan();
+            case "VA" -> d.getDiemVan();
+            case "LI" -> d.getDiemLy();
+            case "HO" -> d.getDiemHoa();
+            case "SI" -> d.getDiemSinh();
+            case "SU" -> d.getDiemSu();
+            case "DI" -> d.getDiemDia();
+            case "TI" -> d.getDiemTin();
+            case "KTPL" -> d.getDiemKtpl();
+
+            // Ngoại ngữ: Ưu tiên điểm quy đổi chứng chỉ (N1_CC) trước, nếu không có mới lấy điểm thi (N1_THI)
+            case "N1" -> (d.getN1Cc() != null && d.getN1Cc().compareTo(BigDecimal.ZERO) > 0)
+                    ? d.getN1Cc() : d.getN1Thi();
+
+            // Các môn năng khiếu (Nếu mã tổ hợp có yêu cầu NK1, NK2...)
+            case "NK1" -> d.getNk1();
+            case "NK2" -> d.getNk2();
+            case "NK3" -> d.getNk3();
+            case "NK4" -> d.getNk4();
+            case "NK5" -> d.getNk5();
+            case "NK6" -> d.getNk6();
+
+            // Các chứng chỉ/môn khác
+            case "CNCN" -> d.getCncn();
+            case "CNNN" -> d.getCnnn();
+
+            default -> null;
+        };
+    }
+
+
+
+    private boolean checkHasDiemVSAT(DiemThiXetTuyen d) {
+        if (d == null) return false;
+
+        // Kiểm tra xem có bất kỳ cột điểm VSAT nào khác null không
+        return d.getDiemToanVSAT() != null ||
+                d.getDiemVanVSAT()  != null ||
+                d.getDiemLyVSAT()   != null ||
+                d.getDiemHoaVSAT()  != null ||
+                d.getDiemSinhVSAT() != null ||
+                d.getDiemSuVSAT()   != null ||
+                d.getDiemDiaVSAT()  != null ||
+                d.getN1VSAT()       != null;
+    }
+
+    private boolean checkHasDiemTHPT(DiemThiXetTuyen d) {
+        if (d == null) return false;
+
+        // Kiểm tra xem có bất kỳ cột điểm VSAT nào khác null không
+        return d.getDiemToan() != null ||
+                d.getDiemVan()  != null ||
+                d.getDiemLy()   != null ||
+                d.getDiemHoa()  != null ||
+                d.getDiemSinh() != null ||
+                d.getDiemSu()   != null ||
+                d.getDiemDia()  != null ||
+                d.getCnnn()     != null ||
+                d.getCncn()     != null ||
+                d.getN1Cc()     != null ||
+                d.getN1Thi()    != null ||
+                d.getDiemTin()  != null ||
+                d.getNk1()      != null ||
+                d.getNk2()      != null ||
+                d.getNk3()      != null ||
+                d.getNk4()      != null ||
+                d.getNk5()      != null ||
+                d.getNk6()      != null ||
+                d.getDiemKtpl()  != null;
+    }
+
+
+//    public static void main(String[] args) {
+//        // 1. Khởi tạo BUS (Constructor này đã khởi tạo Factory và DAO bên trong)
+//        NguyenVongXetTuyenBUS bus = new NguyenVongXetTuyenBUS();
+//
+//        Transaction tx = null;
+//        // 2. Sử dụng try-with-resources để đảm bảo session luôn được đóng
+//        try (Session session = bus.factory.openSession()) {
+//            tx = session.beginTransaction();
+//
+//            // 3. Gọi DAO thông qua đối tượng đã khởi tạo trong BUS
+//            // Giả sử bạn đã khai báo nganhToHopDao là một field trong BUS
+//            String maNganhTest = "7480201";
+//            List<NganhToHop> dsTohop = bus.nganhToHopDAO.getAllByMaNganhWithSession(session, maNganhTest);
+//
+//            // 4. Kiểm tra và in kết quả
+//            if (dsTohop == null || dsTohop.isEmpty()) {
+//                System.out.println(">>> Không tìm thấy tổ hợp nào cho ngành: " + maNganhTest);
+//            } else {
+//                System.out.println(">>> Tìm thấy " + dsTohop.size() + " tổ hợp:");
+//                for (NganhToHop nth : dsTohop) {
+//                    System.out.println("  + Mã tổ hợp: " + nth.getToHopMonThi().getMaToHop());
+//                    System.out.println("    Môn: " + nth.getThMon1() + ", " + nth.getThMon2() + ", " + nth.getThMon3());
+//                    System.out.println("    Môn: " + nth.getHsMon1() + ", " + nth.getHsMon2() + ", " + nth.getHsMon3());
+//                }
+//            }
+//
+//            tx.commit();
+//        } catch (Exception e) {
+//            if (tx != null) tx.rollback();
+//            e.printStackTrace();
+//        } finally {
+//            // Đóng factory để kết thúc chương trình (chỉ dùng khi chạy main test)
+//            if (bus.factory != null) {
+//                bus.factory.close();
+//            }
+//        }
+//    }
+
+
+
 }

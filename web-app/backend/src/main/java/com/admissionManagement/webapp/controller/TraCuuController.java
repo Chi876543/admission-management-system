@@ -32,6 +32,10 @@ public class TraCuuController {
             @RequestParam(name = "ngaySinh") String ngaySinh) {
         String ngaySinhFormatted = ngaySinh.replaceAll("(\\d{2})(\\d{2})(\\d{4})", "$1/$2/$3");
         ThiSinhDTO thiSinh = thiSinhBUS.findBySbd(sbd, ngaySinhFormatted);
+//        System.out.println(thiSinh + " " + sbd + " " + ngaySinhFormatted);
+//        if (thiSinh != null) {
+//            System.out.println(ngaySinh);
+//        }
         if (thiSinh == null)
             return ResponseEntity.status(404).body("Không tìm thấy thí sinh với SBD: " + sbd);
         List<NguyenVongXetTuyenDTO> nguyenVong = nguyenVongBUS.getByThiSinhCccd(thiSinh.getCccd());

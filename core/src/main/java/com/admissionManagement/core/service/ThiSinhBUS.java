@@ -304,4 +304,18 @@ public class ThiSinhBUS {
             return toDTO(thiSinh);
         }
     }
+
+    public ThiSinhDTO getByCccd(String cccd) {
+
+        try (Session session = factory.openSession()) {
+
+            ThiSinh entity = dao.getByCccdWithSession(session, cccd);
+
+            if (entity == null) {
+                return null;
+            }
+
+            return toDTO(entity);
+        }
+    }
 }

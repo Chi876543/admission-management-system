@@ -2,10 +2,8 @@ package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.DiemThiXetTuyenDAO;
 import com.admissionManagement.core.dao.ThiSinhDAO;
-import com.admissionManagement.core.dto.BangQuyDoiDTO;
 import com.admissionManagement.core.dto.DiemThiXetTuyenDTO;
-import com.admissionManagement.core.dto.ThongKeDTO;
-import com.admissionManagement.core.entity.BangQuyDoi;
+import com.admissionManagement.core.dto.ThongKeDiemDTO;
 import com.admissionManagement.core.entity.DiemThiXetTuyen;
 import com.admissionManagement.core.entity.ThiSinh;
 import com.admissionManagement.core.helper.DatabaseHelper;
@@ -21,7 +19,6 @@ import java.io.File;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.file.Files;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -374,8 +371,8 @@ public class DiemThiXetTuyenBUS {
         }
     }
 
-    public List<ThongKeDTO> getThongKeDiem(){
-        List<ThongKeDTO> listThongKe = new ArrayList<>();
+    public List<ThongKeDiemDTO> getThongKeDiem(){
+        List<ThongKeDiemDTO> listThongKe = new ArrayList<>();
 
         String sql =
                 //THPT
@@ -440,7 +437,7 @@ public class DiemThiXetTuyenBUS {
             List<Object[]> results = session.createNativeQuery(sql, Object[].class).list();
 
             for(Object[] row : results){
-                listThongKe.add(new ThongKeDTO(
+                listThongKe.add(new ThongKeDiemDTO(
                         row[0].toString(),
                         row[1].toString(),
                         ((Number) row[2]).longValue(),
