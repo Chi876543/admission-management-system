@@ -1,7 +1,7 @@
 package com.admissionManagement.desktop.controllers.admin;
 
 import com.admissionManagement.core.dto.DiemThiXetTuyenDTO;
-import com.admissionManagement.core.dto.ThongKeDTO;
+import com.admissionManagement.core.dto.ThongKeDiemDTO;
 import com.admissionManagement.core.service.DiemThiXetTuyenBUS;
 import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
@@ -33,7 +33,7 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
     private final DiemThiXetTuyenBUS bus = new DiemThiXetTuyenBUS();
     private final ObservableList<DiemThiXetTuyenDTO> masterData  = FXCollections.observableArrayList();
     private final ObservableList<DiemThiXetTuyenDTO> displayData = FXCollections.observableArrayList();
-    private List<ThongKeDTO> thongKeData;
+    private List<ThongKeDiemDTO> thongKeData;
     private PauseTransition searchDebounce;
 
     private static final int PAGE_SIZE = 50;
@@ -215,7 +215,7 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         // THPT - lấy TB tất cả môn THPT có dữ liệu
         thongKeData.stream()
                 .filter(t -> t.getLoaiKyThi().equals("THPT") && t.getSoLuong() > 0)
-                .mapToDouble(ThongKeDTO::getDiemTrungBinh)
+                .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh)
                 .average()
                 .ifPresentOrElse(
                         avg -> lblTbThpt.setText(String.format("%.2f", avg)),
@@ -225,7 +225,7 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         // VSAT - lấy TB tất cả môn VSAT có dữ liệu
         thongKeData.stream()
                 .filter(t -> t.getLoaiKyThi().equals("VSAT") && t.getSoLuong() > 0)
-                .mapToDouble(ThongKeDTO::getDiemTrungBinh)
+                .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh)
                 .average()
                 .ifPresentOrElse(
                         avg -> lblTbVsat.setText(String.format("%.2f", avg)),
@@ -235,7 +235,7 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         // ĐGNL
         thongKeData.stream()
                 .filter(t -> t.getLoaiKyThi().equals("ĐGNL") && t.getSoLuong() > 0)
-                .mapToDouble(ThongKeDTO::getDiemTrungBinh)
+                .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh)
                 .average()
                 .ifPresentOrElse(
                         avg -> lblTbDgnl.setText(String.format("%.2f", avg)),

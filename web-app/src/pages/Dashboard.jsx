@@ -153,8 +153,8 @@ export default function Dashboard() {
 
     const cols = [
       { title: "Ngành", dataIndex: "maNganh", key: "ma" },
-      { title: "Tổ hợp", dataIndex: "maToHop", key: "th",
-        render: v => <Tag color="blue">{v}</Tag> },
+      { title: "Tổ hợp", dataIndex: "thm", key: "th",
+        render: v => v ? <Tag color="blue">{v}</Tag> : <Tag color="default">—</Tag> },
       { title: "Phương thức", dataIndex: "phuongThuc", key: "pt" },
       { title: "Điểm xét tuyển", dataIndex: "diemXetTuyen", key: "dxt",
         render: v => <Text strong style={{ color: "#f5222d" }}>{v ?? "—"}</Text> },
