@@ -65,7 +65,7 @@ public class BangQuyDoiDAO {
     }
 
     public void deleteWithSession(Session session, BangQuyDoi bangQuyDoi) {
-        session.detach(bangQuyDoi);
+        session.remove(bangQuyDoi);
     }
 
     public BangQuyDoi getLuatQuyDoiWithSession(Session session, String phuongThuc, BigDecimal diem, String mon, String toHop) {

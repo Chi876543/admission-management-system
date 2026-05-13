@@ -58,6 +58,6 @@ public class DiemCongXetTuyenDAO {
     }
 
     public void deleteWithSession(Session session, DiemCongXetTuyen diemCongXetTuyen) {
-        session.detach(diemCongXetTuyen);
+        session.remove(diemCongXetTuyen);
     }
 }

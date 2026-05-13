@@ -47,7 +47,7 @@ public class NguyenVongXetTuyenDAO {
     }
 
     public void deleteWithSession(Session session, NguyenVongXetTuyen nguyenVongXetTuyen) {
-        session.detach(nguyenVongXetTuyen);
+        session.remove(nguyenVongXetTuyen);
     }
 
     public List<NguyenVongXetTuyen> getByThiSinhCccdWithSession(Session session, String cccd) {
