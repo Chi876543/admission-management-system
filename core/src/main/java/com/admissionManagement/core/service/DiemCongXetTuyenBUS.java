@@ -257,7 +257,14 @@ public class DiemCongXetTuyenBUS {
         }
     }
 
-    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyen(String keyword){
+    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyen(){
+        try(Session session = factory.openSession()){
+            List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAll(session);
+            return mapListEntityToListDTO(listDiemCongXetTuyen);
+        }
+    }
+
+    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyenWithCccd(String keyword){
         String cccd = null;
 
         if(keyword != null && !keyword.trim().isEmpty()) {

@@ -1,6 +1,7 @@
 package com.admissionManagement.core.dao;
 
 import com.admissionManagement.core.entity.DiemCongXetTuyen;
+import com.admissionManagement.core.entity.DiemThiXetTuyen;
 import com.admissionManagement.core.entity.ThiSinh;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -36,6 +37,12 @@ public class DiemCongXetTuyenDAO {
         cq.orderBy(cb.desc(root.get("idDiemCong")));
 
         return session.createQuery(cq).getResultList();
+    }
+
+    public List<DiemCongXetTuyen> getAll(Session session){
+        String query = "FROM DiemCongXetTuyen ";
+        List listDiemCongXetTuyen = session.createQuery(query).list();
+        return listDiemCongXetTuyen;
     }
 
     public List<Predicate> buildConditions(CriteriaBuilder cb, Root<DiemCongXetTuyen> root, String cccd) {
