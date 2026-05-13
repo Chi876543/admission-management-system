@@ -1,8 +1,11 @@
 package com.admissionManagement.desktop.controllers.admin;
 
 import com.admissionManagement.core.dto.DiemCongXetTuyenDTO;
+import com.admissionManagement.core.helper.DatabaseHelper;
 import com.admissionManagement.core.service.DiemCongXetTuyenBUS;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -16,113 +19,221 @@ public class DiemCongXetTuyenDialogController extends BaseController {
     private DiemCongXetTuyenDTO editingRow;
     private boolean isSaved = false;
 
-    @FXML private Label lblDialogTitle, lblError;
-    @FXML private TextField tfCccd, tfMon, tfPhuongThuc,
-            tfDiemUtxtToHop, tfDiemUtxtKhongToHop,
-            tfDiemCc, tfTongThxt, tfTongKhongThxt, tfGhiChu;
+    private DiemCongXetTuyenDTO savedData;
 
-    public void init(Stage stage, DiemCongXetTuyenDTO row, DiemCongXetTuyenBUS bus) {
+    @FXML private Label lblDialogTitle;
+    @FXML private Label lblError;
+
+    @FXML private TextField tfCccd;
+
+    @FXML private ComboBox<String>
+            cbMon,
+            cbPhuongThuc,
+            cbLoaiGiai,
+            cbCap;
+
+    @FXML private TextField tfGhiChu;
+
+    public void init(
+            Stage stage,
+            DiemCongXetTuyenDTO row,
+            DiemCongXetTuyenBUS bus
+    ) {
+
         this.dialogStage = stage;
-        this.editingRow  = row;
-        this.bus         = bus;
+        this.editingRow = row;
+        this.bus = bus;
+
+        cbMon.setItems(FXCollections.observableArrayList(
+                "Toán",
+                "Văn",
+                "Lý",
+                "Hóa",
+                "Sinh",
+                "Sử",
+                "Địa",
+                "Tin học"
+        ));
+
+        cbPhuongThuc.setItems(FXCollections.observableArrayList(
+                "THPT",
+                "DGNL",
+                "VSAT"
+        ));
+
+        cbLoaiGiai.setItems(FXCollections.observableArrayList(
+                "Nhất",
+                "Nhì",
+                "Ba",
+                "Khuyến khích"
+        ));
+
+        cbCap.setItems(FXCollections.observableArrayList(
+                "Quốc tế",
+                "Quốc gia",
+                "Tỉnh",
+                "Thành phố"
+        ));
 
         if (row != null) {
-            lblDialogTitle.setText("Sửa điểm cộng ID: " + row.getIdDiemCong());
+
+            lblDialogTitle.setText(
+                    "Sửa điểm cộng ID: "
+                            + row.getIdDiemCong()
+            );
+
             tfCccd.setText(row.getTsCccd());
-            tfCccd.setEditable(false);
-            tfMon.setText(row.getMon() != null ? row.getMon() : "");
-            tfPhuongThuc.setText(row.getPhuongThuc() != null ? row.getPhuongThuc() : "");
-            tfDiemUtxtToHop.setText(val(row.getDiemUtxtToHop()));
-            tfDiemUtxtKhongToHop.setText(val(row.getDiemUtxtKhongXetToHop()));
-            tfDiemCc.setText(val(row.getDiemCc()));
-            tfTongThxt.setText(val(row.getDiemTongThxt()));
-            tfTongKhongThxt.setText(val(row.getDiemTongKhongXetThxt()));
-            tfGhiChu.setText(row.getGhiChu() != null ? row.getGhiChu() : "");
+
+            cbMon.setValue(row.getMon());
+
+            cbPhuongThuc.setValue(row.getPhuongThuc());
+
+            tfGhiChu.setText(
+                    row.getGhiChu() != null
+                            ? row.getGhiChu()
+                            : ""
+            );
+
         } else {
-            lblDialogTitle.setText("Thêm điểm cộng mới");
+
+            lblDialogTitle.setText(
+                    "Thêm điểm cộng mới"
+            );
         }
     }
 
     @FXML
     private void onDialogSave() {
+
         lblError.setText("");
 
-        // --- Validate required ---
         if (tfCccd.getText().trim().isEmpty()) {
-            lblError.setText("CCCD không được để trống.");
+
+            lblError.setText(
+                    "CCCD không được để trống."
+            );
+
             return;
         }
-        if (tfPhuongThuc.getText().trim().isEmpty()) {
-            lblError.setText("Phương thức không được để trống.");
+
+        if (cbMon.getValue() == null) {
+
+            lblError.setText(
+                    "Vui lòng chọn môn."
+            );
+
             return;
         }
 
-        // --- Parse từng field điểm ---
-        BigDecimal diemUtxtToHop = parseBigDecimal(tfDiemUtxtToHop, "Điểm UTXT (có tổ hợp)");
-        if (lblError.getText() != null && !lblError.getText().isEmpty()) return;
+        if (cbPhuongThuc.getValue() == null) {
 
-        BigDecimal diemUtxtKhongToHop = parseBigDecimal(tfDiemUtxtKhongToHop, "Điểm UTXT (không tổ hợp)");
-        if (lblError.getText() != null && !lblError.getText().isEmpty()) return;
+            lblError.setText(
+                    "Vui lòng chọn phương thức."
+            );
 
-        BigDecimal diemCc = parseBigDecimal(tfDiemCc, "Điểm chứng chỉ");
-        if (lblError.getText() != null && !lblError.getText().isEmpty()) return;
+            return;
+        }
 
-        BigDecimal tongThxt = parseBigDecimal(tfTongThxt, "Tổng THXT");
-        if (lblError.getText() != null && !lblError.getText().isEmpty()) return;
+        if (cbLoaiGiai.getValue() == null) {
 
-        BigDecimal tongKhongThxt = parseBigDecimal(tfTongKhongThxt, "Tổng không xét THXT");
-        if (lblError.getText() != null && !lblError.getText().isEmpty()) return;
+            lblError.setText(
+                    "Vui lòng chọn loại giải."
+            );
 
-        // --- Gọi BUS ---
-        DiemCongXetTuyenDTO dto = new DiemCongXetTuyenDTO(
-                editingRow != null ? editingRow.getIdDiemCong() : 0,
-                tfCccd.getText().trim(),
-                tfMon.getText().trim(),
-                tfPhuongThuc.getText().trim(),
-                diemUtxtToHop,
-                diemUtxtKhongToHop,
-                diemCc,
-                tongThxt,
-                tongKhongThxt,
-                tfGhiChu.getText().trim()
-        );
+            return;
+        }
 
-        String result = (editingRow == null)
-                ? bus.addDiemCongXetTuyen(dto)
-                : bus.updateDiemCongXetTuyen(dto.getIdDiemCong(), dto);
+        if (cbCap.getValue() == null) {
+
+            lblError.setText(
+                    "Vui lòng chọn cấp."
+            );
+
+            return;
+        }
+
+        BigDecimal[] diem =
+                DatabaseHelper.tinhDiemUtxt(
+                        cbCap.getValue().toLowerCase(),
+                        cbLoaiGiai.getValue().toLowerCase(),
+                        cbPhuongThuc.getValue()
+                );
+
+        BigDecimal diemToHop = diem[0];
+        BigDecimal diemKhongToHop = diem[1];
+
+        DiemCongXetTuyenDTO dto =
+                new DiemCongXetTuyenDTO(
+                        editingRow != null
+                                ? editingRow.getIdDiemCong()
+                                : 0,
+
+                        tfCccd.getText().trim(),
+
+                        cbMon.getValue(),
+
+                        cbPhuongThuc.getValue(),
+
+                        diemToHop,
+
+                        diemKhongToHop,
+
+                        BigDecimal.ZERO,
+
+                        diemToHop,
+
+                        diemKhongToHop,
+
+                        tfGhiChu.getText().trim()
+                );
+
+        String result =
+                editingRow == null
+                        ? bus.addDiemCongXetTuyen(dto)
+                        : bus.updateDiemCongXetTuyen(
+                        dto.getIdDiemCong(),
+                        dto
+                );
 
         if (result.startsWith("Lỗi")) {
+
             lblError.setText(result);
             return;
         }
 
+        savedData = dto;
+
+        if (editingRow != null) {
+
+            editingRow.setMon(dto.getMon());
+            editingRow.setPhuongThuc(dto.getPhuongThuc());
+            editingRow.setDiemUtxtToHop(dto.getDiemUtxtToHop());
+            editingRow.setDiemUtxtKhongXetToHop(dto.getDiemUtxtKhongXetToHop());
+            editingRow.setDiemTongThxt(dto.getDiemTongThxt());
+            editingRow.setDiemTongKhongXetThxt(dto.getDiemTongKhongXetThxt());
+            editingRow.setGhiChu(dto.getGhiChu());
+        }
+
         showInfo("Thành công", result);
+
         isSaved = true;
+
         dialogStage.close();
     }
 
     @FXML
     private void onDialogCancel() {
+
         dialogStage.close();
     }
 
     public boolean getIsSaved() {
+
         return isSaved;
     }
 
-    // --- Helpers ---
-    private String val(BigDecimal d) {
-        return d == null ? "" : d.toPlainString();
-    }
+    public DiemCongXetTuyenDTO getSavedData() {
 
-    private BigDecimal parseBigDecimal(TextField tf, String fieldName) {
-        String v = tf.getText().trim();
-        if (v.isEmpty()) return null;
-        try {
-            return new BigDecimal(v);
-        } catch (NumberFormatException e) {
-            lblError.setText(fieldName + " phải là số hợp lệ (VD: 1.50).");
-            return null;
-        }
+        return savedData;
     }
 }
