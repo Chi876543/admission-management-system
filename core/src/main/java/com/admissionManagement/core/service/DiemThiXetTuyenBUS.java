@@ -359,18 +359,12 @@ public class DiemThiXetTuyenBUS {
         }
     }
 
-    public String deleteDiemThiXetTuyen(int id){
+    public String deleteDiemThiXetTuyen(String cccd){
         Transaction tx = null;
         try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
-            DiemThiXetTuyen diemThiXetTuyen = dao.getWithSession(session, id);
-
-            if(diemThiXetTuyen == null){
-                return "Lỗi: Không tìm thấy điểm thi với ID " + id;
-            }
-
-            dao.deleteWithSession(session, diemThiXetTuyen);
-
+            ThiSinh thiSinh = thisinhdao.getByCccdWithSesstion(session, cccd);
+            thiSinh.setDiemThi(null);
             tx.commit();
             return "Deleted successfully";
         } catch (Exception e) {

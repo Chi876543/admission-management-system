@@ -300,7 +300,7 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
 
     private void onDelete(DiemThiXetTuyenDTO row) {
         if (confirmDelete("Bảng điểm của thí sinh: " + row.getCccd())) {
-            String result = bus.deleteDiemThiXetTuyen(row.getIdDiemThi());
+            String result = bus.deleteDiemThiXetTuyen(row.getCccd());
             if (result.contains("successfully")) {
                 loadData();
                 showInfo("Thành công", "Đã xóa bảng điểm.");
