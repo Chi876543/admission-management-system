@@ -52,9 +52,9 @@ public class DatabaseHelper {
         return ketQua.subtract(nganhToHop.getDoLech());
     }
 
-    public static BigDecimal tinhDiemUuTien (ThiSinhDTO thiSinh, BigDecimal diemCong, BigDecimal dthgxt) {
-        String doiTuong = thiSinh.getDoiTuong();
-        String khuVuc = thiSinh.getKhuVuc();
+    public static BigDecimal tinhDiemUuTien(ThiSinhDTO thiSinh, BigDecimal diemCong, BigDecimal dthgxt) {
+        String doiTuong = (thiSinh.getDoiTuong() == null) ? "" : thiSinh.getDoiTuong();
+        String khuVuc = (thiSinh.getKhuVuc() == null) ? "" : thiSinh.getKhuVuc();
 
         BigDecimal mucDiemUuTienKV = switch (khuVuc) {
             case "KV1" -> new BigDecimal("0.75");
