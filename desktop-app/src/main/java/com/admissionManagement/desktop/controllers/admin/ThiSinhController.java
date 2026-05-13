@@ -30,6 +30,8 @@ public class ThiSinhController extends BaseController implements Initializable {
     private final NganhToHopBUS nganhToHopBUS = new NganhToHopBUS();
     private final DiemThiXetTuyenBUS diemThiXetTuyenBUS = new DiemThiXetTuyenBUS();
     private final DiemCongXetTuyenBUS diemCongXetTuyenBUS = new DiemCongXetTuyenBUS();
+    private final NguyenVongXetTuyenBUS nguyenVongXetTuyenBUS = new NguyenVongXetTuyenBUS();
+
 
     // Giao diện View
     @FXML private TextField tfSearch;
