@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -104,26 +105,29 @@ public class NguyenVongXetTuyenBUS {
 
     public NguyenVongXetTuyenDTO getNguyenVongXetTuyen(int id){
         try(Session session = factory.openSession()){
-            return toDTO(dao.getWithSession(session, id));
+            NguyenVongXetTuyen result = dao.getWithSession(session, id);
+            if(result != null)
+                return toDTO(result);
+            return null;
         }
     }
 
     public NguyenVongXetTuyenDTO getByKey(String key) {
         try (Session session = factory.openSession()) {
-            NguyenVongXetTuyen entity =
-                    dao.getByKeyWithSession(session, key);
-            if (entity == null) {
-                return null;
-            }
-            return toDTO(entity);
+            NguyenVongXetTuyen entity = dao.getByKeyWithSession(session, key);
+            if (entity != null)
+                return toDTO(entity);
+            return null;
         }
     }
 
     public List<NguyenVongXetTuyenDTO> getAllNganhToHop(){
-        Session session = factory.openSession();
-        List<NguyenVongXetTuyen> listNguyenVongXetTuyen = dao.getAllWithSession(session);
-        session.close();
-        return mapListEntityToListDTO(listNguyenVongXetTuyen);
+        try(Session session = factory.openSession()){
+            List<NguyenVongXetTuyen> result = dao.getAllWithSession(session);
+            if(!result.isEmpty())
+                return mapListEntityToListDTO(result);
+            return Collections.emptyList();
+        }
     }
 
     public String updateNguyenVongXetTuyen(int id, NguyenVongXetTuyenDTO newNguyenVongXetTuyenDTO){
@@ -207,7 +211,7 @@ public class NguyenVongXetTuyenBUS {
             ThiSinh thiSinh = thisinhdao.getBySbdWithSession(session, sbd);
 
             if(thiSinh == null) {
-                return null;
+                return Collections.emptyList();
             }
 
             return mapListEntityToListDTO(thiSinh.getDanhSachNguyenVongCuaThiSinh());

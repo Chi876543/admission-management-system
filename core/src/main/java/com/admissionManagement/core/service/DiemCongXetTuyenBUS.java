@@ -94,7 +94,6 @@ public class DiemCongXetTuyenBUS {
         }
     }
 
-    /** Thêm mới và trả về DTO với ID thật từ DB */
     public DiemCongXetTuyenDTO addAndReturn(DiemCongXetTuyenDTO dto) {
         Session session = factory.openSession();
         Transaction tx = null;
@@ -286,14 +285,19 @@ public class DiemCongXetTuyenBUS {
 
     public DiemCongXetTuyenDTO getDiemCongXetTuyen(int id){
         try(Session session = factory.openSession()){
-            return toDTO(dao.getWithSession(session, id));
+            DiemCongXetTuyen result = dao.getWithSession(session, id);
+            if(result != null)
+                return toDTO(result);
+            return null;
         }
     }
 
     public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyen(){
         try(Session session = factory.openSession()){
-            List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAll(session);
-            return mapListEntityToListDTO(listDiemCongXetTuyen);
+            List<DiemCongXetTuyen> result = dao.getAll(session);
+            if(!result.isEmpty())
+                return mapListEntityToListDTO(result);
+            return java.util.Collections.emptyList();
         }
     }
 
