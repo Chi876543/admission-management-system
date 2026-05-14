@@ -66,7 +66,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
     @FXML private TableColumn<DiemThiXetTuyenDTO, BigDecimal> colNl1, colCncn, colCnnn,
             colNk1, colNk2, colNk3,
             colNk4, colNk5, colNk6;
-    @FXML private TableColumn<DiemThiXetTuyenDTO, Void> colAction;
 
     // ── Pagination ───────────────────────────────────
     @FXML private Label      lblCount;
@@ -128,25 +127,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         colNk4.setCellValueFactory(new PropertyValueFactory<>("nk4"));
         colNk5.setCellValueFactory(new PropertyValueFactory<>("nk5"));
         colNk6.setCellValueFactory(new PropertyValueFactory<>("nk6"));
-
-        colAction.setCellFactory(col -> new TableCell<>() {
-            private final javafx.scene.layout.HBox box = makeActionCell(
-                    () -> {
-                        DiemThiXetTuyenDTO item = getTableRow().getItem();
-                        if (item != null) openDialog(item);
-                    },
-                    () -> {
-                        DiemThiXetTuyenDTO item = getTableRow().getItem();
-                        if (item != null) onDelete(item);
-                    }
-            );
-
-            @Override
-            protected void updateItem(Void v, boolean empty) {
-                super.updateItem(v, empty);
-                setGraphic(empty ? null : box);
-            }
-        });
 
         tblDiem.setItems(displayData);
     }

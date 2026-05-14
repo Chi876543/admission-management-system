@@ -122,8 +122,7 @@
                     </columns>
                 </TableColumn>
 
-                <!-- Thao tác -->
-                <TableColumn fx:id="colAction" text="Thao tác" prefWidth="120" style="-fx-alignment:CENTER;"/>
+
             </columns>
             <placeholder>
                 <Label text="Không có dữ liệu" styleClass="table-placeholder"/>

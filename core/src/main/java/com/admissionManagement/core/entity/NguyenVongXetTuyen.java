@@ -9,6 +9,10 @@ import java.math.BigDecimal;
         name = "xt_nguyenvongxettuyen",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_nguyenvong_keys", columnNames = {"nv_keys"})
+        },
+        indexes = {
+                @Index(name = "idx_nguyenvong_cccd",    columnList = "nn_cccd"),
+                @Index(name = "idx_nguyenvong_manganh", columnList = "nv_manganh")
         }
 )
 @Data

@@ -40,6 +40,14 @@
                 styleClass="btn-primary"
                 onAction="#onImportCc"/>
 
+        <Button text="+ Thêm CC"
+                styleClass="btn-primary"
+                onAction="#onAddCc"/>
+
+        <Button text="✏ Sửa CC"
+                styleClass="btn-warning"
+                onAction="#onEditCc"/>
+
         <Region HBox.hgrow="ALWAYS"/>
 
         <TextField fx:id="tfSearch"
@@ -56,11 +64,6 @@
                    styleClass="main-table">
 
             <columns>
-
-                <TableColumn fx:id="colAction"
-                             text="Thao tác"
-                             prefWidth="120"
-                             style="-fx-alignment:CENTER;"/>
 
                 <TableColumn fx:id="colId"
                              text="ID"

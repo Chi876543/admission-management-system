@@ -37,9 +37,10 @@ public class NguyenVongXetTuyenDAO {
     }
 
     public List<NguyenVongXetTuyen> getAllWithSession(Session session){
-        String query = "FROM NguyenVongXetTuyen ";
-        List listNguyenVongXetTuyen = session.createQuery(query).list();
-        return listNguyenVongXetTuyen;
+        return session.createQuery(
+                "FROM NguyenVongXetTuyen ORDER BY idNv DESC",
+                NguyenVongXetTuyen.class
+        ).getResultList();
     }
 
     public void updateWithSession(Session session, NguyenVongXetTuyen newNguyenVongXetTuyen) {

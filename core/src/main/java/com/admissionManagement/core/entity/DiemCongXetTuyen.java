@@ -7,7 +7,13 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(
-        name = "xt_diemcongxetuyen"
+        name = "xt_diemcongxetuyen",
+        indexes = {
+                @Index(name = "idx_diemcong_cccd",      columnList = "ts_cccd"),
+                @Index(name = "idx_diemcong_mon",       columnList = "mon"),
+                @Index(name = "idx_diemcong_phuongthuc",columnList = "phuongthuc"),
+                @Index(name = "idx_diemcong_ghichu",    columnList = "ghichu(255)")
+        }
 )
 
 public class DiemCongXetTuyen {
