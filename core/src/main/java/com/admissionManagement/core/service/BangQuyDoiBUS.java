@@ -154,6 +154,13 @@ public class BangQuyDoiBUS {
         }
     }
 
+    /** Parse BigDecimal từ chuỗi CSV (bỏ quotes, xử lý NULL) */
+    private BigDecimal parseBD(String raw) {
+        String s = raw.replace("\"", "").trim();
+        if (s.isEmpty() || s.equalsIgnoreCase("NULL")) return null;
+        return new BigDecimal(s);
+    }
+
     /**
      * Import CSV bảng quy đổi.
      * Format dòng (bỏ header): phuongThuc,toHop,mon,diemA,diemB,diemC,diemD
@@ -169,19 +176,31 @@ public class BangQuyDoiBUS {
             while ((line = br.readLine()) != null) {
                 if (isHeader) { isHeader = false; continue; }
                 String[] cols = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-                if (cols.length < 7) { error++; continue; }
+                if (cols.length < 8) { error++; continue; }
                 try {
+                    // CSV format: idqd(0), phuongThuc(1), toHop(2), mon(3),
+                    //             diemA(4), diemB(5), diemC(6), diemD(7), maQuyDoi(8), phanVi(9)
+                    String monRaw = cols[3].replace("\"", "").trim();
+                    String maQuyDoi = cols.length > 8
+                            ? cols[8].replace("\"", "").trim()
+                            : "QD-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+                    if (maQuyDoi.isEmpty()) {
+                        maQuyDoi = "QD-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+                    }
+                    String phanViRaw = cols.length > 9 ? cols[9].replace("\"", "").trim() : null;
+                    Integer phanVi = (phanViRaw != null && !phanViRaw.isEmpty()) ? Integer.parseInt(phanViRaw) : null;
+
                     BangQuyDoiDTO dto = new BangQuyDoiDTO(
                             0,
-                            cols[0].replace("\"", "").trim(),
-                            cols[1].replace("\"", "").trim(),
-                            cols[2].replace("\"", "").trim(),
-                            new BigDecimal(cols[3].replace("\"", "").trim()),
-                            new BigDecimal(cols[4].replace("\"", "").trim()),
-                            new BigDecimal(cols[5].replace("\"", "").trim()),
-                            new BigDecimal(cols[6].replace("\"", "").trim()),
-                            "QD-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase(),
-                            null
+                            cols[1].replace("\"", "").trim(),  // phuongThuc
+                            cols[2].replace("\"", "").trim(),  // toHop
+                            monRaw.equalsIgnoreCase("NULL") ? null : monRaw, // mon (có thể NULL)
+                            parseBD(cols[4]),                  // diemA
+                            parseBD(cols[5]),                  // diemB
+                            parseBD(cols[6]),                  // diemC
+                            parseBD(cols[7]),                  // diemD
+                            maQuyDoi,
+                            phanVi.toString()
                     );
                     String res = addBangQuyDoi(dto);
                     if (res.startsWith("Lỗi")) { error++; report.append("- ").append(res).append("\n"); }

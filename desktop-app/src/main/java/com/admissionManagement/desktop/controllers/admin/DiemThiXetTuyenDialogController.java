@@ -15,6 +15,7 @@ public class DiemThiXetTuyenDialogController extends BaseController {
     private Stage dialogStage;
     private DiemThiXetTuyenDTO editingRow;
     private boolean isSaved = false;
+    private DiemThiXetTuyenDTO savedDTO = null; // ← DTO sau khi save để trả về controller
 
     @FXML private Label lblDialogTitle, lblError;
     @FXML private TextField tfCccd, tfSbd;
@@ -152,6 +153,7 @@ public class DiemThiXetTuyenDialogController extends BaseController {
 
             showInfo("Thành công", result);
             isSaved = true;
+            savedDTO = dto; // ← lưu lại DTO để controller dùng, không cần getAll
             dialogStage.close();
 
         } catch (NumberFormatException e) {
@@ -166,6 +168,10 @@ public class DiemThiXetTuyenDialogController extends BaseController {
 
     public boolean getIsSaved() {
         return isSaved;
+    }
+
+    public DiemThiXetTuyenDTO getSavedDTO() {
+        return savedDTO;
     }
 
     private String val(BigDecimal d) {

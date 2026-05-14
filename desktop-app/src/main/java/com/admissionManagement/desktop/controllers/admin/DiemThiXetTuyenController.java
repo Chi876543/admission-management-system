@@ -15,6 +15,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -125,11 +126,15 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         tblDiem.setItems(displayData);
     }
 
+    // Wrapper cố định để pageFactory luôn trả cùng 1 Node
+    private final StackPane tableWrapper = new StackPane();
+
     private void setupPagination() {
+        tableWrapper.getChildren().setAll(tblDiem);
         pagination.setPageFactory(pageIndex -> {
             currentPage = pageIndex;
             updatePage();
-            return tblDiem;
+            return tableWrapper; // ← luôn trả cùng 1 Node, tránh mất bảng khi chuyển trang
         });
     }
 
@@ -310,12 +315,39 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
             stage.showAndWait();
 
             if (dialogCtrl.getIsSaved()) {
-                // Reload từ DB sau khi thêm/sửa
-                loadData();
+                DiemThiXetTuyenDTO saved = dialogCtrl.getSavedDTO();
+                if (saved != null) {
+                    if (row == null) {
+                        // THÊM MỚI: thêm vào đầu allData, không getAll
+                        allData.add(0, saved);
+                    } else {
+                        // SỬA: cập nhật tại chỗ trong allData
+                        for (int i = 0; i < allData.size(); i++) {
+                            if (allData.get(i).getCccd().equals(saved.getCccd())) {
+                                allData.set(i, saved);
+                                break;
+                            }
+                        }
+                    }
+                    applyFilter();
+                    // Scroll đến dòng vừa thao tác
+                    scrollToRow(saved);
+                }
             }
 
         } catch (IOException e) {
             showError("Lỗi giao diện: " + e.getMessage());
+        }
+    }
+
+    /** Scroll và select dòng vừa thêm/sửa trong bảng hiện tại */
+    private void scrollToRow(DiemThiXetTuyenDTO target) {
+        for (int i = 0; i < displayData.size(); i++) {
+            if (displayData.get(i).getCccd().equals(target.getCccd())) {
+                tblDiem.getSelectionModel().select(i);
+                tblDiem.scrollTo(i);
+                return;
+            }
         }
     }
 }

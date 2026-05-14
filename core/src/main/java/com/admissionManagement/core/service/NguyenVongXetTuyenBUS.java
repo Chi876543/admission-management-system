@@ -224,53 +224,50 @@ public class NguyenVongXetTuyenBUS {
         int errorCount = 0;
         StringBuilder report = new StringBuilder();
 
-        // Mở MỘT session duy nhất cho toàn bộ file
-        try (Session session = factory.openSession()) {
+        // Dùng opencsv để parse đúng CSV có dấu quotes — tránh bug split regex
+        try (com.opencsv.CSVReader csvReader = new com.opencsv.CSVReaderBuilder(
+                new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))
+                .withSkipLines(1).build();
+             Session session = factory.openSession()) {
+
             Transaction tx = session.beginTransaction();
+            int count = 0;
+            String[] columns;
 
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+            while ((columns = csvReader.readNext()) != null) {
+                if (columns.length < 6) { errorCount++; continue; }
+                try {
+                    String cccd    = columns[1].trim();
+                    int thuTuNV    = Integer.parseInt(columns[2].trim());
+                    String maNganh = columns[5].trim();
 
-                String line;
-                boolean isHeader = true;
-                int count = 0;
+                    String result = addNguyenVong(session, cccd, maNganh, thuTuNV);
 
-                while ((line = br.readLine()) != null) {
-                    if (isHeader) { isHeader = false; continue; }
-
-                    String[] columns = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-                    if (columns.length >= 6) {
-                        String cccd = columns[1].replace("\"", "").trim();
-                        int thuTuNV = Integer.parseInt(columns[2].replace("\"", "").trim());
-                        String maNganh = columns[5].replace("\"", "").trim();
-
-                        // Gọi hàm dùng chung session
-                        String result = addNguyenVong(session, cccd, maNganh, thuTuNV);
-
-                        if (result.contains("Thành công")) {
-                            successCount++;
-                        } else {
-                            errorCount++;
-                            report.append("- Lỗi dòng ").append(cccd).append(": ").append(result).append("\n");
-                        }
+                    if (result.contains("Thành công")) {
+                        successCount++;
+                    } else {
+                        errorCount++;
+                        report.append("- Lỗi dòng ").append(cccd).append(": ").append(result).append("\n");
                     }
-
-                    // Flush để tránh tràn bộ nhớ nếu file quá lớn (Batch processing)
-                    if (++count % 50 == 0) {
-                        session.flush();
-                        session.clear();
-                    }
+                } catch (Exception e) {
+                    errorCount++;
+                    report.append("- Lỗi parse dòng: ").append(e.getMessage()).append("\n");
                 }
-                tx.commit(); // Lưu tất cả thay đổi
-            } catch (Exception e) {
-                if (tx != null) tx.rollback();
-                return "Lỗi đọc file: " + e.getMessage();
+
+                if (++count % 50 == 0) {
+                    session.flush();
+                    session.clear();
+                }
             }
+
+            tx.commit();
+
         } catch (Exception e) {
-            return "Lỗi kết nối DB: " + e.getMessage();
+            return "Lỗi đọc file: " + e.getMessage();
         }
 
-        return report.append("\nTổng: ").append(successCount).append(" thành công.").toString();
+        return report.append("\nTổng: ").append(successCount).append(" thành công, ")
+                .append(errorCount).append(" lỗi.").toString();
     }
 
 
