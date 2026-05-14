@@ -152,7 +152,10 @@ public class NganhBUS {
 
     public List<NganhWithRegistryCountDTO> getAllNganhWithRegistryCount(){
         try(Session session = factory.openSession()){
-            return dao.getAllWithCountWithSession(session);
+            List<NganhWithRegistryCountDTO> result = dao.getAllWithCountWithSession(session);
+            if(!result.isEmpty())
+                return result;
+            return Collections.emptyList();
         }
     }
 
