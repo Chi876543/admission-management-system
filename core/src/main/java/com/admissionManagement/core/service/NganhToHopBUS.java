@@ -174,7 +174,7 @@ public class NganhToHopBUS {
                     entity.setToHopMonThi(toHop);
                     entity.setTbKeys(line[4].trim());
                     String cleanedValue = line[7].trim().replace(",", ".");
-                    entity.setDoLech(BigDecimal.valueOf(Long.parseLong(cleanedValue)));
+                    entity.setDoLech(new BigDecimal(cleanedValue));
 
                     int viTriMoNgoac = line[3].trim().indexOf("(");
                     int viTriDongNgoac = line[3].trim().indexOf(")");

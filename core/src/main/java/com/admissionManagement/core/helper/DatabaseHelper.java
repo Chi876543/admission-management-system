@@ -305,4 +305,86 @@ public class DatabaseHelper {
 
         return diemKhongToHop;
     }
+
+    public static BigDecimal tinhDiemQuyDoiTuDiemGoc(String tenChungChi, String mucDiem) {
+        if (tenChungChi == null || mucDiem == null) {
+            return BigDecimal.ZERO;
+        }
+
+        String ten = tenChungChi.trim().toUpperCase();
+        String diemStr = mucDiem.trim().toUpperCase();
+
+        double diemNum = -1;
+        try {
+            diemNum = Double.parseDouble(diemStr.replace(",", "."));
+        } catch (NumberFormatException e) {
+            // Bỏ qua lỗi này vì một số chứng chỉ dùng chữ (B1, C, Bậc 3)
+        }
+
+        if (ten.contains("IELTS")) {
+            if (diemNum >= 7.0) return new BigDecimal("10.0");
+            if (diemNum >= 5.5) return new BigDecimal("9.0");
+            if (diemNum >= 4.0) return new BigDecimal("8.0");
+        }
+        // 2. TOEFL ITP
+        else if (ten.contains("TOEFL ITP")) {
+            if (diemNum >= 627) return new BigDecimal("10.0");
+            if (diemNum >= 500) return new BigDecimal("9.0");
+            if (diemNum >= 450) return new BigDecimal("8.0");
+        }
+        // 3. TOEFL iBT
+        else if (ten.contains("TOEFL IBT") || ten.contains("TOEFL IBT")) {
+            if (diemNum >= 94) return new BigDecimal("10.0");
+            if (diemNum >= 46) return new BigDecimal("9.0");
+            if (diemNum >= 30) return new BigDecimal("8.0");
+        }
+        // 4. PTE Academic
+        else if (ten.contains("PTE")) {
+            if (diemNum >= 76) return new BigDecimal("10.0");
+            if (diemNum >= 59) return new BigDecimal("9.0");
+            if (diemNum >= 43) return new BigDecimal("8.0");
+        }
+        // 5. Linguaskill
+        else if (ten.contains("LINGUASKILL")) {
+            if (diemNum >= 180) return new BigDecimal("10.0");
+            if (diemNum >= 160) return new BigDecimal("9.0");
+            if (diemNum >= 140) return new BigDecimal("8.0");
+        }
+        // 6. Aptis ESOL (General & Advanced)
+        else if (ten.contains("APTIS")) {
+            // C và C1 đều tương đương mức 10.0
+            if (diemStr.equals("C") || diemStr.equals("C1")) return new BigDecimal("10.0");
+            if (diemStr.equals("B2")) return new BigDecimal("9.0");
+            if (diemStr.equals("B1")) return new BigDecimal("8.0");
+        }
+        // 7. VSTEP (3 bậc)
+        else if (ten.contains("VSTEP")) {
+            if (diemStr.contains("5")) return new BigDecimal("10.0");
+            if (diemStr.contains("4")) return new BigDecimal("9.0");
+            if (diemStr.contains("3")) return new BigDecimal("8.0");
+        }
+        // 8. TOEIC (4 kỹ năng) - Xử lý bóc tách từng kỹ năng
+        else if (ten.contains("TOEIC")) {
+            if (ten.contains("NGHE")) {
+                if (diemNum >= 490) return new BigDecimal("10.0");
+                if (diemNum >= 400) return new BigDecimal("9.0");
+                if (diemNum >= 275) return new BigDecimal("8.0");
+            } else if (ten.contains("ĐỌC") || ten.contains("DOC")) {
+                if (diemNum >= 455) return new BigDecimal("10.0");
+                if (diemNum >= 385) return new BigDecimal("9.0");
+                if (diemNum >= 275) return new BigDecimal("8.0");
+            } else if (ten.contains("NÓI") || ten.contains("NOI")) {
+                if (diemNum >= 180) return new BigDecimal("10.0");
+                if (diemNum >= 160) return new BigDecimal("9.0");
+                if (diemNum >= 120) return new BigDecimal("8.0");
+            } else if (ten.contains("VIẾT") || ten.contains("VIET")) {
+                if (diemNum >= 180) return new BigDecimal("10.0");
+                if (diemNum >= 150) return new BigDecimal("9.0");
+                if (diemNum >= 120) return new BigDecimal("8.0");
+            }
+        }
+
+        // Trả về 0 nếu không khớp chứng chỉ nào hoặc điểm chưa đạt mức tối thiểu
+        return BigDecimal.ZERO;
+    }
 }

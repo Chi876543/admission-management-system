@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.Reader;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -111,19 +112,18 @@ public class NganhBUS {
 
             while ((line = csvReader.readNext()) != null) {
                 try {
-                    boolean isRoot = line[6].trim().equalsIgnoreCase("Gốc");
-                    if (isRoot) {
-                        Nganh entity = new Nganh();
-                        entity.setMaNganh(line[1].trim());
-                        entity.setTenNganh(line[2].trim());
-                        entity.setToHopGoc(line[5].trim());
-                        entity.setTuyenThang("1");
-                        entity.setDgnl("1");
-                        entity.setThpt("1");
-                        entity.setVsat("1");
-                        session.persist(entity);
-                        successCount++;
-                    }
+                    Nganh entity = new Nganh();
+                    entity.setMaNganh(line[1].trim());
+                    entity.setTenNganh(line[2].trim());
+                    entity.setToHopGoc(line[3].trim());
+                    entity.setChiTieu(Integer.parseInt(line[4].trim()));
+                    entity.setDiemSan(new BigDecimal(line[5].trim()));
+                    entity.setTuyenThang("1");
+                    entity.setDgnl("1");
+                    entity.setThpt("1");
+                    entity.setVsat("1");
+                    session.persist(entity);
+                    successCount++;
                 } catch (Exception e) {
                     // Ghi log lỗi dòng
                     System.out.println("Lỗi parse dòng tổ hợp: " + e.getMessage());
