@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -206,18 +207,33 @@ public class NguyenVongXetTuyenController
 
     @FXML
     private void onImport() {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Chọn file CSV nguyện vọng");
-        chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("CSV Files", "*.csv")
-        );
-        File file = chooser.showOpenDialog(tblNguyenVong.getScene().getWindow());
-        if (file == null) return;
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Chọn file CSV thí sinh");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        File selectedFile = fileChooser.showOpenDialog(tblNguyenVong.getScene().getWindow());
 
-        String result = bus.importFromCsv(file);
-        showInfo("Kết quả Import", result);
-        // Reload toàn bộ sau import
-        loadData();
+        if (selectedFile != null) {
+            Task<String> importTask = new Task<>() {
+                @Override
+                protected String call() throws Exception {
+                    return bus.importFromCsv(selectedFile);
+                }
+            };
+
+            importTask.setOnSucceeded(e -> {
+                String result = importTask.getValue();
+                showInfo("Kết quả", result);
+                loadData();
+            });
+
+            importTask.setOnFailed(e -> {
+                showError("Lỗi Import: " + importTask.getException().getMessage());
+            });
+
+            new Thread(importTask).start();
+
+            showInfo("Đang xử lý", "Hệ thống đang import ngầm, vui lòng đợi...");
+        }
     }
 
     private void openDialog(NguyenVongXetTuyenDTO row) {

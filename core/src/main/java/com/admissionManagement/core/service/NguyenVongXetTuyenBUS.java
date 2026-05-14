@@ -11,10 +11,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
@@ -222,62 +219,41 @@ public class NguyenVongXetTuyenBUS {
     public String importFromCsv(File file) {
         int successCount = 0;
         int errorCount = 0;
-        StringBuilder report = new StringBuilder();
 
-        // Dùng opencsv để parse đúng CSV có dấu quotes — tránh bug split regex
-        try (com.opencsv.CSVReader csvReader = new com.opencsv.CSVReaderBuilder(
-                new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))
-                .withSkipLines(1).build();
-             Session session = factory.openSession()) {
+        // Mở session duy nhất để dùng chung
+        try (Session session = factory.openSession()) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
+                br.readLine(); // Bỏ qua header
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (line.trim().isEmpty()) continue;
 
-            Transaction tx = session.beginTransaction();
-            int count = 0;
-            String[] columns;
+                    String[] columns = line.split("\",\"");
+                    // Làm sạch dữ liệu và ép kiểu
+                    String cccd = columns[1].replace("\"", "").trim();
+                    int thuTu = Integer.parseInt(columns[2].replace("\"", "").trim());
+                    String maNganh = columns[5].replace("\"", "").trim();
 
-            while ((columns = csvReader.readNext()) != null) {
-                if (columns.length < 6) { errorCount++; continue; }
-                try {
-                    String cccd    = columns[1].trim();
-                    String thuTuRaw = columns[2].trim();
-                    int thuTuNV;
-                    try {
-                        thuTuNV = Integer.parseInt(thuTuRaw);
-                    } catch (NumberFormatException e) {
-                        errorCount++;
-                        report.append("- Lỗi dòng (CCCD=").append(cccd)
-                                .append("): cột 'Thứ tự NV' không hợp lệ: \"").append(thuTuRaw)
-                                .append("\" — Kiểm tra đúng file sheet nguyện vọng (không phải file thống kê).\n");
-                        continue;
-                    }
-                    String maNganh = columns[5].trim();
+                    // GỌI HÀM: addNguyenVong sẽ tự lo Transaction bên trong
+                    String result = addNguyenVong(session, cccd, maNganh, thuTu);
 
-                    String result = addNguyenVong(session, cccd, maNganh, thuTuNV);
-
-                    if (result.contains("Thành công")) {
+                    if (result.startsWith("Thêm nguyện vọng thành công")) {
                         successCount++;
                     } else {
                         errorCount++;
-                        report.append("- Lỗi dòng ").append(cccd).append(": ").append(result).append("\n");
+                        System.err.println(result); // Log lỗi để kiểm tra
                     }
-                } catch (Exception e) {
-                    errorCount++;
-                    report.append("- Lỗi parse dòng: ").append(e.getMessage()).append("\n");
-                }
 
-                if (++count % 50 == 0) {
-                    session.flush();
-                    session.clear();
+                    // Giải phóng bộ nhớ đệm Hibernate
+                    if (successCount % 50 == 0) {
+                        session.clear();
+                    }
                 }
             }
-
-            tx.commit();
-
         } catch (Exception e) {
-            return "Lỗi đọc file: " + e.getMessage();
+            return "Lỗi hệ thống khi đọc file: " + e.getMessage();
         }
-
-        return report.append("\nTổng: ").append(successCount).append(" thành công, ")
-                .append(errorCount).append(" lỗi.").toString();
+        return String.format("Hoàn thành! Thành công: %d, Thất bại: %d", successCount, errorCount);
     }
 
 
@@ -291,17 +267,24 @@ public class NguyenVongXetTuyenBUS {
     }
 
     public String addNguyenVong(Session session, String cccd, String maNganh, int thuTu) {
+        Transaction tx = null;
         try{
-            Transaction tx = session.beginTransaction();
+            tx = session.beginTransaction();
 
             // Kiểm tra thí sinh
             ThiSinhBUS thiSinhBUS = new ThiSinhBUS();
             ThiSinhDTO thiSinh = thiSinhBUS.getByCccd(cccd);
-            if (thiSinh == null) return "Lỗi: Thí sinh " + cccd + " không tồn tại.";
+            if (thiSinh == null) {
+                tx.rollback(); // Phải rollback trước khi return
+                return "Lỗi: Thí sinh " + cccd + " không tồn tại.";
+            }
 
             // Kiểm tra ngành
             Nganh nganh = nganhdao.getByMaNganhWithSession(session, maNganh);
-            if (nganh == null) return "Lỗi: Ngành " + maNganh + " không tồn tại.";
+            if (nganh == null) {
+                tx.rollback();
+                return "Lỗi: Ngành " + maNganh + " không tồn tại.";
+            }
 
             // Lấy tổ hợp của ngành
             NganhToHopBUS nganhToHopBUS = new NganhToHopBUS();
@@ -359,6 +342,9 @@ public class NguyenVongXetTuyenBUS {
             return "Thêm nguyện vọng thành công cho thí sinh " + cccd;
 
         } catch (Exception e) {
+            if (tx != null && tx.getStatus().canRollback()) {
+                tx.rollback();
+            }
             return "Lỗi hệ thống: " + e.getMessage();
         }
     }
