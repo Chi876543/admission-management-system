@@ -2,7 +2,9 @@ package com.admissionManagement.desktop.controllers.admin;
 
 import com.admissionManagement.core.dto.DiemThiXetTuyenDTO;
 import com.admissionManagement.core.service.DiemThiXetTuyenBUS;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -17,7 +19,8 @@ public class DiemThiXetTuyenDialogController extends BaseController {
     private boolean isSaved = false;
 
     @FXML private Label lblDialogTitle, lblError;
-    @FXML private TextField tfCccd, tfSbd, tfPhuongThuc;
+    @FXML private TextField tfCccd, tfSbd;
+    @FXML private ComboBox<String> cbPhuongThuc;
 
     // THPT
     @FXML private TextField tfToan, tfLy, tfHoa, tfSinh, tfSu, tfDia,
@@ -33,12 +36,18 @@ public class DiemThiXetTuyenDialogController extends BaseController {
         this.editingRow  = row;
         this.bus         = bus;
 
+        cbPhuongThuc.setItems(FXCollections.observableArrayList("THPT", "VSAT", "ĐGNL", "Năng khiếu"));
+
         if (row != null) {
             lblDialogTitle.setText("Sửa điểm thi thí sinh: " + row.getCccd());
+            // Khóa CCCD và SBD khi sửa
             tfCccd.setText(row.getCccd());
             tfCccd.setEditable(false);
+            tfCccd.setStyle("-fx-background-color: #f0f0f0;");
             tfSbd.setText(row.getSoBaoDanh() != null ? row.getSoBaoDanh() : "");
-            tfPhuongThuc.setText(row.getPhuongThuc() != null ? row.getPhuongThuc() : "");
+            tfSbd.setEditable(false);
+            tfSbd.setStyle("-fx-background-color: #f0f0f0;");
+            cbPhuongThuc.setValue(row.getPhuongThuc());
 
             // THPT
             tfToan.setText(val(row.getDiemToan()));
@@ -80,10 +89,20 @@ public class DiemThiXetTuyenDialogController extends BaseController {
 
     @FXML
     private void onDialogSave() {
+        lblError.setStyle("-fx-text-fill: #e74c3c;");
         lblError.setText("");
 
-        if (tfCccd.getText().trim().isEmpty()) {
+        String cccd = tfCccd.getText().trim();
+        String sbd  = tfSbd.getText().trim();
+
+        if (cccd.isEmpty()) {
             lblError.setText("CCCD không được để trống.");
+            return;
+        }
+
+        // Khi thêm mới: SBD bắt buộc
+        if (editingRow == null && sbd.isEmpty()) {
+            lblError.setText("Số báo danh không được để trống khi thêm mới.");
             return;
         }
 
@@ -91,9 +110,9 @@ public class DiemThiXetTuyenDialogController extends BaseController {
             DiemThiXetTuyenDTO dto = new DiemThiXetTuyenDTO();
             if (editingRow != null) dto.setIdDiemThi(editingRow.getIdDiemThi());
 
-            dto.setCccd(tfCccd.getText().trim());
-            dto.setSoBaoDanh(tfSbd.getText().trim());
-            dto.setPhuongThuc(tfPhuongThuc.getText().trim());
+            dto.setCccd(cccd);
+            dto.setSoBaoDanh(sbd);
+            dto.setPhuongThuc(cbPhuongThuc.getValue());
 
             // THPT
             dto.setDiemToan(parse(tfToan.getText()));
@@ -156,12 +175,10 @@ public class DiemThiXetTuyenDialogController extends BaseController {
         return isSaved;
     }
 
-    // --- Helpers ---
     private String val(BigDecimal d) {
         return d == null ? "" : d.toPlainString();
     }
 
-    // Để trống = null (không phải ZERO như code cũ)
     private BigDecimal parse(String s) {
         if (s == null || s.trim().isEmpty()) return null;
         return new BigDecimal(s.trim());

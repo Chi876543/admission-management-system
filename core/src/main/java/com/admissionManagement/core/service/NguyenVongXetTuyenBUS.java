@@ -270,8 +270,18 @@ public class NguyenVongXetTuyenBUS {
     }
 
 
+    /** Wrapper công khai không cần truyền Session — dùng cho Dialog thêm/sửa NV từ UI */
+    public String addNguyenVong(String cccd, String maNganh, int thuTu) {
+        try (Session session = factory.openSession()) {
+            return addNguyenVong(session, cccd, maNganh, thuTu);
+        } catch (Exception e) {
+            return "Lỗi: " + e.getMessage();
+        }
+    }
+
     public String addNguyenVong(Session session, String cccd, String maNganh, int thuTu) {
         try{
+            Transaction tx = session.beginTransaction();
 
             // Kiểm tra thí sinh
             ThiSinhBUS thiSinhBUS = new ThiSinhBUS();
@@ -501,7 +511,7 @@ public class NguyenVongXetTuyenBUS {
     }
 
     private BigDecimal tinhTHXT(DiemThiXetTuyen diem, NganhToHopDTO th, String phuongThuc,
-                                    List<DiemCongXetTuyenDTO> dsDiemCong, BangQuyDoiBUS bangQuyDoiBUS) {
+                                List<DiemCongXetTuyenDTO> dsDiemCong, BangQuyDoiBUS bangQuyDoiBUS) {
         // Lấy điểm gốc từng môn theo phương thức (VSAT/THPT)
         BigDecimal m1 = layDiemTheoMon(diem, th.getThMon1(), phuongThuc, bangQuyDoiBUS);
         BigDecimal m2 = layDiemTheoMon(diem, th.getThMon2(), phuongThuc, bangQuyDoiBUS);

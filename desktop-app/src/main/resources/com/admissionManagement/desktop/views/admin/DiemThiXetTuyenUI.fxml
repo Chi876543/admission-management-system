@@ -52,6 +52,8 @@
     <!-- Toolbar -->
     <HBox styleClass="toolbar" spacing="8" alignment="CENTER_LEFT">
         <Button text="+ Thêm"       styleClass="btn-primary"  onAction="#onAdd"/>
+        <Button text="✎ Sửa"        styleClass="btn-warning"  onAction="#onEdit"/>
+        <Button text="✕ Xóa"        styleClass="btn-danger"   onAction="#onDeleteSelected"/>
         <Button text="⬆ Import CSV" styleClass="btn-primary"  onAction="#onImport"/>
         <Region HBox.hgrow="ALWAYS"/>
         <TextField fx:id="tfSearch"

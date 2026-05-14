@@ -18,26 +18,29 @@
           spacing="8"
           alignment="CENTER_LEFT">
 
+        <Button text="+ Thêm mới"
+                styleClass="btn-primary"
+                onAction="#onAdd"/>
+
+        <Button text="✎ Sửa"
+                styleClass="btn-warning"
+                onAction="#onEdit"/>
+
+        <Button text="✕ Xóa"
+                styleClass="btn-danger"
+                onAction="#onDeleteSelected"/>
+
+        <Button text="⬆ Import CSV"
+                styleClass="btn-default"
+                onAction="#onImport"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
         <TextField fx:id="tfSearch"
                    promptText="Tìm theo CCCD, mã ngành..."
                    styleClass="search-box"
                    prefWidth="260"/>
 
-        <Button text="+ Thêm mới"
-                styleClass="btn-primary"
-                onAction="#onAdd"/>
-
-        <Button text="Sửa"
-                styleClass="btn-warning"
-                onAction="#onEdit"/>
-
-        <Button text="Xóa"
-                styleClass="btn-danger"
-                onAction="#onDeleteSelected"/>
-
-        <Button text="Import"
-                styleClass="btn-default"
-                onAction="#onImport"/>
     </HBox>
 
     <VBox VBox.vgrow="ALWAYS"

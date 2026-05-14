@@ -18,26 +18,28 @@
           spacing="8"
           alignment="CENTER_LEFT">
 
-        <TextField fx:id="tfSearch"
-                   promptText="Tìm kiếm..."
-                   styleClass="search-box"
-                   prefWidth="260"/>
-
         <Button text="+ Thêm mới"
                 styleClass="btn-primary"
                 onAction="#onAdd"/>
 
-        <Button text="Sửa"
+        <Button text="✎ Sửa"
                 styleClass="btn-warning"
                 onAction="#onEdit"/>
 
-        <Button text="Xóa"
+        <Button text="✕ Xóa"
                 styleClass="btn-danger"
                 onAction="#onDeleteSelected"/>
 
-        <Button text="Import Excel"
+        <Button text="⬆ Import CSV"
                 styleClass="btn-default"
                 onAction="#onImport"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <TextField fx:id="tfSearch"
+                   promptText="Tìm kiếm..."
+                   styleClass="search-box"
+                   prefWidth="260"/>
 
     </HBox>
 

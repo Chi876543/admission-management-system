@@ -46,13 +46,14 @@ public class BangQuyDoiDialogController extends BaseController {
 
     private void setupComboBox() {
         cbPhuongThuc.setItems(FXCollections.observableArrayList(
-                "THPT", "DGNL", "HSA", "VSAT"
+                "THPT", "DGNL", "VSAT", "HSA"
         ));
         cbToHop.setItems(FXCollections.observableArrayList(
-                "A00", "A01", "B00", "C00", "D01"
+                "A00", "A01", "A02", "B00", "B03", "C00", "C01", "D01", "D07", "D14"
         ));
         cbMon.setItems(FXCollections.observableArrayList(
-                "Toán", "Lý", "Hóa", "Sinh", "Anh", "Văn"
+                "Toán", "Văn", "Lý", "Hóa", "Sinh", "Sử", "Địa", "Tin học",
+                "Tiếng Anh", "KTPL"
         ));
     }
 

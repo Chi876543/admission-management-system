@@ -129,15 +129,18 @@ public class BangQuyDoiController extends BaseController implements Initializabl
     @FXML
     private void onImport() {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle("Chọn file Excel");
+        chooser.setTitle("Chọn file CSV quy đổi");
         chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx", "*.xls")
+                new FileChooser.ExtensionFilter("CSV Files", "*.csv")
         );
         File file = chooser.showOpenDialog(tblBangQuyDoi.getScene().getWindow());
         if (file == null) return;
 
-        showInfo("Import", "Đã chọn file:\n" + file.getAbsolutePath());
-        // TODO: bangQuyDoiBUS.importExcel(file);
+        String result = bangQuyDoiBUS.importCsv(file);
+        showInfo("Kết quả Import", result);
+        // Reload sau import
+        loadData();
+        lblCount.setText(allData.size() + " bản ghi");
     }
 
     private void openDialog(BangQuyDoiDTO row) {

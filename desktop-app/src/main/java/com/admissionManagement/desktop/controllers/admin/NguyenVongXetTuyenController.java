@@ -207,14 +207,17 @@ public class NguyenVongXetTuyenController
     @FXML
     private void onImport() {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle("Chọn file import");
+        chooser.setTitle("Chọn file CSV nguyện vọng");
         chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx", "*.xls")
+                new FileChooser.ExtensionFilter("CSV Files", "*.csv")
         );
         File file = chooser.showOpenDialog(tblNguyenVong.getScene().getWindow());
         if (file == null) return;
-        showInfo("Import", "Đã chọn file:\n" + file.getAbsolutePath());
-        // TODO: bus.importDataProcess(file.getAbsolutePath());
+
+        String result = bus.importFromCsv(file);
+        showInfo("Kết quả Import", result);
+        // Reload toàn bộ sau import
+        loadData();
     }
 
     private void openDialog(NguyenVongXetTuyenDTO row) {

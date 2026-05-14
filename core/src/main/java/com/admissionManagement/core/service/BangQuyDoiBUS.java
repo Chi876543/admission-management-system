@@ -146,6 +146,50 @@ public class BangQuyDoiBUS {
         }
     }
 
+    /**
+     * Import CSV bảng quy đổi.
+     * Format dòng (bỏ header): phuongThuc,toHop,mon,diemA,diemB,diemC,diemD
+     */
+    public String importCsv(java.io.File file) {
+        int success = 0, error = 0;
+        StringBuilder report = new StringBuilder();
+        try (java.io.BufferedReader br = new java.io.BufferedReader(
+                new java.io.InputStreamReader(new java.io.FileInputStream(file),
+                        java.nio.charset.StandardCharsets.UTF_8))) {
+            String line;
+            boolean isHeader = true;
+            while ((line = br.readLine()) != null) {
+                if (isHeader) { isHeader = false; continue; }
+                String[] cols = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                if (cols.length < 7) { error++; continue; }
+                try {
+                    BangQuyDoiDTO dto = new BangQuyDoiDTO(
+                            0,
+                            cols[0].replace("\"", "").trim(),
+                            cols[1].replace("\"", "").trim(),
+                            cols[2].replace("\"", "").trim(),
+                            new BigDecimal(cols[3].replace("\"", "").trim()),
+                            new BigDecimal(cols[4].replace("\"", "").trim()),
+                            new BigDecimal(cols[5].replace("\"", "").trim()),
+                            new BigDecimal(cols[6].replace("\"", "").trim()),
+                            "QD-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase(),
+                            null
+                    );
+                    String res = addBangQuyDoi(dto);
+                    if (res.startsWith("Lỗi")) { error++; report.append("- ").append(res).append("\n"); }
+                    else success++;
+                } catch (Exception e) {
+                    error++;
+                    report.append("- Lỗi dòng: ").append(line).append("\n");
+                }
+            }
+        } catch (Exception e) {
+            return "Lỗi đọc file: " + e.getMessage();
+        }
+        return report.append("Thành công: ").append(success)
+                .append(" | Lỗi: ").append(error).toString();
+    }
+
     public BangQuyDoiDTO getBangQuyDoiWithScore(String phuongThuc, BigDecimal diem, String mon, String toHop) {
         try (Session session = factory.openSession()) {
 

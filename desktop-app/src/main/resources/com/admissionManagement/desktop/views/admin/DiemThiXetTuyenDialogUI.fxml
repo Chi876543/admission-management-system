@@ -29,7 +29,7 @@
                 </VBox>
                 <VBox HBox.hgrow="ALWAYS" spacing="4">
                     <Label text="Phương thức" styleClass="field-label"/>
-                    <TextField fx:id="tfPhuongThuc" promptText="VD: THPT" styleClass="field-input"/>
+                    <ComboBox fx:id="cbPhuongThuc" promptText="Chọn phương thức" maxWidth="Infinity" styleClass="field-input"/>
                 </VBox>
             </HBox>
 

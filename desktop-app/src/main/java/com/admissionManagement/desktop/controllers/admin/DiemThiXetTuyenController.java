@@ -15,7 +15,6 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -25,14 +24,17 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class DiemThiXetTuyenController extends BaseController implements Initializable {
 
     private final DiemThiXetTuyenBUS bus = new DiemThiXetTuyenBUS();
-    private final ObservableList<DiemThiXetTuyenDTO> masterData  = FXCollections.observableArrayList();
-    private final ObservableList<DiemThiXetTuyenDTO> displayData = FXCollections.observableArrayList();
+    // Toàn bộ dữ liệu – chỉ load 1 lần, không gọi DB lại mỗi thao tác
+    private final ObservableList<DiemThiXetTuyenDTO> allData    = FXCollections.observableArrayList();
+    private final ObservableList<DiemThiXetTuyenDTO> masterData = FXCollections.observableArrayList();
+    private final ObservableList<DiemThiXetTuyenDTO> displayData= FXCollections.observableArrayList();
     private List<ThongKeDiemDTO> thongKeData;
     private PauseTransition searchDebounce;
 
@@ -53,22 +55,17 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
     // ── Table ────────────────────────────────────────
     @FXML private TableView<DiemThiXetTuyenDTO> tblDiem;
 
-    // Thông tin chung
     @FXML private TableColumn<DiemThiXetTuyenDTO, String>     colCccd, colSbd, colPhuongThuc;
 
-    // Điểm THPT
     @FXML private TableColumn<DiemThiXetTuyenDTO, BigDecimal> colToan, colVan, colLy, colHoa,
             colSinh, colSu, colDia, colTin,
             colKtpl, colN1Thi, colN1Cc;
-    // Điểm VSAT
     @FXML private TableColumn<DiemThiXetTuyenDTO, BigDecimal> colToanVsat, colVanVsat, colLyVsat,
             colHoaVsat, colSinhVsat, colSuVsat,
             colDiaVsat, colN1Vsat;
-    // ĐGNL & Năng khiếu
     @FXML private TableColumn<DiemThiXetTuyenDTO, BigDecimal> colNl1, colCncn, colCnnn,
             colNk1, colNk2, colNk3,
             colNk4, colNk5, colNk6;
-    // Thao tác
     @FXML private TableColumn<DiemThiXetTuyenDTO, Void> colAction;
 
     // ── Pagination ───────────────────────────────────
@@ -97,12 +94,10 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
     private void setupTable() {
         tblDiem.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        // Thông tin chung
         colCccd.setCellValueFactory(new PropertyValueFactory<>("cccd"));
         colSbd.setCellValueFactory(new PropertyValueFactory<>("soBaoDanh"));
         colPhuongThuc.setCellValueFactory(new PropertyValueFactory<>("phuongThuc"));
 
-        // Điểm THPT
         colToan.setCellValueFactory(new PropertyValueFactory<>("diemToan"));
         colVan.setCellValueFactory(new PropertyValueFactory<>("diemVan"));
         colLy.setCellValueFactory(new PropertyValueFactory<>("diemLy"));
@@ -115,7 +110,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         colN1Thi.setCellValueFactory(new PropertyValueFactory<>("n1Thi"));
         colN1Cc.setCellValueFactory(new PropertyValueFactory<>("n1Cc"));
 
-        // Điểm VSAT
         colToanVsat.setCellValueFactory(new PropertyValueFactory<>("diemToanVSAT"));
         colVanVsat.setCellValueFactory(new PropertyValueFactory<>("diemVanVSAT"));
         colLyVsat.setCellValueFactory(new PropertyValueFactory<>("diemLyVSAT"));
@@ -125,7 +119,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         colDiaVsat.setCellValueFactory(new PropertyValueFactory<>("diemDiaVSAT"));
         colN1Vsat.setCellValueFactory(new PropertyValueFactory<>("n1VSAT"));
 
-        // ĐGNL & Năng khiếu
         colNl1.setCellValueFactory(new PropertyValueFactory<>("nl1"));
         colCncn.setCellValueFactory(new PropertyValueFactory<>("cncn"));
         colCnnn.setCellValueFactory(new PropertyValueFactory<>("cnnn"));
@@ -136,9 +129,8 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         colNk5.setCellValueFactory(new PropertyValueFactory<>("nk5"));
         colNk6.setCellValueFactory(new PropertyValueFactory<>("nk6"));
 
-        // Thao tác
         colAction.setCellFactory(col -> new TableCell<>() {
-            private final HBox box = makeActionCell(
+            private final javafx.scene.layout.HBox box = makeActionCell(
                     () -> {
                         DiemThiXetTuyenDTO item = getTableRow().getItem();
                         if (item != null) openDialog(item);
@@ -182,28 +174,29 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         lblCount.setText(masterData.size() + " bản ghi");
     }
 
+    /** Load lần đầu hoặc sau import — gọi DB */
     private void loadData() {
-        masterData.setAll(bus.getAllDiemThiXetTuyen());
+        allData.setAll(bus.getAllDiemThiXetTuyen());
         thongKeData = bus.getThongKeDiem();
         updateStatCards();
         updateChart();
         applyFilter();
     }
 
+    /** Lọc từ allData — KHÔNG gọi DB */
     private void applyFilter() {
         String key  = tfSearch.getText().trim().toLowerCase();
         String loai = cbLoaiDiemFilter.getValue();
 
-        List<DiemThiXetTuyenDTO> filtered = bus.getAllDiemThiXetTuyen().stream()
-                .filter(d -> {
-                    boolean matchKey = key.isEmpty()
-                            || d.getCccd().toLowerCase().contains(key)
-                            || (d.getSoBaoDanh() != null && d.getSoBaoDanh().toLowerCase().contains(key));
-                    boolean matchLoai = loai == null || loai.equals("Tất cả")
-                            || (d.getPhuongThuc() != null && d.getPhuongThuc().equalsIgnoreCase(loai));
-                    return matchKey && matchLoai;
-                })
-                .toList();
+        List<DiemThiXetTuyenDTO> filtered = new ArrayList<>();
+        for (DiemThiXetTuyenDTO d : allData) {
+            boolean matchKey = key.isEmpty()
+                    || d.getCccd().toLowerCase().contains(key)
+                    || (d.getSoBaoDanh() != null && d.getSoBaoDanh().toLowerCase().contains(key));
+            boolean matchLoai = loai == null || loai.equals("Tất cả")
+                    || (d.getPhuongThuc() != null && d.getPhuongThuc().equalsIgnoreCase(loai));
+            if (matchKey && matchLoai) filtered.add(d);
+        }
 
         masterData.setAll(filtered);
         refreshPagination();
@@ -212,7 +205,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
     private void updateStatCards() {
         if (thongKeData == null) return;
 
-        // THPT - lấy TB tất cả môn THPT có dữ liệu
         thongKeData.stream()
                 .filter(t -> t.getLoaiKyThi().equals("THPT") && t.getSoLuong() > 0)
                 .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh)
@@ -222,7 +214,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
                         () -> lblTbThpt.setText("--")
                 );
 
-        // VSAT - lấy TB tất cả môn VSAT có dữ liệu
         thongKeData.stream()
                 .filter(t -> t.getLoaiKyThi().equals("VSAT") && t.getSoLuong() > 0)
                 .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh)
@@ -232,7 +223,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
                         () -> lblTbVsat.setText("--")
                 );
 
-        // ĐGNL
         thongKeData.stream()
                 .filter(t -> t.getLoaiKyThi().equals("ĐGNL") && t.getSoLuong() > 0)
                 .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh)
@@ -242,14 +232,12 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
                         () -> lblTbDgnl.setText("--")
                 );
 
-        // Số thí sinh đã nhập điểm
-        long total = masterData.size();
+        long total = allData.size();
         lblDaNhap.setText(String.valueOf(total));
         lblDaNhapSub.setText("/ " + total + " thí sinh");
     }
 
-    @FXML
-    private void onChartFilter() { updateChart(); }
+    @FXML private void onChartFilter() { updateChart(); }
 
     private void updateChart() {
         if (thongKeData == null) return;
@@ -272,6 +260,26 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
     @FXML private void onAdd() { openDialog(null); }
 
     @FXML
+    private void onEdit() {
+        DiemThiXetTuyenDTO selected = tblDiem.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showError("Vui lòng chọn dòng cần sửa.");
+            return;
+        }
+        openDialog(selected);
+    }
+
+    @FXML
+    private void onDeleteSelected() {
+        DiemThiXetTuyenDTO selected = tblDiem.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showError("Vui lòng chọn dòng cần xóa.");
+            return;
+        }
+        onDelete(selected);
+    }
+
+    @FXML
     private void onImport() {
         ChoiceDialog<String> dialog = new ChoiceDialog<>("VSAT", "VSAT", "ĐGNL");
         dialog.setTitle("Chọn loại import");
@@ -291,7 +299,7 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
                     ? bus.importVsatCsvData(file)
                     : bus.importDGNLCsvData(file);
             showInfo("Kết quả Import", msg);
-            loadData();
+            loadData(); // Reload sau import
         }
     }
 
@@ -302,7 +310,9 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         if (confirmDelete("Bảng điểm của thí sinh: " + row.getCccd())) {
             String result = bus.deleteDiemThiXetTuyen(row.getCccd());
             if (result.contains("successfully")) {
-                loadData();
+                // Xóa khỏi allData — không gọi DB
+                allData.remove(row);
+                applyFilter();
                 showInfo("Thành công", "Đã xóa bảng điểm.");
             } else {
                 showError(result);
@@ -328,7 +338,10 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
             dialogCtrl.init(stage, row, bus);
             stage.showAndWait();
 
-            if (dialogCtrl.getIsSaved()) loadData();
+            if (dialogCtrl.getIsSaved()) {
+                // Reload từ DB sau khi thêm/sửa
+                loadData();
+            }
 
         } catch (IOException e) {
             showError("Lỗi giao diện: " + e.getMessage());
