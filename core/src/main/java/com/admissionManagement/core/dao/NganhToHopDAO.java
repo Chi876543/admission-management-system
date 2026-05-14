@@ -25,22 +25,13 @@ public class NganhToHopDAO {
     }
 
     public List<NganhToHop> getAllByMaNganhWithSession(Session session, String maNganh) {
-        try {
-            // Sử dụng SQL thuần (Native Query)
-            // Thêm COLLATE để xử lý triệt để lỗi xung đột bảng mã ký tự
-            String sql = "SELECT nth.* FROM xt_nganh_tohop nth " +
-                    "JOIN xt_nganh n ON nth.manganh = n.manganh COLLATE utf8mb3_general_ci " +
-                    "WHERE n.manganh = :maNganh";
+        String hql = "SELECT nth FROM NganhToHop nth " +
+                "WHERE nth.nganh.maNganh = :maNganh";
 
-            return session.createNativeQuery(sql, NganhToHop.class)
-                    .setParameter("maNganh", maNganh)
-                    .getResultList();
+        return session.createQuery(hql, NganhToHop.class)
+                .setParameter("maNganh", maNganh)
+                .getResultList();
 
-        } catch (Exception e) {
-            System.err.println("Lỗi Native Query tại NganhToHopDAO: " + e.getMessage());
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
     }
 
     public List<NganhToHop> getAllWithSession(Session session){
