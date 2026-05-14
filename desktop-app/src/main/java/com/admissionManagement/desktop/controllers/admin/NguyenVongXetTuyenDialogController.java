@@ -147,22 +147,24 @@ public class NguyenVongXetTuyenDialogController extends BaseController {
                     .forEach(nv -> allData.add(0, nv));
             showInfo("Thành công", "Thêm nguyện vọng thành công.");
         } else {
-            // SỬA: cập nhật thuTu và maNganh của bản ghi cũ (không xóa + thêm mới)
+            // SỬA: kiểm tra xem maNganh có thay đổi không
             String oldMaNganh = editingRow.getMaNganh();
-            int    oldThuTu   = editingRow.getThuTu();
 
-            // Nếu không thay đổi gì thì vẫn có thể cần tính lại điểm
-            // Dùng deleteOld + addNew nhưng cập nhật allData đúng cách
-            String deleteResult = bus.deleteNguyenVongXetTuyen(editingRow.getIdNv());
-            if (deleteResult.startsWith("Lỗi")) {
-                lblError.setText("Lỗi khi xóa bản ghi cũ: " + deleteResult);
-                return;
+            if (!oldMaNganh.equals(maNganh)) {
+                // Ngành đổi → xóa các NV cũ của ngành cũ (theo idNv cụ thể),
+                // sau đó gọi addNguyenVong để tạo NV với ngành mới.
+                // Không xóa theo idNv duy nhất vì một lần addNguyenVong
+                // tạo nhiều dòng (PT2/PT3/PT4) — xóa đúng nhóm cùng cccd+oldMaNganh.
+                List<NguyenVongXetTuyenDTO> nvCuThiSinh = bus.getByThiSinhCccd(cccdFinal);
+                for (NguyenVongXetTuyenDTO nv : nvCuThiSinh) {
+                    if (nv.getMaNganh().equals(oldMaNganh)) {
+                        bus.deleteNguyenVongXetTuyen(nv.getIdNv());
+                        allData.removeIf(item -> item.getIdNv() == nv.getIdNv());
+                    }
+                }
             }
-
-            // Xóa bản ghi cũ khỏi allData
-            allData.removeIf(item ->
-                    item.getIdNv() == editingRow.getIdNv()
-            );
+            // Nếu ngành không đổi: saveOrUpdateNV() trong addNguyenVong sẽ tự
+            // UPDATE dòng cũ theo nvKeys (cccd_maNganh_phuongThuc) → idNv giữ nguyên.
 
             result = bus.addNguyenVong(cccd, maNganh, thuTu);
             if (result.startsWith("Lỗi")) {
@@ -170,11 +172,24 @@ public class NguyenVongXetTuyenDialogController extends BaseController {
                 return;
             }
 
-            // Tải bản ghi vừa thêm vào allData
+            // Reload các dòng thuộc ngành mới vào allData
             List<NguyenVongXetTuyenDTO> nvCuaThiSinh = bus.getByThiSinhCccd(cccdFinal);
             nvCuaThiSinh.stream()
-                    .filter(nv -> nv.getMaNganh().equals(maNganh) && nv.getThuTu() == thuTuFinal)
-                    .forEach(nv -> allData.add(0, nv));
+                    .filter(nv -> nv.getMaNganh().equals(maNganhFinal) && nv.getThuTu() == thuTuFinal)
+                    .forEach(nv -> {
+                        // Nếu đã tồn tại trong allData (update) thì replace, chưa có thì add
+                        boolean exists = allData.stream().anyMatch(item -> item.getIdNv() == nv.getIdNv());
+                        if (exists) {
+                            for (int i = 0; i < allData.size(); i++) {
+                                if (allData.get(i).getIdNv() == nv.getIdNv()) {
+                                    allData.set(i, nv);
+                                    break;
+                                }
+                            }
+                        } else {
+                            allData.add(0, nv);
+                        }
+                    });
 
             showInfo("Thành công", "Sửa nguyện vọng thành công.");
         }

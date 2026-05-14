@@ -114,7 +114,11 @@ public class MainController implements Initializable {
     }
     @FXML private void onNavDiem()        { loadScreen("diem",        btnDiem);        }
     @FXML private void onNavDiemCong()    { loadScreen("diemcong",    btnDiemCong);    }
-    @FXML private void onNavNguyenVong()  { loadScreen("nguyenvong",  btnNguyenVong);  }
+    @FXML private void onNavNguyenVong() {
+        // Nguyện vọng thay đổi → khi quay lại Ngành cần reload soLuongDangKy
+        screenCache.remove("nganh");
+        loadScreen("nguyenvong", btnNguyenVong);
+    }
     @FXML private void onNavQuyDoi()      { loadScreen("quydoi",      btnQuyDoi);      }
 
     @FXML private void onLogout() {
