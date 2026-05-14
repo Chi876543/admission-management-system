@@ -94,6 +94,39 @@ public class DiemCongXetTuyenBUS {
         }
     }
 
+    /** Thêm mới và trả về DTO với ID thật từ DB */
+    public DiemCongXetTuyenDTO addAndReturn(DiemCongXetTuyenDTO dto) {
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+
+            ThiSinh thiSinhGoc = thisinhdao.getByCccdWithSesstion(session, dto.getTsCccd());
+            if (thiSinhGoc == null) return null;
+
+            DiemCongXetTuyen entity = new DiemCongXetTuyen();
+            entity.setThiSinh(thiSinhGoc);
+            entity.setMon(dto.getMon());
+            entity.setPhuongThuc(dto.getPhuongThuc());
+            entity.setDiemUtxtToHop(dto.getDiemUtxtToHop());
+            entity.setDiemUtxtKhongXetToHop(dto.getDiemUtxtKhongXetToHop());
+            entity.setDiemCc(dto.getDiemCc());
+            entity.setDiemTongThxt(dto.getDiemTongThxt());
+            entity.setDiemTongKhongXetThxt(dto.getDiemTongKhongXetThxt());
+            entity.setGhiChu(dto.getGhiChu());
+
+            dao.addWithSession(session, entity);
+            tx.commit();
+            return toDTO(entity); // entity.idDiemCong đã có giá trị thật sau khi commit
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            return null;
+        } finally {
+            session.close();
+        }
+    }
+
     public String importUtxtCsvData(File file) {
         int batchSize = 1000;
         int successCount = 0;

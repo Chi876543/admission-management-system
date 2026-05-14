@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.admissionManagement.desktop.controllers.admin.DiemCcDialogController"
+      styleClass="screen-root"
+      spacing="12"
+      prefWidth="480">
+
+    <padding>
+        <Insets top="16" right="16" bottom="16" left="16"/>
+    </padding>
+
+    <Label fx:id="lblDialogTitle"
+           text="Thêm điểm chứng chỉ tiếng Anh"
+           styleClass="inline-form-title"/>
+
+    <VBox spacing="12"
+          styleClass="inline-form-card">
+
+        <!-- CCCD + Phương thức -->
+        <HBox spacing="12">
+
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="CCCD *" styleClass="field-label"/>
+                <TextField fx:id="tfCccd"
+                           promptText="Nhập CCCD"
+                           styleClass="field-input"/>
+            </VBox>
+
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="Phương thức *" styleClass="field-label"/>
+                <ComboBox fx:id="cbPhuongThuc"
+                          maxWidth="Infinity"
+                          styleClass="field-input"/>
+            </VBox>
+
+        </HBox>
+
+        <!-- Mức điểm quy đổi -->
+        <VBox spacing="4">
+            <Label text="Mức điểm chứng chỉ (VD: IELTS 6.5, TOEIC 700...)" styleClass="field-label"/>
+            <ComboBox fx:id="cbMucDiem"
+                      maxWidth="Infinity"
+                      promptText="Chọn mức điểm"
+                      styleClass="field-input"/>
+        </VBox>
+
+        <!-- Ghi chú chứng chỉ -->
+        <VBox spacing="4">
+            <Label text="Ghi chú chứng chỉ" styleClass="field-label"/>
+            <TextField fx:id="tfGhiChu"
+                       promptText="VD: IELTS 6.5"
+                       styleClass="field-input"/>
+        </VBox>
+
+        <!-- Preview điểm -->
+        <Label fx:id="lblPreview"
+               text=""
+               style="-fx-text-fill:#2563eb; -fx-font-size:13px;"/>
+
+        <!-- Error -->
+        <Label fx:id="lblError"
+               text=""
+               styleClass="error-label"/>
+
+        <!-- Buttons -->
+        <HBox spacing="8" alignment="CENTER_RIGHT">
+            <Button text="Lưu"
+                    styleClass="btn-primary"
+                    onAction="#onDialogSave"/>
+            <Button text="Hủy"
+                    styleClass="btn-default"
+                    onAction="#onDialogCancel"/>
+        </HBox>
+
+    </VBox>
+
+</VBox>

@@ -40,9 +40,10 @@ public class DiemCongXetTuyenDAO {
     }
 
     public List<DiemCongXetTuyen> getAll(Session session){
-        String query = "FROM DiemCongXetTuyen ";
-        List listDiemCongXetTuyen = session.createQuery(query).list();
-        return listDiemCongXetTuyen;
+        return session.createQuery(
+                "FROM DiemCongXetTuyen ORDER BY idDiemCong DESC",
+                DiemCongXetTuyen.class
+        ).getResultList();
     }
 
     public List<Predicate> buildConditions(CriteriaBuilder cb, Root<DiemCongXetTuyen> root, String cccd) {

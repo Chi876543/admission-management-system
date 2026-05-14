@@ -307,6 +307,54 @@ public class DiemCongXetTuyenController extends BaseController implements Initia
         handleImport(false);
     }
 
+    @FXML
+    private void onAddCc() {
+        openCcDialog(null);
+    }
+
+    @FXML
+    private void onEditCc() {
+        DiemCongXetTuyenDTO selected =
+                tblDiemCong.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showError("Vui lòng chọn dòng cần sửa.");
+            return;
+        }
+        openCcDialog(selected);
+    }
+
+    private void openCcDialog(DiemCongXetTuyenDTO row) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/com/admissionManagement/desktop/views/admin/DiemCcDialogUI.fxml"
+                    )
+            );
+            Parent root = loader.load();
+            DiemCcDialogController dialogCtrl = loader.getController();
+
+            Stage stage = new Stage();
+            stage.setTitle(row == null ? "Thêm điểm CC" : "Sửa điểm CC");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            dialogCtrl.init(stage, row, bus);
+            stage.showAndWait();
+
+            if (dialogCtrl.getIsSaved()) {
+                DiemCongXetTuyenDTO savedData = dialogCtrl.getSavedData();
+                if (row == null) {
+                    allData.add(0, savedData);
+                } else {
+                    int index = allData.indexOf(row);
+                    if (index >= 0) allData.set(index, savedData);
+                }
+                updatePagination();
+            }
+        } catch (IOException e) {
+            showError("Lỗi giao diện CC: " + e.getMessage());
+        }
+    }
+
     private void handleImport(boolean isUtxt) {
 
         FileChooser fileChooser = new FileChooser();
@@ -401,8 +449,8 @@ public class DiemCongXetTuyenController extends BaseController implements Initia
                         dialogCtrl.getSavedData();
 
                 if (row == null) {
-
-                    allData.add(savedData);
+                    // savedData đã có ID thật từ addAndReturn
+                    allData.add(0, savedData);
 
                 } else {
 
