@@ -27,7 +27,7 @@ public class DiemThiXetTuyenDAO {
     }
 
     public List<DiemThiXetTuyen> getAllWithSession(Session session){
-        String query = "FROM DiemThiXetTuyen ORDER BY thiSinh.cccd ASC";
+        String query = "FROM DiemThiXetTuyen ORDER BY idDiemThi DESC";
         List listDiemThiXetTuyen = session.createQuery(query).list();
         return listDiemThiXetTuyen;
     }

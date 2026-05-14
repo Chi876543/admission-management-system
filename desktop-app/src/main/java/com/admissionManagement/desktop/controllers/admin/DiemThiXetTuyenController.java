@@ -15,6 +15,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Pagination;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -67,10 +68,8 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
             colNk4, colNk5, colNk6;
 
     // ── Pagination ───────────────────────────────────
-    @FXML private Label  lblCount;
-    @FXML private Button btnPrev;
-    @FXML private Button btnNext;
-    @FXML private Label  lblPage;
+    @FXML private Label      lblCount;
+    @FXML private Pagination pagination;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -137,26 +136,26 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         int to   = Math.min(from + PAGE_SIZE, totalItems);
         displayData.setAll(masterData.subList(from, to));
 
-        if (lblPage  != null) lblPage.setText("Trang " + (currentPage + 1) + " / " + totalPages);
-        if (btnPrev  != null) btnPrev.setDisable(currentPage == 0);
-        if (btnNext  != null) btnNext.setDisable(currentPage >= totalPages - 1);
         if (lblCount != null) lblCount.setText(totalItems + " bản ghi");
-    }
 
-    @FXML private void onPrevPage() {
-        if (currentPage > 0) {
-            currentPage--;
-            refreshPagination();
+        if (pagination != null) {
+            // Tạm thời gỡ listener để tránh trigger khi set pageCount / currentPage
+            pagination.setPageCount(totalPages);
+            pagination.setCurrentPageIndex(currentPage);
+            pagination.setPageFactory(pageIndex -> {
+                // Mỗi lần Pagination chuyển trang → cập nhật displayData
+                currentPage = pageIndex;
+                int f = currentPage * PAGE_SIZE;
+                int t = Math.min(f + PAGE_SIZE, masterData.size());
+                displayData.setAll(masterData.subList(f, t));
+
+                javafx.scene.layout.Region dummyNode = new javafx.scene.layout.Region();
+                dummyNode.setPrefSize(0, 0);
+                return dummyNode;
+            });
         }
     }
 
-    @FXML private void onNextPage() {
-        int totalPages = Math.max(1, (int) Math.ceil((double) masterData.size() / PAGE_SIZE));
-        if (currentPage < totalPages - 1) {
-            currentPage++;
-            refreshPagination();
-        }
-    }
 
     /** Load lần đầu hoặc sau import — gọi DB */
     private void loadData() {
