@@ -73,6 +73,7 @@
                 <TableColumn fx:id="colDiemSan"        text="Điểm sàn"        prefWidth="85" style="-fx-alignment:CENTER;"/>
                 <TableColumn fx:id="colDiemTrungTuyen" text="Điểm TT"         prefWidth="80" style="-fx-alignment:CENTER;"/>
                 <TableColumn fx:id="colPhuongThuc"     text="Phương thức"     prefWidth="180"/>
+                <TableColumn fx:id="colSoLuong"        text="Số TS đăng ký"   prefWidth="120" style="-fx-alignment:CENTER;"/>
                 <TableColumn fx:id="colAction"         text="Thao tác"        prefWidth="120" style="-fx-alignment:CENTER;"/>
             </columns>
             <placeholder><Label text="Không có dữ liệu" styleClass="table-placeholder"/></placeholder>

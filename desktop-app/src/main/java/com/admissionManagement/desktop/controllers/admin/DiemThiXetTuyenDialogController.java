@@ -2,9 +2,7 @@ package com.admissionManagement.desktop.controllers.admin;
 
 import com.admissionManagement.core.dto.DiemThiXetTuyenDTO;
 import com.admissionManagement.core.service.DiemThiXetTuyenBUS;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -20,7 +18,6 @@ public class DiemThiXetTuyenDialogController extends BaseController {
 
     @FXML private Label lblDialogTitle, lblError;
     @FXML private TextField tfCccd, tfSbd;
-    @FXML private ComboBox<String> cbPhuongThuc;
 
     // THPT
     @FXML private TextField tfToan, tfLy, tfHoa, tfSinh, tfSu, tfDia,
@@ -36,8 +33,6 @@ public class DiemThiXetTuyenDialogController extends BaseController {
         this.editingRow  = row;
         this.bus         = bus;
 
-        cbPhuongThuc.setItems(FXCollections.observableArrayList("THPT", "VSAT", "ĐGNL", "Năng khiếu"));
-
         if (row != null) {
             lblDialogTitle.setText("Sửa điểm thi thí sinh: " + row.getCccd());
             // Khóa CCCD và SBD khi sửa
@@ -47,8 +42,6 @@ public class DiemThiXetTuyenDialogController extends BaseController {
             tfSbd.setText(row.getSoBaoDanh() != null ? row.getSoBaoDanh() : "");
             tfSbd.setEditable(false);
             tfSbd.setStyle("-fx-background-color: #f0f0f0;");
-            cbPhuongThuc.setValue(row.getPhuongThuc());
-
             // THPT
             tfToan.setText(val(row.getDiemToan()));
             tfLy.setText(val(row.getDiemLy()));
@@ -112,7 +105,7 @@ public class DiemThiXetTuyenDialogController extends BaseController {
 
             dto.setCccd(cccd);
             dto.setSoBaoDanh(sbd);
-            dto.setPhuongThuc(cbPhuongThuc.getValue());
+            dto.setPhuongThuc(null);
 
             // THPT
             dto.setDiemToan(parse(tfToan.getText()));

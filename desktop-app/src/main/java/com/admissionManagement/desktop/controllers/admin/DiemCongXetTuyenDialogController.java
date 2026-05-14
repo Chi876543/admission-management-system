@@ -20,6 +20,7 @@ public class DiemCongXetTuyenDialogController extends BaseController {
     private boolean isSaved = false;
 
     private DiemCongXetTuyenDTO savedData;
+    private boolean isLoading = false;
 
     @FXML private Label lblDialogTitle;
     @FXML private Label lblError;
@@ -61,20 +62,27 @@ public class DiemCongXetTuyenDialogController extends BaseController {
         ));
 
         // Tự động tạo ghi chú khi cbLoaiGiai hoặc cbCap thay đổi
-        cbLoaiGiai.valueProperty().addListener((obs, o, n) -> autoFillGhiChu());
-        cbCap.valueProperty().addListener((obs, o, n) -> autoFillGhiChu());
+        // CHỈ auto fill khi người dùng chủ động thay đổi (không fill khi đang load dữ liệu)
+        cbLoaiGiai.valueProperty().addListener((obs, o, n) -> {
+            if (!isLoading) autoFillGhiChu();
+        });
+        cbCap.valueProperty().addListener((obs, o, n) -> {
+            if (!isLoading) autoFillGhiChu();
+        });
 
         if (row != null) {
+            isLoading = true;
             lblDialogTitle.setText("Sửa điểm cộng ID: " + row.getIdDiemCong());
             tfCccd.setText(row.getTsCccd());
+            tfCccd.setDisable(true);  // Khóa CCCD khi sửa
             cbMon.setValue(row.getMon());
             cbPhuongThuc.setValue(row.getPhuongThuc());
 
-            // Parse ghi chú dạng "Giải Nhì - Cấp Tỉnh" để set combobox
+            // Parse ghi chú để set combobox (không trigger autoFill nhờ isLoading)
             parseGhiChuToComboBox(row.getGhiChu());
 
             tfGhiChu.setText(row.getGhiChu() != null ? row.getGhiChu() : "");
-
+            isLoading = false;
         } else {
             lblDialogTitle.setText("Thêm điểm cộng mới");
         }
@@ -155,11 +163,9 @@ public class DiemCongXetTuyenDialogController extends BaseController {
         BigDecimal diemToHop      = diem[0];
         BigDecimal diemKhongToHop = diem[1];
 
-        // Tự tạo ghi chú nếu trống
-        String ghiChu = tfGhiChu.getText().trim();
-        if (ghiChu.isEmpty()) {
-            ghiChu = "Giải " + cbLoaiGiai.getValue() + " - Cấp " + cbCap.getValue();
-        }
+        // Ưu tiên combobox để tạo ghi chú chuẩn; nếu tfGhiChu trống thì dùng combobox
+        String ghiChuFromCb = "Giải " + cbLoaiGiai.getValue() + " - Cấp " + cbCap.getValue();
+        String ghiChu = ghiChuFromCb; // Luôn dùng giá trị combobox
 
         DiemCongXetTuyenDTO dto = new DiemCongXetTuyenDTO(
                 editingRow != null ? editingRow.getIdDiemCong() : 0,

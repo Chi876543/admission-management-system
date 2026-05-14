@@ -27,10 +27,7 @@
                     <Label text="Số báo danh" styleClass="field-label"/>
                     <TextField fx:id="tfSbd" promptText="VD: 01000001" styleClass="field-input"/>
                 </VBox>
-                <VBox HBox.hgrow="ALWAYS" spacing="4">
-                    <Label text="Phương thức" styleClass="field-label"/>
-                    <ComboBox fx:id="cbPhuongThuc" promptText="Chọn phương thức" maxWidth="Infinity" styleClass="field-input"/>
-                </VBox>
+
             </HBox>
 
             <!-- Điểm THPT -->

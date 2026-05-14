@@ -59,10 +59,7 @@
         <TextField fx:id="tfSearch"
                    promptText="Tìm theo CCCD, số báo danh..."
                    styleClass="search-box" prefWidth="240"/>
-        <ComboBox fx:id="cbLoaiDiemFilter"
-                  promptText="Tất cả loại điểm"
-                  styleClass="combo-box-filter" prefWidth="150"
-                  onAction="#onFilter"/>
+
     </HBox>
 
 
@@ -74,8 +71,6 @@
                 <!-- Thông tin chung -->
                 <TableColumn fx:id="colCccd"      text="CCCD"        prefWidth="150" style="-fx-alignment:CENTER;"/>
                 <TableColumn fx:id="colSbd"        text="Số báo danh" prefWidth="120" style="-fx-alignment:CENTER;"/>
-                <TableColumn fx:id="colPhuongThuc" text="Phương thức" prefWidth="110" style="-fx-alignment:CENTER;"/>
-
                 <!-- Điểm THPT -->
                 <TableColumn text="Điểm THPT">
                     <columns>

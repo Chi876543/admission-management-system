@@ -50,12 +50,11 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
 
     // ── Toolbar ──────────────────────────────────────
     @FXML private TextField tfSearch;
-    @FXML private ComboBox<String> cbLoaiDiemFilter;
 
     // ── Table ────────────────────────────────────────
     @FXML private TableView<DiemThiXetTuyenDTO> tblDiem;
 
-    @FXML private TableColumn<DiemThiXetTuyenDTO, String>     colCccd, colSbd, colPhuongThuc;
+    @FXML private TableColumn<DiemThiXetTuyenDTO, String>     colCccd, colSbd;
 
     @FXML private TableColumn<DiemThiXetTuyenDTO, BigDecimal> colToan, colVan, colLy, colHoa,
             colSinh, colSu, colDia, colTin,
@@ -77,10 +76,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         searchDebounce.setOnFinished(e -> applyFilter());
         tfSearch.textProperty().addListener((obs, old, val) -> searchDebounce.playFromStart());
 
-        cbLoaiDiemFilter.setItems(FXCollections.observableArrayList("Tất cả", "THPT", "VSAT", "ĐGNL"));
-        cbLoaiDiemFilter.setValue("Tất cả");
-        cbLoaiDiemFilter.setOnAction(e -> applyFilter());
-
         cbLoaiDiem.setItems(FXCollections.observableArrayList("THPT", "VSAT", "ĐGNL", "Năng khiếu"));
         cbLoaiDiem.setValue("THPT");
         cbLoaiDiem.setOnAction(e -> updateChart());
@@ -95,7 +90,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
 
         colCccd.setCellValueFactory(new PropertyValueFactory<>("cccd"));
         colSbd.setCellValueFactory(new PropertyValueFactory<>("soBaoDanh"));
-        colPhuongThuc.setCellValueFactory(new PropertyValueFactory<>("phuongThuc"));
 
         colToan.setCellValueFactory(new PropertyValueFactory<>("diemToan"));
         colVan.setCellValueFactory(new PropertyValueFactory<>("diemVan"));
@@ -166,16 +160,13 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
     /** Lọc từ allData — KHÔNG gọi DB */
     private void applyFilter() {
         String key  = tfSearch.getText().trim().toLowerCase();
-        String loai = cbLoaiDiemFilter.getValue();
 
         List<DiemThiXetTuyenDTO> filtered = new ArrayList<>();
         for (DiemThiXetTuyenDTO d : allData) {
             boolean matchKey = key.isEmpty()
                     || d.getCccd().toLowerCase().contains(key)
                     || (d.getSoBaoDanh() != null && d.getSoBaoDanh().toLowerCase().contains(key));
-            boolean matchLoai = loai == null || loai.equals("Tất cả")
-                    || (d.getPhuongThuc() != null && d.getPhuongThuc().equalsIgnoreCase(loai));
-            if (matchKey && matchLoai) filtered.add(d);
+            if (matchKey) filtered.add(d);
         }
 
         masterData.setAll(filtered);

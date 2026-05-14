@@ -50,6 +50,9 @@ public class BangQuyDoiDialogController extends BaseController {
         }
     }
 
+    // Map mã tổ hợp → danh sách tên môn (theo mon1, mon2, mon3)
+    private final java.util.Map<String, List<String>> toHopMonMap = new java.util.HashMap<>();
+
     private void setupComboBox() {
         cbPhuongThuc.setItems(FXCollections.observableArrayList(
                 "THPT", "DGNL", "VSAT", "HSA"
@@ -58,13 +61,50 @@ public class BangQuyDoiDialogController extends BaseController {
         // Load danh sách tổ hợp từ DB — tự cập nhật khi có tổ hợp mới
         loadToHopFromDb();
 
+        // Khi chọn tổ hợp → tự động update môn
+        cbToHop.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) loadMonTheoToHop(newVal);
+        });
+
+        // Default: toàn bộ môn
         cbMon.setItems(FXCollections.observableArrayList(
                 "Toán", "Văn", "Lý", "Hóa", "Sinh", "Sử", "Địa", "Tin học",
                 "Tiếng Anh", "KTPL"
         ));
     }
 
-    /** Load mã tổ hợp từ DB thay vì hardcode */
+    private static final java.util.Map<String, String> MON_CODE_TO_NAME = new java.util.HashMap<>();
+    static {
+        MON_CODE_TO_NAME.put("TO",   "Toán");
+        MON_CODE_TO_NAME.put("VA",   "Văn");
+        MON_CODE_TO_NAME.put("LI",   "Lý");
+        MON_CODE_TO_NAME.put("HO",   "Hóa");
+        MON_CODE_TO_NAME.put("SI",   "Sinh");
+        MON_CODE_TO_NAME.put("SU",   "Sử");
+        MON_CODE_TO_NAME.put("DI",   "Địa");
+        MON_CODE_TO_NAME.put("TI",   "Tin học");
+        MON_CODE_TO_NAME.put("N1",   "Tiếng Anh");
+        MON_CODE_TO_NAME.put("KTPL", "KTPL");
+        MON_CODE_TO_NAME.put("NK1",  "NK1"); MON_CODE_TO_NAME.put("NK2", "NK2");
+        MON_CODE_TO_NAME.put("NK3",  "NK3"); MON_CODE_TO_NAME.put("NK4", "NK4");
+        MON_CODE_TO_NAME.put("NK5",  "NK5"); MON_CODE_TO_NAME.put("NK6", "NK6");
+        MON_CODE_TO_NAME.put("CNCN", "Công nghệ CN"); MON_CODE_TO_NAME.put("CNNN", "Công nghệ NN");
+    }
+
+    private void loadMonTheoToHop(String maToHop) {
+        List<String> monList = toHopMonMap.get(maToHop);
+        if (monList != null && !monList.isEmpty()) {
+            String currentMon = cbMon.getValue();
+            cbMon.setItems(FXCollections.observableArrayList(monList));
+            // Giữ giá trị cũ nếu vẫn hợp lệ
+            if (currentMon != null && monList.contains(currentMon)) {
+                cbMon.setValue(currentMon);
+            }
+        }
+        // Nếu không có trong map (tổ hợp chưa load được) → giữ list hiện tại
+    }
+
+    /** Load mã tổ hợp từ DB và build map tổ hợp → môn */
     private void loadToHopFromDb() {
         try {
             List<ToHopMonThiDTO> danhSach = toHopBUS.getAllToHopMonThi();
@@ -74,6 +114,15 @@ public class BangQuyDoiDialogController extends BaseController {
                     .distinct()
                     .collect(Collectors.toList());
             cbToHop.setItems(FXCollections.observableArrayList(maToHopList));
+
+            // Build map: maToHop → list tên môn
+            for (ToHopMonThiDTO th : danhSach) {
+                List<String> mons = new java.util.ArrayList<>();
+                if (th.getMon1() != null) mons.add(MON_CODE_TO_NAME.getOrDefault(th.getMon1().toUpperCase(), th.getMon1()));
+                if (th.getMon2() != null) mons.add(MON_CODE_TO_NAME.getOrDefault(th.getMon2().toUpperCase(), th.getMon2()));
+                if (th.getMon3() != null) mons.add(MON_CODE_TO_NAME.getOrDefault(th.getMon3().toUpperCase(), th.getMon3()));
+                toHopMonMap.put(th.getMaToHop(), mons);
+            }
         } catch (Exception e) {
             // Fallback danh sách cứng nếu DB lỗi
             cbToHop.setItems(FXCollections.observableArrayList(

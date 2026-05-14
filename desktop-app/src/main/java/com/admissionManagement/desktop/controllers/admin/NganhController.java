@@ -1,6 +1,7 @@
 package com.admissionManagement.desktop.controllers.admin;
 
 import com.admissionManagement.core.dto.NganhDTO;
+import com.admissionManagement.core.dto.NganhWithRegistryCountDTO;
 import com.admissionManagement.core.service.NganhBUS;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,7 +14,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class NganhController extends BaseController implements Initializable {
 
     @FXML private TableView<NganhRow>           tblNganh;
     @FXML private TableColumn<NganhRow, String> colMa, colTen, colToHopGoc;
-    @FXML private TableColumn<NganhRow, String> colChiTieu, colDiemSan, colDiemTrungTuyen, colPhuongThuc;
+    @FXML private TableColumn<NganhRow, String> colChiTieu, colDiemSan, colDiemTrungTuyen, colPhuongThuc, colSoLuong;
     @FXML private TableColumn<NganhRow, Void>   colAction;
 
     private final ObservableList<NganhRow> allData = FXCollections.observableArrayList();
@@ -52,6 +52,7 @@ public class NganhController extends BaseController implements Initializable {
         colDiemSan.setCellValueFactory(new PropertyValueFactory<>("diemSan"));
         colDiemTrungTuyen.setCellValueFactory(new PropertyValueFactory<>("diemTrungTuyen"));
         colPhuongThuc.setCellValueFactory(new PropertyValueFactory<>("phuongThuc"));
+        colSoLuong.setCellValueFactory(new PropertyValueFactory<>("soLuongDangKy"));
 
         colAction.setCellFactory(col -> new TableCell<>() {
             private final HBox box = makeActionCell(
@@ -65,7 +66,7 @@ public class NganhController extends BaseController implements Initializable {
     }
 
     public void loadData() {
-        List<NganhDTO> list = new ArrayList<>(nganhBUS.getAllNganh());
+        List<NganhWithRegistryCountDTO> list = new ArrayList<>(nganhBUS.getAllNganhWithRegistryCount());
         Collections.reverse(list);
         allData.setAll(list.stream().map(dto -> new NganhRow(
                 dto.getIdNganh(), dto.getMaNganh(), dto.getTenNganh(),
@@ -76,7 +77,8 @@ public class NganhController extends BaseController implements Initializable {
                 "1".equals(dto.getTuyenThang()),
                 "1".equals(dto.getDgnl()),
                 "1".equals(dto.getThpt()),
-                "1".equals(dto.getVsat())
+                "1".equals(dto.getVsat()),
+                dto.getSoLuongDangKy()
         )).collect(Collectors.toList()));
         refresh();
     }
@@ -207,14 +209,17 @@ public class NganhController extends BaseController implements Initializable {
         private int id;
         private String maNganh, tenNganh, toHopGoc, chiTieu, diemSan, diemTrungTuyen;
         private boolean tuyenThang, dgnl, thpt, vsat;
+        private long soLuongDangKy;
 
         public NganhRow(int id, String maNganh, String tenNganh, String toHopGoc,
                         String chiTieu, String diemSan, String diemTrungTuyen,
-                        boolean tuyenThang, boolean dgnl, boolean thpt, boolean vsat) {
+                        boolean tuyenThang, boolean dgnl, boolean thpt, boolean vsat,
+                        long soLuongDangKy) {
             this.id=id; this.maNganh=maNganh; this.tenNganh=tenNganh;
             this.toHopGoc=toHopGoc; this.chiTieu=chiTieu;
             this.diemSan=diemSan; this.diemTrungTuyen=diemTrungTuyen;
             this.tuyenThang=tuyenThang; this.dgnl=dgnl; this.thpt=thpt; this.vsat=vsat;
+            this.soLuongDangKy=soLuongDangKy;
         }
 
         public int    getId()             { return id; }
@@ -228,6 +233,7 @@ public class NganhController extends BaseController implements Initializable {
         public boolean isDgnl()           { return dgnl; }
         public boolean isThpt()           { return thpt; }
         public boolean isVsat()           { return vsat; }
+        public long getSoLuongDangKy()    { return soLuongDangKy; }
 
         public String getPhuongThuc() {
             List<String> methods = new ArrayList<>();

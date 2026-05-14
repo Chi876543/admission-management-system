@@ -119,41 +119,66 @@ public class NguyenVongXetTuyenDialogController extends BaseController {
             return;
         }
 
+        // Kiểm tra trùng ngành cùng CCCD
+        final String maNganhFinal = maNganh;
+        boolean isDuplicateNganh = allData.stream().anyMatch(item ->
+                item.getCccd().equalsIgnoreCase(cccdFinal)
+                        && item.getMaNganh().equals(maNganhFinal)
+                        && (editingRow == null || item.getIdNv() != editingRow.getIdNv())
+        );
+        if (isDuplicateNganh) {
+            lblError.setText("Ngành " + maNganh + " đã tồn tại trong danh sách nguyện vọng của thí sinh này.");
+            return;
+        }
+
         String result;
 
         if (editingRow == null) {
+            // THÊM MỚI
             result = bus.addNguyenVong(cccd, maNganh, thuTu);
+            if (result.startsWith("Lỗi")) {
+                lblError.setText(result);
+                return;
+            }
+            // Tải bản ghi vừa thêm vào allData
+            List<NguyenVongXetTuyenDTO> nvCuaThiSinh = bus.getByThiSinhCccd(cccdFinal);
+            nvCuaThiSinh.stream()
+                    .filter(nv -> nv.getMaNganh().equals(maNganh) && nv.getThuTu() == thuTuFinal)
+                    .forEach(nv -> allData.add(0, nv));
+            showInfo("Thành công", "Thêm nguyện vọng thành công.");
         } else {
+            // SỬA: cập nhật thuTu và maNganh của bản ghi cũ (không xóa + thêm mới)
             String oldMaNganh = editingRow.getMaNganh();
             int    oldThuTu   = editingRow.getThuTu();
 
+            // Nếu không thay đổi gì thì vẫn có thể cần tính lại điểm
+            // Dùng deleteOld + addNew nhưng cập nhật allData đúng cách
             String deleteResult = bus.deleteNguyenVongXetTuyen(editingRow.getIdNv());
             if (deleteResult.startsWith("Lỗi")) {
                 lblError.setText("Lỗi khi xóa bản ghi cũ: " + deleteResult);
                 return;
             }
 
+            // Xóa bản ghi cũ khỏi allData
             allData.removeIf(item ->
-                    item.getCccd().equalsIgnoreCase(cccdFinal)
-                            && item.getMaNganh().equals(oldMaNganh)
-                            && item.getThuTu() == oldThuTu
+                    item.getIdNv() == editingRow.getIdNv()
             );
 
             result = bus.addNguyenVong(cccd, maNganh, thuTu);
+            if (result.startsWith("Lỗi")) {
+                lblError.setText(result);
+                return;
+            }
+
+            // Tải bản ghi vừa thêm vào allData
+            List<NguyenVongXetTuyenDTO> nvCuaThiSinh = bus.getByThiSinhCccd(cccdFinal);
+            nvCuaThiSinh.stream()
+                    .filter(nv -> nv.getMaNganh().equals(maNganh) && nv.getThuTu() == thuTuFinal)
+                    .forEach(nv -> allData.add(0, nv));
+
+            showInfo("Thành công", "Sửa nguyện vọng thành công.");
         }
 
-        if (result.startsWith("Lỗi")) {
-            lblError.setText(result);
-            return;
-        }
-
-        // Thêm bản ghi mới vào allData
-        List<NguyenVongXetTuyenDTO> nvCuaThiSinh = bus.getByThiSinhCccd(cccdFinal);
-        nvCuaThiSinh.stream()
-                .filter(nv -> nv.getMaNganh().equals(maNganh) && nv.getThuTu() == thuTuFinal)
-                .forEach(nv -> allData.add(0, nv));
-
-        showInfo("Thành công", result);
         isSaved = true;
         dialogStage.close();
     }
