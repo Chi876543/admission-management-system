@@ -322,13 +322,13 @@ public class NguyenVongXetTuyenBUS {
                     diemCongDGNL = BigDecimal.valueOf(3);
                 }
                 BangQuyDoiDTO quyDoi = bangQuyDoiBUS.getBangQuyDoiWithScore("DGNL", diem.getNl1(), null, nganh.getToHopGoc());
-                BigDecimal diemHe30 = DatabaseHelper.quyDoiDiemVSATVaDGNL(diemCongDGNL, quyDoi);
+                BigDecimal diemHe30 = DatabaseHelper.quyDoiDiemVSATVaDGNL(diem.getNl1(), quyDoi);
                 BigDecimal diemUuTien = DatabaseHelper.tinhDiemUuTien(thiSinh, diemCongDGNL, diemHe30);
                 BigDecimal finalDiem = diemHe30.add(diemCongDGNL).add(diemUuTien);
                 if (finalDiem.compareTo(BigDecimal.valueOf(30)) > 0) {
                     finalDiem = BigDecimal.valueOf(30);
                 }
-                saveOrUpdateNV(thiSinh, nganh, thuTu, diemHe30, diemCongDGNL, diemUuTien, finalDiem, "PT2", null);
+                saveOrUpdateNV(thiSinh, nganh, thuTu, diemHe30, diemCongDGNL, diemUuTien, finalDiem, "PT2", nganh.getToHopGoc());
             }
 
             // Xử lý VSAT (PT3)
@@ -407,6 +407,8 @@ public class NguyenVongXetTuyenBUS {
         if (diemSan.compareTo(diemXetTuyen) < 0) {
             ketqua = "yes";
         }
+
+
 
         // Kiểm tra xem đã tồn tại chưa để tránh trùng Unique Constraint
         NguyenVongXetTuyenDTO nv = this.getByKey(key);
