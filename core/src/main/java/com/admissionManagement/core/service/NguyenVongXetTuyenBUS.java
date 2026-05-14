@@ -288,55 +288,69 @@ public class NguyenVongXetTuyenBUS {
         try (Session session = factory.openSession()) {
             tx = session.beginTransaction();
 
-            // Kiểm tra thí sinh và điểm thi
+            // Kiểm tra thí sinh
             ThiSinhBUS thiSinhBUS = new ThiSinhBUS();
             ThiSinhDTO thiSinh = thiSinhBUS.getByCccd(cccd);
             if (thiSinh == null) return "Lỗi: Thí sinh " + cccd + " không tồn tại.";
 
-            DiemThiXetTuyen diem = diemThiXetTuyenDAO.getByCccdWithSession(session, cccd);
-            if (diem == null) return "Lỗi: Thí sinh " + cccd + " chưa có dữ liệu điểm.";
+            // Kiểm tra ngành
+            Nganh nganh = nganhdao.getByMaNganhWithSession(session, maNganh);
+            if (nganh == null) return "Lỗi: Ngành " + maNganh + " không tồn tại.";
 
-            // Lấy list tổ hợp của ngành xét tuyển
+            // Lấy tổ hợp của ngành
             NganhToHopBUS nganhToHopBUS = new NganhToHopBUS();
             List<NganhToHopDTO> dsToHopDTO = nganhToHopBUS.getAllByMaNganh(maNganh);
+            if (dsToHopDTO == null || dsToHopDTO.isEmpty()) {
+                return "Lỗi: Ngành " + maNganh + " chưa có tổ hợp xét tuyển.";
+            }
 
-            // (Lấy Nganh) chưa dùng dto
-            Nganh nganh = nganhdao.getByMaNganhWithSession(session, maNganh);
+            // Lấy điểm thi
+            DiemThiXetTuyen diem = diemThiXetTuyenDAO.getByCccdWithSession(session, cccd);
+
+            // FIX: chưa có điểm → vẫn lưu NV với điểm 0, tổ hợp đầu tiên làm placeholder
+            if (diem == null) {
+                saveOrUpdateNV(
+                        thiSinh, nganh, thuTu,
+                        BigDecimal.ZERO,  // diemThxt
+                        BigDecimal.ZERO,  // diemCong
+                        BigDecimal.ZERO,  // diemUuTien
+                        BigDecimal.ZERO,  // diemXetTuyen
+                        "PT0",            // phuongThuc placeholder
+                        dsToHopDTO.get(0).getMaToHop() // toHop đầu tiên làm placeholder
+                );
+                tx.commit();
+                return "Thêm nguyện vọng thành công (chưa có điểm thi, sẽ tính lại khi import điểm).";
+            }
 
             BangQuyDoiBUS bangQuyDoiBUS = new BangQuyDoiBUS();
-
-            // Lấy danh sách điểm cộng của Thí Sinh
             DiemCongXetTuyenBUS diemCongXetTuyenBUS = new DiemCongXetTuyenBUS();
             List<DiemCongXetTuyenDTO> dsDiemCong = diemCongXetTuyenBUS.getListByCccd(cccd);
 
-            // Xử lý DGNL (Lưu thành PT2)
+            // Xử lý DGNL (PT2)
             if (diem.getNl1() != null) {
                 BigDecimal diemCongDGNL = getDiemCongQuyChuan(dsDiemCong, "DGNL", null);
                 if (diemCongDGNL.compareTo(BigDecimal.valueOf(3)) > 0) {
                     diemCongDGNL = BigDecimal.valueOf(3);
                 }
-                // Điểm sau cộng tra bảng quy đổi sang hệ 30
                 BangQuyDoiDTO quyDoi = bangQuyDoiBUS.getBangQuyDoiWithScore("DGNL", diem.getNl1(), null, nganh.getToHopGoc());
                 BigDecimal diemHe30 = DatabaseHelper.quyDoiDiemVSATVaDGNL(diemCongDGNL, quyDoi);
-
                 BigDecimal diemUuTien = DatabaseHelper.tinhDiemUuTien(thiSinh, diemCongDGNL, diemHe30);
-
                 BigDecimal finalDiem = diemHe30.add(diemCongDGNL).add(diemUuTien);
-                // Điểm không được vượt quá 30 điểm
                 if (finalDiem.compareTo(BigDecimal.valueOf(30)) > 0) {
                     finalDiem = BigDecimal.valueOf(30);
                 }
                 saveOrUpdateNV(thiSinh, nganh, thuTu, diemHe30, diemCongDGNL, diemUuTien, finalDiem, "PT2", null);
             }
 
-            // Xử lý VSAT (Lưu thành PT3 - chọn tổ hợp cao nhất)
+            // Xử lý VSAT (PT3)
             processAndSaveBestToHop(session, thiSinh, nganh, dsToHopDTO, diem, thuTu, "VSAT", "PT3", dsDiemCong, bangQuyDoiBUS);
 
-            // Xử lý THPT (Lưu thành PT4 - chọn tổ hợp cao nhất)
+            // Xử lý THPT (PT4)
             processAndSaveBestToHop(session, thiSinh, nganh, dsToHopDTO, diem, thuTu, "THPT", "PT4", dsDiemCong, bangQuyDoiBUS);
 
             tx.commit();
-            return "Import thành công cho thí sinh " + cccd;
+            return "Thêm nguyện vọng thành công cho thí sinh " + cccd;
+
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             return "Lỗi hệ thống: " + e.getMessage();

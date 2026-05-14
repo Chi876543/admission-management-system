@@ -3,11 +3,14 @@ package com.admissionManagement.desktop.controllers.admin;
 import com.admissionManagement.core.dto.NguyenVongXetTuyenDTO;
 import com.admissionManagement.core.service.NguyenVongXetTuyenBUS;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 public class NguyenVongXetTuyenDialogController extends BaseController {
 
@@ -15,102 +18,114 @@ public class NguyenVongXetTuyenDialogController extends BaseController {
     private Stage dialogStage;
     private NguyenVongXetTuyenDTO editingRow;
     private boolean isSaved = false;
+    private ObservableList<NguyenVongXetTuyenDTO> allData;
 
     @FXML private Label lblDialogTitle, lblError;
-    @FXML private TextField tfCccd, tfMaNganh, tfThuTu, tfDiemTHXT,
-            tfDiemUTQD, tfDiemCong, tfDiemXT, tfNvKeys, tfToHop;
-    @FXML private ComboBox<String> cbPhuongThuc, cbKetQua;
+    @FXML private TextField tfCccd, tfThuTu;
+    @FXML private ComboBox<String> cbMaNganh;
 
-    public void init(Stage stage, NguyenVongXetTuyenDTO row, NguyenVongXetTuyenBUS bus) {
+    public void init(
+            Stage stage,
+            NguyenVongXetTuyenDTO row,
+            NguyenVongXetTuyenBUS bus,
+            ObservableList<NguyenVongXetTuyenDTO> allData
+    ) {
         this.dialogStage = stage;
-        this.editingRow  = row;
-        this.bus         = bus;
+        this.editingRow = row;
+        this.bus = bus;
+        this.allData = allData;
 
-        cbPhuongThuc.setItems(FXCollections.observableArrayList("DGNL", "THPT", "VSAT", "XetTuyenThang"));
-        cbKetQua.setItems(FXCollections.observableArrayList("Trúng tuyển", "Trượt", "Đang xét duyệt"));
+        setupComboBox();
 
         if (row != null) {
             lblDialogTitle.setText("Sửa nguyện vọng ID: " + row.getIdNv());
             tfCccd.setText(row.getCccd());
-            tfCccd.setEditable(false);
-            tfMaNganh.setText(row.getMaNganh());
+            tfCccd.setDisable(true);
+            cbMaNganh.setValue(row.getMaNganh());
             tfThuTu.setText(String.valueOf(row.getThuTu()));
-            tfDiemTHXT.setText(row.getDiemThxt()     != null ? row.getDiemThxt().toPlainString()     : "");
-            tfDiemUTQD.setText(row.getDiemUtqd()     != null ? row.getDiemUtqd().toPlainString()     : "");
-            tfDiemCong.setText(row.getDiemCong()     != null ? row.getDiemCong().toPlainString()     : "");
-            tfDiemXT.setText(row.getDiemXetTuyen()   != null ? row.getDiemXetTuyen().toPlainString() : "");
-            tfNvKeys.setText(row.getNvKeys());
-            tfToHop.setText(row.getThm());
-            cbPhuongThuc.setValue(row.getPhuongThuc());
-            cbKetQua.setValue(row.getKetQua());
         } else {
             lblDialogTitle.setText("Thêm nguyện vọng mới");
+            tfCccd.setDisable(false);
         }
+    }
+
+    private void setupComboBox() {
+        cbMaNganh.setItems(FXCollections.observableArrayList(
+                "7480201", "7480101", "7480107", "7340101", "7420201"
+        ));
     }
 
     @FXML
     private void onDialogSave() {
         lblError.setText("");
 
-        // --- Validate required ---
-        if (tfCccd.getText().trim().isEmpty()) {
-            lblError.setText("CCCD không được để trống.");
+        String cccd = editingRow != null
+                ? editingRow.getCccd()
+                : tfCccd.getText().trim();
+
+        String maNganh = cbMaNganh.getValue();
+
+        if (cccd.isEmpty()) { lblError.setText("CCCD không được để trống."); return; }
+        if (maNganh == null) { lblError.setText("Vui lòng chọn ngành."); return; }
+
+        int thuTu;
+        try {
+            thuTu = Integer.parseInt(tfThuTu.getText().trim());
+        } catch (NumberFormatException e) {
+            lblError.setText("Thứ tự NV phải là số.");
             return;
         }
-        if (tfMaNganh.getText().trim().isEmpty()) {
-            lblError.setText("Mã ngành không được để trống.");
-            return;
-        }
-        if (tfToHop.getText().trim().isEmpty()) {
-            lblError.setText("Tổ hợp không được để trống.");
-            return;
-        }
-        if (tfNvKeys.getText().trim().isEmpty()) {
-            lblError.setText("NV Keys không được để trống.");
-            return;
-        }
 
-        // --- Parse thứ tự (bắt buộc) ---
-        Integer thuTu = parseInt(tfThuTu, "Thứ tự");
-        if (thuTu == null) return;
+        final String cccdFinal = cccd;
+        final int thuTuFinal   = thuTu;
 
-        // --- Parse điểm (không bắt buộc, để trống = null) ---
-        BigDecimal diemTHXT = parseBigDecimalNullable(tfDiemTHXT, "Điểm THXT");
-        if (lblError.getText() != null && !lblError.getText().isEmpty()) return;
-
-        BigDecimal diemUTQD = parseBigDecimalNullable(tfDiemUTQD, "Điểm UTQD");
-        if (lblError.getText() != null && !lblError.getText().isEmpty()) return;
-
-        BigDecimal diemCong = parseBigDecimalNullable(tfDiemCong, "Điểm cộng");
-        if (lblError.getText() != null && !lblError.getText().isEmpty()) return;
-
-        BigDecimal diemXT = parseBigDecimalNullable(tfDiemXT, "Điểm xét tuyển");
-        if (lblError.getText() != null && !lblError.getText().isEmpty()) return;
-
-        // --- Gọi BUS ---
-        NguyenVongXetTuyenDTO dto = new NguyenVongXetTuyenDTO(
-                editingRow != null ? editingRow.getIdNv() : 0,
-                tfCccd.getText().trim(),
-                tfMaNganh.getText().trim(),
-                thuTu,
-                diemTHXT,
-                diemUTQD,
-                diemCong,
-                diemXT,
-                cbKetQua.getValue(),
-                tfNvKeys.getText().trim(),
-                cbPhuongThuc.getValue(),
-                tfToHop.getText().trim()
+        // Kiểm tra trùng thứ tự NV cùng CCCD
+        boolean isDuplicate = allData.stream().anyMatch(item ->
+                item.getCccd().equalsIgnoreCase(cccdFinal)
+                        && item.getThuTu() == thuTuFinal
+                        && (editingRow == null || item.getIdNv() != editingRow.getIdNv())
         );
+        if (isDuplicate) {
+            lblError.setText("Thứ tự nguyện vọng đã tồn tại cho CCCD này.");
+            return;
+        }
 
-        String result = (editingRow == null)
-                ? bus.addNguyenVongXetTuyen(dto)
-                : bus.updateNguyenVongXetTuyen(dto.getIdNv(), dto);
+        String result;
+
+        if (editingRow == null) {
+            result = bus.addNguyenVong(cccd, maNganh, thuTu);
+        } else {
+            String oldMaNganh = editingRow.getMaNganh();
+            int    oldThuTu   = editingRow.getThuTu();
+
+            String deleteResult = bus.deleteNguyenVongXetTuyen(editingRow.getIdNv());
+            if (deleteResult.startsWith("Lỗi")) {
+                lblError.setText("Lỗi khi xóa bản ghi cũ: " + deleteResult);
+                return;
+            }
+
+            // Xóa các bản ghi cũ cùng cccd+maNganh+thuTu khỏi allData
+            allData.removeIf(item ->
+                    item.getCccd().equalsIgnoreCase(cccdFinal)
+                            && item.getMaNganh().equals(oldMaNganh)
+                            && item.getThuTu() == oldThuTu
+            );
+
+            result = bus.addNguyenVong(cccd, maNganh, thuTu);
+        }
 
         if (result.startsWith("Lỗi")) {
             lblError.setText(result);
             return;
         }
+
+        // Chỉ query NV của đúng thí sinh này (nhẹ hơn getAll)
+        List<NguyenVongXetTuyenDTO> nvCuaThiSinh = bus.getByThiSinhCccd(cccdFinal);
+
+        // Thêm các bản ghi mới (đúng maNganh + thuTu) vào đầu allData
+        nvCuaThiSinh.stream()
+                .filter(nv -> nv.getMaNganh().equals(maNganh) && nv.getThuTu() == thuTuFinal)
+                .forEach(nv -> allData.add(0, nv));
 
         showInfo("Thành công", result);
         isSaved = true;
@@ -124,41 +139,5 @@ public class NguyenVongXetTuyenDialogController extends BaseController {
 
     public boolean getIsSaved() {
         return isSaved;
-    }
-
-    // --- Helpers ---
-    private Integer parseInt(TextField tf, String fieldName) {
-        try {
-            return Integer.parseInt(tf.getText().trim());
-        } catch (NumberFormatException e) {
-            lblError.setText(fieldName + " phải là số nguyên.");
-            return null;
-        }
-    }
-
-    // Bắt buộc nhập, không được để trống
-    private BigDecimal parseBigDecimal(TextField tf, String fieldName) {
-        try {
-            if (tf.getText().trim().isEmpty()) {
-                lblError.setText(fieldName + " không được để trống.");
-                return null;
-            }
-            return new BigDecimal(tf.getText().trim());
-        } catch (NumberFormatException e) {
-            lblError.setText(fieldName + " phải là số hợp lệ (VD: 10.00).");
-            return null;
-        }
-    }
-
-    // Không bắt buộc, để trống thì trả về null
-    private BigDecimal parseBigDecimalNullable(TextField tf, String fieldName) {
-        String val = tf.getText().trim();
-        if (val.isEmpty()) return null;
-        try {
-            return new BigDecimal(val);
-        } catch (NumberFormatException e) {
-            lblError.setText(fieldName + " phải là số hợp lệ (VD: 10.00).");
-            return null;
-        }
     }
 }

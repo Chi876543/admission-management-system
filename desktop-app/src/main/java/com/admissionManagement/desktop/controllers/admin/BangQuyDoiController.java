@@ -13,261 +13,168 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.Normalizer;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class BangQuyDoiController extends BaseController implements Initializable {
 
     private final BangQuyDoiBUS bangQuyDoiBUS = new BangQuyDoiBUS();
 
-    private final ObservableList<BangQuyDoiDTO> masterData =
+    private final ObservableList<BangQuyDoiDTO> allData =
             FXCollections.observableArrayList();
 
     private FilteredList<BangQuyDoiDTO> filteredData;
 
     @FXML private TextField tfSearch;
     @FXML private TableView<BangQuyDoiDTO> tblBangQuyDoi;
-
     @FXML private TableColumn<BangQuyDoiDTO, Integer> colId;
-
-    @FXML private TableColumn<BangQuyDoiDTO, String>
-            colPhuongThuc,
-            colToHop,
-            colMon,
-            colMaQuyDoi,
-            colPhanVi;
-
-    @FXML private TableColumn<BangQuyDoiDTO, BigDecimal>
-            colDiemA,
-            colDiemB,
-            colDiemC,
-            colDiemD;
-
-    @FXML private TableColumn<BangQuyDoiDTO, Void> colAction;
+    @FXML private TableColumn<BangQuyDoiDTO, String> colPhuongThuc, colToHop, colMon;
+    @FXML private TableColumn<BangQuyDoiDTO, BigDecimal> colDiemA, colDiemB, colDiemC, colDiemD;
+    @FXML private Label lblCount;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
         setupTable();
-
-        // Load dữ liệu 1 lần
         loadData();
 
-        // Filter realtime
-        filteredData = new FilteredList<>(masterData, b -> true);
+        filteredData = new FilteredList<>(allData, b -> true);
 
         tfSearch.textProperty().addListener((obs, oldVal, newVal) -> {
-
             String keyword = normalize(newVal);
-
             filteredData.setPredicate(item -> {
-
-                if (keyword.isEmpty()) {
-                    return true;
-                }
-
-                return
-
-                        String.valueOf(item.getIdqd()).contains(keyword)
-
-                                || contains(item.getPhuongThuc(), keyword)
-
-                                || contains(item.getToHop(), keyword)
-
-                                || contains(item.getMon(), keyword)
-
-                                || contains(item.getMaQuyDoi(), keyword)
-
-                                || contains(item.getPhanVi(), keyword);
+                if (keyword.isEmpty()) return true;
+                return String.valueOf(item.getIdqd()).contains(keyword)
+                        || contains(item.getPhuongThuc(), keyword)
+                        || contains(item.getToHop(), keyword)
+                        || contains(item.getMon(), keyword);
             });
         });
 
-        // Giữ nguyên sort của TableView
-        SortedList<BangQuyDoiDTO> sortedData =
-                new SortedList<>(filteredData);
-
-        sortedData.comparatorProperty()
-                .bind(tblBangQuyDoi.comparatorProperty());
-
+        SortedList<BangQuyDoiDTO> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(tblBangQuyDoi.comparatorProperty());
         tblBangQuyDoi.setItems(sortedData);
     }
 
     private void setupTable() {
-
-        colId.setCellValueFactory(
-                new PropertyValueFactory<>("idqd"));
-
-        colPhuongThuc.setCellValueFactory(
-                new PropertyValueFactory<>("phuongThuc"));
-
-        colToHop.setCellValueFactory(
-                new PropertyValueFactory<>("toHop"));
-
-        colMon.setCellValueFactory(
-                new PropertyValueFactory<>("mon"));
-
-        colDiemA.setCellValueFactory(
-                new PropertyValueFactory<>("diemA"));
-
-        colDiemB.setCellValueFactory(
-                new PropertyValueFactory<>("diemB"));
-
-        colDiemC.setCellValueFactory(
-                new PropertyValueFactory<>("diemC"));
-
-        colDiemD.setCellValueFactory(
-                new PropertyValueFactory<>("diemD"));
-
-        colMaQuyDoi.setCellValueFactory(
-                new PropertyValueFactory<>("maQuyDoi"));
-
-        colPhanVi.setCellValueFactory(
-                new PropertyValueFactory<>("phanVi"));
-
-        colAction.setCellFactory(col -> new TableCell<>() {
-
-            private final HBox box = makeActionCell(
-
-                    () -> {
-                        BangQuyDoiDTO item = getTableRow().getItem();
-
-                        if (item != null) {
-                            openDialog(item);
-                        }
-                    },
-
-                    () -> {
-                        BangQuyDoiDTO item = getTableRow().getItem();
-
-                        if (item != null) {
-                            onDelete(item);
-                        }
-                    }
-            );
-
-            @Override
-            protected void updateItem(Void v, boolean empty) {
-
-                super.updateItem(v, empty);
-
-                setGraphic(empty ? null : box);
-            }
-        });
+        colId.setCellValueFactory(new PropertyValueFactory<>("idqd"));
+        colPhuongThuc.setCellValueFactory(new PropertyValueFactory<>("phuongThuc"));
+        colToHop.setCellValueFactory(new PropertyValueFactory<>("toHop"));
+        colMon.setCellValueFactory(new PropertyValueFactory<>("mon"));
+        colDiemA.setCellValueFactory(new PropertyValueFactory<>("diemA"));
+        colDiemB.setCellValueFactory(new PropertyValueFactory<>("diemB"));
+        colDiemC.setCellValueFactory(new PropertyValueFactory<>("diemC"));
+        colDiemD.setCellValueFactory(new PropertyValueFactory<>("diemD"));
     }
 
     private void loadData() {
-
-        masterData.setAll(
-                bangQuyDoiBUS.getAllBangQuyDoi("")
-        );
+        allData.setAll(bangQuyDoiBUS.getAllBangQuyDoi(""));
+        lblCount.setText(allData.size() + " bản ghi");
     }
 
-    // =========================
-    // SEARCH UTILS
-    // =========================
-
     private boolean contains(String source, String keyword) {
-
         return normalize(source).contains(keyword);
     }
 
     private String normalize(String text) {
-
-        if (text == null) {
-            return "";
-        }
-
-        String normalized =
-                Normalizer.normalize(text, Normalizer.Form.NFD);
-
-        return normalized
-                .replaceAll("\\p{M}", "")
-                .toLowerCase()
-                .trim();
+        if (text == null) return "";
+        String normalized = Normalizer.normalize(text, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{M}", "").toLowerCase().trim();
     }
-
-    // =========================
-    // CRUD
-    // =========================
 
     @FXML
     private void onAdd() {
-
         openDialog(null);
     }
 
-    private void onDelete(BangQuyDoiDTO row) {
+    @FXML
+    private void onEdit() {
+        BangQuyDoiDTO selected = tblBangQuyDoi.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showError("Vui lòng chọn dòng cần sửa.");
+            return;
+        }
+        openDialog(selected);
+    }
 
-        if (confirmDelete("Luật quy đổi: " + row.getMaQuyDoi())) {
+    @FXML
+    private void onDeleteSelected() {
+        BangQuyDoiDTO selected = tblBangQuyDoi.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showError("Vui lòng chọn dòng cần xóa.");
+            return;
+        }
 
-            String result =
-                    bangQuyDoiBUS.deleteBangQuyDoi(row.getIdqd());
+        if (confirmDelete("Luật quy đổi ID: " + selected.getIdqd())) {
+            String result = bangQuyDoiBUS.deleteBangQuyDoi(selected.getIdqd());
 
-            if (result.contains("successfully")) {
-
-                loadData();
-
-                showInfo(
-                        "Thành công",
-                        "Đã xóa bản ghi."
-                );
-
+            if (!result.startsWith("Lỗi")) {
+                allData.remove(selected); // xóa trực tiếp khỏi list
+                lblCount.setText(allData.size() + " bản ghi");
+                showInfo("Thành công", "Đã xóa bản ghi.");
             } else {
-
                 showError(result);
             }
         }
     }
 
+    @FXML
+    private void onImport() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Chọn file Excel");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx", "*.xls")
+        );
+        File file = chooser.showOpenDialog(tblBangQuyDoi.getScene().getWindow());
+        if (file == null) return;
+
+        showInfo("Import", "Đã chọn file:\n" + file.getAbsolutePath());
+        // TODO: bangQuyDoiBUS.importExcel(file);
+    }
+
     private void openDialog(BangQuyDoiDTO row) {
-
         try {
-
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource(
                             "/com/admissionManagement/desktop/views/admin/BangQuyDoiDialogUI.fxml"
                     )
             );
-
             Parent root = loader.load();
-
-            BangQuyDoiDialogController dialogCtrl =
-                    loader.getController();
+            BangQuyDoiDialogController dialogCtrl = loader.getController();
 
             Stage stage = new Stage();
-
-            stage.setTitle(
-                    row == null
-                            ? "Thêm luật mới"
-                            : "Cập nhật luật"
-            );
-
+            stage.setTitle(row == null ? "Thêm luật mới" : "Cập nhật luật");
             stage.initModality(Modality.APPLICATION_MODAL);
-
             stage.setScene(new Scene(root));
-
-            dialogCtrl.init(
-                    stage,
-                    row,
-                    bangQuyDoiBUS
-            );
-
+            dialogCtrl.init(stage, row, bangQuyDoiBUS);
             stage.showAndWait();
 
             if (dialogCtrl.getIsSaved()) {
-
-                loadData();
+                if (row == null) {
+                    // ADD: lấy 1 record mới nhất từ DB (id desc → index 0) thêm vào đầu list
+                    // Chỉ query để lấy ID thật, không reload toàn bộ
+                    List<BangQuyDoiDTO> fresh = bangQuyDoiBUS.getAllBangQuyDoi("");
+                    if (!fresh.isEmpty()) {
+                        BangQuyDoiDTO newRecord = fresh.get(0); // mới nhất do sắp xếp DESC
+                        allData.add(0, newRecord);
+                    }
+                } else {
+                    // EDIT: editingRow đã được sửa trực tiếp (cùng reference trong allData)
+                    // Chỉ cần refresh lại UI
+                    tblBangQuyDoi.refresh();
+                }
+                lblCount.setText(allData.size() + " bản ghi");
             }
 
         } catch (IOException e) {
-
             showError("Lỗi giao diện: " + e.getMessage());
         }
     }
