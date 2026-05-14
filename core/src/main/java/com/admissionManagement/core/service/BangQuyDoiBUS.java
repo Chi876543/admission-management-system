@@ -188,7 +188,16 @@ public class BangQuyDoiBUS {
                         maQuyDoi = "QD-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
                     }
                     String phanViRaw = cols.length > 9 ? cols[9].replace("\"", "").trim() : null;
-                    Integer phanVi = (phanViRaw != null && !phanViRaw.isEmpty()) ? Integer.parseInt(phanViRaw) : null;
+                    // phanViRaw có thể là ">90" (giá trị đặc biệt) — không parse được thành int
+                    // → dùng null để tránh crash, giá trị gốc được lưu trong maQuyDoi
+                    Integer phanVi = null;
+                    if (phanViRaw != null && !phanViRaw.isEmpty()) {
+                        try {
+                            phanVi = Integer.parseInt(phanViRaw);
+                        } catch (NumberFormatException ignored) {
+                            // Giá trị đặc biệt như ">90" — để null
+                        }
+                    }
 
                     BangQuyDoiDTO dto = new BangQuyDoiDTO(
                             0,
@@ -200,7 +209,7 @@ public class BangQuyDoiBUS {
                             parseBD(cols[6]),                  // diemC
                             parseBD(cols[7]),                  // diemD
                             maQuyDoi,
-                            phanVi.toString()
+                            phanVi != null ? phanVi.toString() : (phanViRaw != null ? phanViRaw : null)
                     );
                     String res = addBangQuyDoi(dto);
                     if (res.startsWith("Lỗi")) { error++; report.append("- ").append(res).append("\n"); }

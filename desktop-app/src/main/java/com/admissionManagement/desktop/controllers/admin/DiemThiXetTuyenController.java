@@ -15,7 +15,6 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -68,8 +67,10 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
             colNk4, colNk5, colNk6;
 
     // ── Pagination ───────────────────────────────────
-    @FXML private Label      lblCount;
-    @FXML private Pagination pagination;
+    @FXML private Label  lblCount;
+    @FXML private Button btnPrev;
+    @FXML private Button btnNext;
+    @FXML private Label  lblPage;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -82,7 +83,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         cbLoaiDiem.setOnAction(e -> updateChart());
 
         setupTable();
-        setupPagination();
         loadData();
     }
 
@@ -126,31 +126,36 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         tblDiem.setItems(displayData);
     }
 
-    // Wrapper cố định để pageFactory luôn trả cùng 1 Node
-    private final StackPane tableWrapper = new StackPane();
-
-    private void setupPagination() {
-        tableWrapper.getChildren().setAll(tblDiem);
-        pagination.setPageFactory(pageIndex -> {
-            currentPage = pageIndex;
-            updatePage();
-            return tableWrapper; // ← luôn trả cùng 1 Node, tránh mất bảng khi chuyển trang
-        });
-    }
-
-    private void updatePage() {
-        int from = currentPage * PAGE_SIZE;
-        int to   = Math.min(from + PAGE_SIZE, masterData.size());
-        displayData.setAll(masterData.subList(from, to));
-    }
-
     private void refreshPagination() {
-        int pageCount = Math.max(1, (int) Math.ceil((double) masterData.size() / PAGE_SIZE));
-        pagination.setPageCount(pageCount);
-        pagination.setCurrentPageIndex(0);
-        currentPage = 0;
-        updatePage();
-        lblCount.setText(masterData.size() + " bản ghi");
+        int totalItems = masterData.size();
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalItems / PAGE_SIZE));
+
+        if (currentPage >= totalPages) currentPage = totalPages - 1;
+        if (currentPage < 0) currentPage = 0;
+
+        int from = currentPage * PAGE_SIZE;
+        int to   = Math.min(from + PAGE_SIZE, totalItems);
+        displayData.setAll(masterData.subList(from, to));
+
+        if (lblPage  != null) lblPage.setText("Trang " + (currentPage + 1) + " / " + totalPages);
+        if (btnPrev  != null) btnPrev.setDisable(currentPage == 0);
+        if (btnNext  != null) btnNext.setDisable(currentPage >= totalPages - 1);
+        if (lblCount != null) lblCount.setText(totalItems + " bản ghi");
+    }
+
+    @FXML private void onPrevPage() {
+        if (currentPage > 0) {
+            currentPage--;
+            refreshPagination();
+        }
+    }
+
+    @FXML private void onNextPage() {
+        int totalPages = Math.max(1, (int) Math.ceil((double) masterData.size() / PAGE_SIZE));
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            refreshPagination();
+        }
     }
 
     /** Load lần đầu hoặc sau import — gọi DB */
@@ -175,6 +180,7 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         }
 
         masterData.setAll(filtered);
+        currentPage = 0;
         refreshPagination();
     }
 

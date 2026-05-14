@@ -238,7 +238,17 @@ public class NguyenVongXetTuyenBUS {
                 if (columns.length < 6) { errorCount++; continue; }
                 try {
                     String cccd    = columns[1].trim();
-                    int thuTuNV    = Integer.parseInt(columns[2].trim());
+                    String thuTuRaw = columns[2].trim();
+                    int thuTuNV;
+                    try {
+                        thuTuNV = Integer.parseInt(thuTuRaw);
+                    } catch (NumberFormatException e) {
+                        errorCount++;
+                        report.append("- Lỗi dòng (CCCD=").append(cccd)
+                                .append("): cột 'Thứ tự NV' không hợp lệ: \"").append(thuTuRaw)
+                                .append("\" — Kiểm tra đúng file sheet nguyện vọng (không phải file thống kê).\n");
+                        continue;
+                    }
                     String maNganh = columns[5].trim();
 
                     String result = addNguyenVong(session, cccd, maNganh, thuTuNV);
