@@ -363,11 +363,8 @@ public class DiemThiXetTuyenBUS {
         Transaction tx = null;
         try(Session session = factory.openSession()) {
             tx = session.beginTransaction();
-            DiemThiXetTuyen diemThi = dao.getByCccdWithSession(session, cccd);
-            if (diemThi == null) {
-                return "Lỗi: Không tìm thấy bảng điểm của thí sinh " + cccd;
-            }
-            dao.deleteWithSession(session, diemThi);
+            ThiSinh thiSinh = thisinhdao.getByCccdWithSesstion(session, cccd);
+            thiSinh.setDiemThi(null);
             tx.commit();
             return "Deleted successfully";
         } catch (Exception e) {
