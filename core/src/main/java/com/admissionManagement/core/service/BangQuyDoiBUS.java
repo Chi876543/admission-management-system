@@ -4,12 +4,14 @@ import com.admissionManagement.core.dao.BangQuyDoiDAO;
 import com.admissionManagement.core.dto.BangQuyDoiDTO;
 import com.admissionManagement.core.entity.BangQuyDoi;
 import com.admissionManagement.core.util.HibernateUtil;
+import org.apache.commons.lang3.builder.DiffResult;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -69,7 +71,10 @@ public class BangQuyDoiBUS {
 
     public BangQuyDoiDTO getBangQuyDoi(int id){
         try(Session session = factory.openSession()) {
-            return toDTO(dao.getWithSession(session, id));
+            BangQuyDoi result = dao.getWithSession(session, id);
+            if(result != null)
+                return toDTO(result);
+            return null;
         }
     }
 
@@ -90,7 +95,10 @@ public class BangQuyDoiBUS {
         }
 
         try (Session session = factory.openSession()) {
-            return mapListEntityToListDTO(dao.getAllWithSession(session, phuongThuc, toHop, mon));
+            List<BangQuyDoi> result = dao.getAllWithSession(session, phuongThuc, toHop, mon);
+            if(!result.isEmpty())
+                return mapListEntityToListDTO(result);
+            return new ArrayList<>();
         }
     }
 
