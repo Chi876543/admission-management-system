@@ -19,10 +19,7 @@ import java.io.File;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DiemThiXetTuyenBUS {
@@ -283,15 +280,21 @@ public class DiemThiXetTuyenBUS {
 
     public DiemThiXetTuyenDTO getDiemThiXetTuyen(int id){
         try(Session session = factory.openSession()){
-            return toDTO(dao.getWithSession(session, id));
+            DiemThiXetTuyen result = dao.getWithSession(session, id);
+            if(result != null)
+                return toDTO(result);
+            return null;
         }
     }
 
     public List<DiemThiXetTuyenDTO> getAllDiemThiXetTuyen(){
-        Session session = factory.openSession();
-        List<DiemThiXetTuyen> listDiemThiXetTuyen = dao.getAllWithSession(session);
-        session.close();
-        return mapListEntityToListDTO(listDiemThiXetTuyen);
+        try(Session session = factory.openSession()){
+            List<DiemThiXetTuyen> result = dao.getAllWithSession(session);
+            if(!result.isEmpty())
+                return mapListEntityToListDTO(result);
+            return Collections.emptyList();
+        }
+
     }
 
     public String updateDiemThiXetTuyen(int id, DiemThiXetTuyenDTO newDiemThiXetTuyenDTO){

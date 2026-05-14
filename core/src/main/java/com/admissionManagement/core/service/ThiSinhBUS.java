@@ -18,6 +18,7 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -163,7 +164,10 @@ public class ThiSinhBUS {
 
     public ThiSinhDTO getThiSinh(int id){
         try (Session session = factory.openSession()) {
-            return toDTO(dao.getWithSession(session, id));
+            ThiSinh result = dao.getWithSession(session, id);
+            if(result != null)
+                return toDTO(result);
+            return null;
         }
     }
 
@@ -187,8 +191,10 @@ public class ThiSinhBUS {
         }
 
         try (Session session = factory.openSession()) {
-            List<ThiSinh> entities = dao.getAllWithSession(session, ho, ten ,cccd, pageIndex, pageSize);
-            return mapListEntityToListDTO(entities);
+            List<ThiSinh> result = dao.getAllWithSession(session, ho, ten ,cccd, pageIndex, pageSize);
+            if(!result.isEmpty())
+                return mapListEntityToListDTO(result);
+            return Collections.emptyList();
         }
     }
 
@@ -294,9 +300,6 @@ public class ThiSinhBUS {
     public ThiSinhDTO findBySbd(String sbd, String ngaySinh) {
         try (Session session = factory.openSession()) {
             ThiSinh thiSinh = dao.getBySbdWithSession(session, sbd);
-            if(thiSinh != null){
-                System.out.println(ngaySinh + " " + thiSinh.getNgaySinh());
-            }
             if (thiSinh == null || !thiSinh.getNgaySinh().equals(ngaySinh)) {
                 return null;
             }

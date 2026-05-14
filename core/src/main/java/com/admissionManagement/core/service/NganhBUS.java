@@ -21,10 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.Reader;
 import java.nio.file.Files;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class NganhBUS {
@@ -94,7 +91,10 @@ public class NganhBUS {
 
     public NganhDTO getNganh(int id){
         try(Session session = factory.openSession()){
-            return toDTO(dao.getWithSession(session, id));
+            Nganh result = dao.getWithSession(session, id);
+            if(result != null)
+                return toDTO(result);
+            return null;
         }
     }
 
@@ -143,8 +143,10 @@ public class NganhBUS {
 
     public List<NganhDTO> getAllNganh(){
         try(Session session = factory.openSession()){
-            List<Nganh> listNganh = dao.getAllWithSession(session);
-            return mapListEntityToListDTO(listNganh);
+            List<Nganh> result = dao.getAllWithSession(session);
+            if(!result.isEmpty())
+                return mapListEntityToListDTO(result);
+            return Collections.emptyList();
         }
     }
 

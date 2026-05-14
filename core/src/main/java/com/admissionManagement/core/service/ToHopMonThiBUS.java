@@ -122,15 +122,20 @@ public class ToHopMonThiBUS {
 
     public ToHopMonThiDTO getToHopMonThi(int id){
         try(Session session = factory.openSession()){
-            return toDTO(dao.getWithSession(session, id));
+            ToHopMonThi result = dao.getWithSession(session, id);
+            if(result != null)
+                return toDTO(result);
+            return null;
         }
     }
 
     public List<ToHopMonThiDTO> getAllToHopMonThi(){
-        Session session = factory.openSession();
-        List<ToHopMonThi> listToHopMonThi = dao.getAllWithSession(session);
-        session.close();
-        return mapListEntityToListDTO(listToHopMonThi);
+        try(Session session = factory.openSession()){
+            List<ToHopMonThi> result = dao.getAllWithSession(session);
+            if(!result.isEmpty())
+                return mapListEntityToListDTO(result);
+            return Collections.emptyList();
+        }
     }
 
     public String updateToHopMonThi(int id, ToHopMonThiDTO newToHopMonThiDTO){

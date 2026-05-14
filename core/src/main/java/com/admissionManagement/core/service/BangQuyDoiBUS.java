@@ -98,7 +98,7 @@ public class BangQuyDoiBUS {
             List<BangQuyDoi> result = dao.getAllWithSession(session, phuongThuc, toHop, mon);
             if(!result.isEmpty())
                 return mapListEntityToListDTO(result);
-            return new ArrayList<>();
+            return java.util.Collections.emptyList();
         }
     }
 
@@ -201,8 +201,7 @@ public class BangQuyDoiBUS {
     public BangQuyDoiDTO getBangQuyDoiWithScore(String phuongThuc, BigDecimal diem, String mon, String toHop) {
         try (Session session = factory.openSession()) {
 
-            BangQuyDoi entity =
-                    dao.getLuatQuyDoiWithSession(session, phuongThuc, diem, mon, toHop);
+            BangQuyDoi entity = dao.getLuatQuyDoiWithSession(session, phuongThuc, diem, mon, toHop);
 
             if (entity == null) {
                 return null;

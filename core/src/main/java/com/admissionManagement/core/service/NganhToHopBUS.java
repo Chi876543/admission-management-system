@@ -24,10 +24,7 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -230,15 +227,20 @@ public class NganhToHopBUS {
 
     public NganhToHopDTO getNganhToHop(int id){
         try(Session session = factory.openSession()){
-            return toDTO(dao.getWithSession(session, id));
+            NganhToHop result = dao.getWithSession(session, id);
+            if(result != null)
+                return toDTO(result);
+            return null;
         }
     }
 
     public List<NganhToHopDTO> getAllNganhToHop(){
-        Session session = factory.openSession();
-        List<NganhToHop> listNganhToHop = dao.getAllWithSession(session);
-        session.close();
-        return mapListEntityToListDTO(listNganhToHop);
+        try(Session session = factory.openSession()){
+            List<NganhToHop> result = dao.getAllWithSession(session);
+            if(!result.isEmpty())
+                return mapListEntityToListDTO(result);
+            return Collections.emptyList();
+        }
     }
 
     public String updateNganhToHop(int id, NganhToHopDTO newNganhToHopDTO){
