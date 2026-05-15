@@ -53,18 +53,25 @@ public class NguyenVongXetTuyenDAO {
         return session.createQuery("SELECT COUNT(n) FROM NguyenVongXetTuyen n", Long.class).getSingleResult();
     }
 
-    public long getTotalByCccdWithSession(Session session, String cccd) {
+    public long getTotalByCccdWithSession(Session session, String keyword) {
+        String kw = "%" + keyword.trim() + "%";
         return session.createQuery(
-                "SELECT COUNT(n) FROM NguyenVongXetTuyen n WHERE n.thiSinh.cccd LIKE :kw", Long.class)
-                .setParameter("kw", "%" + cccd.trim() + "%")
+                "SELECT COUNT(n) FROM NguyenVongXetTuyen n WHERE " +
+                "n.thiSinh.cccd LIKE :kw OR n.nganh.maNganh LIKE :kw " +
+                "OR n.phuongThuc LIKE :kw OR n.ketQua LIKE :kw", Long.class)
+                .setParameter("kw", kw)
                 .getSingleResult();
     }
 
-    public List<NguyenVongXetTuyen> getAllByCccdWithSession(Session session, String cccd, int pageIndex, int pageSize) {
-        String hql = "FROM NguyenVongXetTuyen n WHERE n.thiSinh.cccd LIKE :kw ORDER BY n.idNv DESC";
+    public List<NguyenVongXetTuyen> getAllByCccdWithSession(Session session, String keyword, int pageIndex, int pageSize) {
+        String kw = "%" + keyword.trim() + "%";
+        String hql = "FROM NguyenVongXetTuyen n WHERE " +
+                "n.thiSinh.cccd LIKE :kw OR n.nganh.maNganh LIKE :kw " +
+                "OR n.phuongThuc LIKE :kw OR n.ketQua LIKE :kw " +
+                "ORDER BY n.idNv DESC";
         int offset = pageIndex * pageSize;
         return session.createQuery(hql, NguyenVongXetTuyen.class)
-                .setParameter("kw", "%" + cccd.trim() + "%")
+                .setParameter("kw", kw)
                 .setFirstResult(offset)
                 .setMaxResults(pageSize)
                 .getResultList();

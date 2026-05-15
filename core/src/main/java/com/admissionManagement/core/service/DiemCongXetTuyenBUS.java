@@ -411,16 +411,10 @@ public class DiemCongXetTuyenBUS {
     }
 
     public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyenWithCccd(String keyword, int pageSize, int pageIndex){
-        String cccd = null;
-
-        if(keyword != null && !keyword.trim().isEmpty()) {
-            if (keyword.matches("^\\d{9,12}$")) {
-                cccd = keyword;
-            }
-        }
+        String kw = (keyword != null && !keyword.trim().isEmpty()) ? keyword.trim() : null;
 
         try(Session session = factory.openSession()){
-            List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAllWithSession(session, cccd, pageSize, pageIndex);
+            List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAllWithSession(session, kw, pageSize, pageIndex);
             return mapListEntityToListDTO(listDiemCongXetTuyen);
         }
     }

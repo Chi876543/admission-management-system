@@ -1,12 +1,12 @@
 package com.admissionManagement.desktop.controllers.admin;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 import java.net.URL;
@@ -26,6 +26,7 @@ public class DiemCongController extends BaseController implements Initializable 
     @FXML private TableColumn<DiemCongRow,Void>    colAction;
 
     private final ObservableList<DiemCongRow> allData = FXCollections.observableArrayList();
+    private final ObservableList<DiemCongRow> filteredData = FXCollections.observableArrayList();
     private DiemCongRow editingRow;
 
     @Override public void initialize(URL u, ResourceBundle r) {
@@ -50,6 +51,9 @@ public class DiemCongController extends BaseController implements Initializable 
             }
         });
 
+        // Bind table tới filteredData một lần duy nhất
+        tblDiemCong.setItems(filteredData);
+
         allData.setAll(
                 new DiemCongRow("001234567890","Nguyễn Văn An","KV1 - Khu vực 1","0.75","Khu vực 1"),
                 new DiemCongRow("001234567891","Trần Thị Bình","ĐT1 - Đối tượng 1","2.0","Đối tượng ưu tiên 1"),
@@ -65,11 +69,12 @@ public class DiemCongController extends BaseController implements Initializable 
                 .filter(r -> kw.isEmpty() || r.getCccd().contains(kw) || r.getHoTen().toLowerCase().contains(kw))
                 .filter(r -> fil == null || r.getLoai().equals(fil))
                 .collect(Collectors.toList());
-        // BUG FIX: phải setItems + refresh() để table hiển thị đúng sau khi filter
-        ObservableList<DiemCongRow> filtered = FXCollections.observableArrayList(f);
-        tblDiemCong.setItems(filtered);
-        tblDiemCong.refresh();
-        lblCount.setText(f.size() + " bản ghi");
+
+        // Luôn chạy trên FX Application Thread để table nhận update
+        Platform.runLater(() -> {
+            filteredData.setAll(f);
+            if (lblCount != null) lblCount.setText(f.size() + " bản ghi");
+        });
     }
 
     @FXML private void onSearch() { refresh(); }

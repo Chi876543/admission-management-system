@@ -4,7 +4,7 @@ import { studentApi } from "../services/api";
 import { Form, Input, Button, Alert, Card, Typography, Space } from "antd";
 import { IdcardOutlined, CalendarOutlined, LoginOutlined } from "@ant-design/icons";
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 export default function StudentLogin() {
     const navigate = useNavigate();
@@ -94,25 +94,23 @@ export default function StudentLogin() {
                             {
                                 validator: (_, value) => {
                                     if (!value) return Promise.resolve();
+                                    // Kiểm tra xem có đúng định dạng CCCD (9-12 số) HOẶC mã TS (TS_ kèm các chữ số phía sau)
                                     if (/^\d{9,12}$/.test(value)) return Promise.resolve();
                                     if (/^TS_\d+$/i.test(value)) return Promise.resolve();
-                                    return Promise.reject("CCCD phải gồm 9–12 chữ số, hoặc mã thí sinh dạng TS_xxxx");
+                                    return Promise.reject("CCCD phải gồm 9–12 chữ số, hoặc mã thí sinh dạng TS_xxxx (VD: TS_1234)");
                                 },
                             },
                         ]}
                     >
                         <Input
                             prefix={<IdcardOutlined style={{ color: "#bfbfbf" }} />}
-                            placeholder="Nhập CCCD (9–12 chữ số) hoặc TS_xxxx"
+                            placeholder="Nhập CCCD (9–12 số) hoặc TS_xxxx"
                             maxLength={20}
                             onChange={(e) => {
                                 const val = e.target.value;
-                                // Chỉ strip ký tự không hợp lệ, giữ lại TS_ prefix
-                                if (/^ts_?/i.test(val)) {
-                                    form.setFieldValue("cccd", val.toUpperCase());
-                                } else {
-                                    form.setFieldValue("cccd", val.replace(/\D/g, ""));
-                                }
+                                // Chỉ cho phép nhập chữ, số và dấu gạch dưới, đồng thời tự động viết hoa chữ TS
+                                const cleanedValue = val.replace(/[^a-zA-Z0-9_]/g, "").toUpperCase();
+                                form.setFieldValue("cccd", cleanedValue);
                             }}
                             style={{ borderRadius: 8, fontFamily: "'Courier New', monospace", letterSpacing: "1px" }}
                         />

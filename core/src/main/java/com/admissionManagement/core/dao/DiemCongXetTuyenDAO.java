@@ -55,9 +55,10 @@ public class DiemCongXetTuyenDAO {
     public List<Predicate> buildConditions(CriteriaBuilder cb, Root<DiemCongXetTuyen> root, String cccd) {
         List<Predicate> conditions = new ArrayList<>();
 
-        // BUG FIX: DiemCongXetTuyen không có field "cccd" trực tiếp — phải join qua thiSinh
-        if(cccd != null && !cccd.trim().isEmpty())
-            conditions.add(cb.equal(root.get("thiSinh").get("cccd"), cccd.trim()));
+        if(cccd != null && !cccd.trim().isEmpty()) {
+            String kw = "%" + cccd.trim() + "%";
+            conditions.add(cb.like(root.get("thiSinh").get("cccd"), kw));
+        }
 
         return conditions;
     }
@@ -78,8 +79,8 @@ public class DiemCongXetTuyenDAO {
 
     public long getTotalByCccdWithSession(Session session, String cccd) {
         return session.createQuery(
-                "SELECT COUNT(d) FROM DiemCongXetTuyen d WHERE d.thiSinh.cccd = :cccd", Long.class)
-                .setParameter("cccd", cccd.trim())
+                "SELECT COUNT(d) FROM DiemCongXetTuyen d WHERE d.thiSinh.cccd LIKE :cccd", Long.class)
+                .setParameter("cccd", "%" + cccd.trim() + "%")
                 .getSingleResult();
     }
 
