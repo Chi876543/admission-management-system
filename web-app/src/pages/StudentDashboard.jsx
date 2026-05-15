@@ -109,6 +109,18 @@ export default function StudentDashboard() {
             const { thiSinh: ts, nguyenVong: nv } = JSON.parse(raw);
             setThiSinh(ts);
             setNguyenVong(nv || []);
+            // Re-fetch nguyenVong từ server để lấy ketQua mới nhất
+            // (session có thể cũ từ trước khi xét tuyển chạy)
+            if (ts?.cccd) {
+                studentApi.getNguyenVong(ts.cccd)
+                    .then(freshNv => {
+                        setNguyenVong(freshNv || []);
+                        // Cập nhật session với dữ liệu mới
+                        const updated = { thiSinh: ts, nguyenVong: freshNv };
+                        sessionStorage.setItem("student_session", JSON.stringify(updated));
+                    })
+                    .catch(() => {}); // giữ dữ liệu cũ nếu server không phản hồi
+            }
         } catch { navigate("/student-login"); }
     }, [navigate]);
 

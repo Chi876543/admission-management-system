@@ -302,6 +302,19 @@ public class DiemThiXetTuyenBUS {
         }
     }
 
+    public long getTotalByCccd(String cccd) {
+        try (Session session = factory.openSession()) {
+            return dao.getTotalByCccdWithSession(session, cccd);
+        }
+    }
+
+    public List<DiemThiXetTuyenDTO> getAllDiemThiXetTuyenByCccd(String cccd, int pageIndex, int pageSize) {
+        try (Session session = factory.openSession()) {
+            List<DiemThiXetTuyen> result = dao.getAllByCccdWithSession(session, cccd, pageIndex, pageSize);
+            return result.isEmpty() ? Collections.emptyList() : mapListEntityToListDTO(result);
+        }
+    }
+
     public List<DiemThiXetTuyenDTO> getAllDiemThiXetTuyen(int pageIndex, int pageSize){
         try(Session session = factory.openSession()){
             List<DiemThiXetTuyen> result = dao.getAllWithSession(session, pageIndex, pageSize);

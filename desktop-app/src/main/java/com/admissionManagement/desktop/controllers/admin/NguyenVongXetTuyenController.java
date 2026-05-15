@@ -43,10 +43,7 @@ public class NguyenVongXetTuyenController extends BaseController implements Init
     @FXML private TableColumn<NguyenVongXetTuyenDTO, BigDecimal>
             colDiemTHXT, colDiemUTQD, colDiemCong, colDiemXT;
 
-    // Các nút phân trang cũ (nếu FXML vẫn còn, sẽ được giữ nguyên)
-    @FXML private Button btnPrev;
-    @FXML private Button btnNext;
-    @FXML private Label  lblPage;
+    // btnPrev/btnNext đã được thay bằng Pagination control trong FXML
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -106,10 +103,6 @@ public class NguyenVongXetTuyenController extends BaseController implements Init
                 }
             }
 
-            // Cập nhật nút prev/next cũ (nếu FXML vẫn dùng)
-            if (btnPrev != null) btnPrev.setDisable(pageIndex == 0);
-            if (btnNext != null) btnNext.setDisable(pageIndex >= totalPages - 1);
-            if (lblPage != null) lblPage.setText("Trang " + (pageIndex + 1) + " / " + totalPages);
             if (lblCount != null)
                 lblCount.setText(totalRecords + " bản ghi (trang " + (pageIndex + 1) + "/" + totalPages + ")");
         });
@@ -122,19 +115,6 @@ public class NguyenVongXetTuyenController extends BaseController implements Init
     private int getCurrentPageIndex() {
         if (pagination != null) return pagination.getCurrentPageIndex();
         return 0;
-    }
-
-    @FXML
-    private void onPrevPage() {
-        int cur = getCurrentPageIndex();
-        if (cur > 0) loadData(cur - 1);
-    }
-
-    @FXML
-    private void onNextPage() {
-        int totalPages = Math.max(1, (int) Math.ceil((double) totalRecords / PAGE_SIZE));
-        int cur = getCurrentPageIndex();
-        if (cur < totalPages - 1) loadData(cur + 1);
     }
 
     @FXML

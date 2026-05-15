@@ -43,6 +43,23 @@ public class DiemThiXetTuyenDAO {
         return session.createQuery("SELECT COUNT(d) FROM DiemThiXetTuyen d", Long.class).getSingleResult();
     }
 
+    public long getTotalByCccdWithSession(Session session, String cccd) {
+        return session.createQuery(
+                "SELECT COUNT(d) FROM DiemThiXetTuyen d WHERE d.thiSinh.cccd LIKE :kw", Long.class)
+                .setParameter("kw", "%" + cccd.trim() + "%")
+                .getSingleResult();
+    }
+
+    public List<DiemThiXetTuyen> getAllByCccdWithSession(Session session, String cccd, int pageIndex, int pageSize) {
+        String hql = "FROM DiemThiXetTuyen d WHERE d.thiSinh.cccd LIKE :kw ORDER BY d.idDiemThi DESC";
+        int offset = pageIndex * pageSize;
+        return session.createQuery(hql, DiemThiXetTuyen.class)
+                .setParameter("kw", "%" + cccd.trim() + "%")
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .list();
+    }
+
     public void deleteWithSession(Session session, DiemThiXetTuyen diemThiXetTuyen) {
         session.remove(diemThiXetTuyen);
     }

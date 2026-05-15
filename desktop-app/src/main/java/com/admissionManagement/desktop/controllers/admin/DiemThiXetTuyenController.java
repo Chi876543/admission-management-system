@@ -131,12 +131,17 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         Task<List<DiemThiXetTuyenDTO>> task = new Task<>() {
             @Override
             protected List<DiemThiXetTuyenDTO> call() {
-                // Gọi getTotal mỗi lần search thay đổi (pageIndex == 0)
-                // Khi chỉ chuyển trang, dùng lại totalRecords
-                if (pageIndex == 0) {
-                    totalRecords = bus.getTotal();
+                if (keyword.isEmpty()) {
+                    // Không có filter: chỉ lấy total khi về trang đầu
+                    if (pageIndex == 0) {
+                        totalRecords = bus.getTotal();
+                    }
+                    return bus.getAllDiemThiXetTuyen(pageIndex, PAGE_SIZE);
+                } else {
+                    // Có filter theo CCCD: luôn cập nhật total theo keyword
+                    totalRecords = bus.getTotalByCccd(keyword);
+                    return bus.getAllDiemThiXetTuyenByCccd(keyword, pageIndex, PAGE_SIZE);
                 }
-                return bus.getAllDiemThiXetTuyen(pageIndex, PAGE_SIZE);
             }
         };
 

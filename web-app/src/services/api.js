@@ -45,6 +45,12 @@ export const studentApi = {
      * Trả về DiemThiXetTuyenDTO
      */
     getDiemThi: (cccd) => request(`/student/diem-thi?cccd=${cccd}`),
+
+    /**
+     * Lấy danh sách nguyện vọng mới nhất theo CCCD (có ketQua cập nhật).
+     * Dùng để refresh sau khi xét tuyển chạy xong.
+     */
+    getNguyenVong: (cccd) => request(`/student/nguyen-vong?cccd=${cccd}`),
 };
 
 export const toHopApi = {

@@ -75,6 +75,13 @@ public class DiemCongXetTuyenDAO {
         return session.createQuery("SELECT COUNT(d) FROM DiemCongXetTuyen d", Long.class).getSingleResult();
     }
 
+    public long getTotalByCccdWithSession(Session session, String cccd) {
+        return session.createQuery(
+                "SELECT COUNT(d) FROM DiemCongXetTuyen d WHERE d.thiSinh.cccd = :cccd", Long.class)
+                .setParameter("cccd", cccd.trim())
+                .getSingleResult();
+    }
+
     public void deleteWithSession(Session session, DiemCongXetTuyen diemCongXetTuyen) {
         session.remove(diemCongXetTuyen);
     }

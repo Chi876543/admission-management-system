@@ -410,7 +410,7 @@ public class NguyenVongXetTuyenBUS {
 
         BigDecimal diemSan = nganh.getDiemSan();
         String ketqua = "duoisan";
-        if (diemSan.compareTo(diemXetTuyen) <= 0) {
+        if (diemSan != null && diemSan.compareTo(diemXetTuyen) <= 0) {
             ketqua = "yes";
         }
 

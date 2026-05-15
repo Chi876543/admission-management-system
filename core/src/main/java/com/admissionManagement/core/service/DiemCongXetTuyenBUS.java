@@ -395,6 +395,12 @@ public class DiemCongXetTuyenBUS {
         }
     }
 
+    public long getTotalByCccd(String cccd) {
+        try (Session session = factory.openSession()) {
+            return dao.getTotalByCccdWithSession(session, cccd);
+        }
+    }
+
     public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyen(int pageSize, int pageIndex){
         try(Session session = factory.openSession()){
             List<DiemCongXetTuyen> result = dao.getAll(session, pageSize, pageIndex);

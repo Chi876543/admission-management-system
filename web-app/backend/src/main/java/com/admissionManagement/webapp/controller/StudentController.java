@@ -86,4 +86,22 @@ public class StudentController {
 
         return ResponseEntity.ok(result);
     }
+
+    /**
+     * GET /api/student/nguyen-vong?cccd=...
+     * Lấy danh sách nguyện vọng mới nhất theo CCCD (có ketQua cập nhật).
+     * Dùng để refresh kết quả xét tuyển mà không cần login lại.
+     */
+    @GetMapping("/nguyen-vong")
+    public ResponseEntity<?> getNguyenVong(@RequestParam(name = "cccd") String cccd) {
+        if (cccd == null || cccd.isBlank()) {
+            return ResponseEntity.badRequest().body("Thiếu CCCD");
+        }
+        ThiSinhDTO thiSinh = thiSinhBUS.getByCccd(cccd);
+        if (thiSinh == null) {
+            return ResponseEntity.status(404).body("Không tìm thấy thí sinh với CCCD: " + cccd);
+        }
+        List<NguyenVongXetTuyenDTO> nguyenVong = nguyenVongBUS.getByThiSinhCccd(cccd);
+        return ResponseEntity.ok(nguyenVong);
+    }
 }

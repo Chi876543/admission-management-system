@@ -121,17 +121,11 @@
 
         </TableView>
 
-        <HBox styleClass="pagination-bar"
-              alignment="CENTER_RIGHT">
-
+        <HBox styleClass="pagination-bar" alignment="CENTER_RIGHT" spacing="12">
             <Label fx:id="lblCount"
                    text="0 bản ghi"
                    styleClass="record-count"/>
-        </HBox>
-        <HBox alignment="CENTER" spacing="10">
-            <Button fx:id="btnPrev" text="◀ Trước" onAction="#onPrevPage"/>
-            <Label fx:id="lblPage" text="Trang 1 / 1"/>
-            <Button fx:id="btnNext" text="Tiếp ▶" onAction="#onNextPage"/>
+            <Pagination fx:id="pagination" pageCount="1" styleClass="pagination" HBox.hgrow="ALWAYS"/>
         </HBox>
 
     </VBox>

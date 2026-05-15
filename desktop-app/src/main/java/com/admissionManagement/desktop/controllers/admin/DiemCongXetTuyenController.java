@@ -74,14 +74,22 @@ public class DiemCongXetTuyenController extends BaseController implements Initia
     }
 
     private void loadData(int pageIndex) {
+        String keyword = tfSearch.getText().trim();
+
         Task<List<DiemCongXetTuyenDTO>> task = new Task<>() {
             @Override
             protected List<DiemCongXetTuyenDTO> call() {
-                if (pageIndex == 0) {
-                    totalRecords = bus.getTotal();
+                if (keyword.isEmpty()) {
+                    if (pageIndex == 0) {
+                        totalRecords = bus.getTotal();
+                    }
+                    // getAllDiemCongXetTuyen(pageSize, pageIndex) — lưu ý thứ tự tham số ngược
+                    return bus.getAllDiemCongXetTuyen(PAGE_SIZE, pageIndex);
+                } else {
+                    // Tìm theo CCCD — luôn cập nhật total theo keyword
+                    totalRecords = bus.getTotalByCccd(keyword);
+                    return bus.getAllDiemCongXetTuyenWithCccd(keyword, PAGE_SIZE, pageIndex);
                 }
-                // getAllDiemCongXetTuyen(pageSize, pageIndex) — lưu ý thứ tự tham số ngược
-                return bus.getAllDiemCongXetTuyen(PAGE_SIZE, pageIndex);
             }
         };
 
