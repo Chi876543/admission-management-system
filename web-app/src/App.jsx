@@ -7,15 +7,18 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                {/* Dashboard cũ — vẫn truy cập được tại / */}
-                <Route path="/" element={<Dashboard />} />
+                {/* Mặc định vào Student Login */}
+                <Route path="/" element={<Navigate to="/student-login" replace />} />
 
-                {/* Portal thí sinh mới */}
+                {/* Portal thí sinh */}
                 <Route path="/student-login" element={<StudentLogin />} />
                 <Route path="/student-dashboard" element={<StudentDashboard />} />
 
+                {/* Trang tra cứu cũ */}
+                <Route path="/tra-cuu" element={<Dashboard />} />
+
                 {/* Fallback */}
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<Navigate to="/student-login" replace />} />
             </Routes>
         </BrowserRouter>
     );

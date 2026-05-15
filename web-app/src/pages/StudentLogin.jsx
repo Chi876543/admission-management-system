@@ -1,31 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { studentApi } from "../services/api";
+import { Form, Input, Button, Alert, Card, Typography, Space } from "antd";
+import { IdcardOutlined, CalendarOutlined, LoginOutlined } from "@ant-design/icons";
+
+const { Title, Text, Paragraph } = Typography;
 
 export default function StudentLogin() {
     const navigate = useNavigate();
-    const [cccd, setCccd] = useState("");
-    const [ngaySinh, setNgaySinh] = useState("");
+    const [form] = Form.useForm();
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (values) => {
+        const { cccd, ngaySinh } = values;
         setError("");
-
-        if (!/^\d{9,12}$/.test(cccd)) {
-            setError("CCCD phải gồm 9–12 chữ số.");
-            return;
-        }
-        if (!/^\d{8}$/.test(ngaySinh)) {
-            setError("Ngày sinh phải đúng 8 chữ số (DDMMYYYY). Ví dụ: 15032005");
-            return;
-        }
-
         setLoading(true);
         try {
             const data = await studentApi.login(cccd, ngaySinh);
-            // Lưu session vào sessionStorage
             sessionStorage.setItem("student_session", JSON.stringify(data));
             navigate("/student-dashboard");
         } catch (err) {
@@ -36,260 +28,136 @@ export default function StudentLogin() {
     };
 
     return (
-        <div style={styles.page}>
-            {/* Background decoration */}
-            <div style={styles.bgCircle1} />
-            <div style={styles.bgCircle2} />
+        <div style={{
+            minHeight: "100vh",
+            background: "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "24px",
+            position: "relative",
+            overflow: "hidden",
+        }}>
+            {/* Decorative circles */}
+            <div style={{
+                position: "absolute", width: 450, height: 450, borderRadius: "50%",
+                background: "rgba(24,144,255,0.1)", top: -120, right: -120, pointerEvents: "none",
+            }} />
+            <div style={{
+                position: "absolute", width: 320, height: 320, borderRadius: "50%",
+                background: "rgba(24,144,255,0.08)", bottom: -80, left: -80, pointerEvents: "none",
+            }} />
 
-            <div style={styles.card}>
+            <Card
+                style={{
+                    width: "100%", maxWidth: 440,
+                    borderRadius: 16,
+                    boxShadow: "0 25px 60px rgba(0,0,0,0.4)",
+                    border: "none",
+                    position: "relative", zIndex: 1,
+                }}
+                styles={{ body: { padding: "40px 36px" } }}
+            >
                 {/* Header */}
-                <div style={styles.cardHeader}>
-                    <div style={styles.logoWrap}>
-                        <span style={styles.logoIcon}>🎓</span>
+                <div style={{ textAlign: "center", marginBottom: 32 }}>
+                    <div style={{
+                        width: 68, height: 68, borderRadius: "50%",
+                        background: "linear-gradient(135deg, #1890ff, #096dd9)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        margin: "0 auto 20px",
+                        fontSize: 28,
+                        boxShadow: "0 6px 20px rgba(24,144,255,0.4)",
+                    }}>
+                        🎓
                     </div>
-                    <h1 style={styles.title}>Cổng Thông Tin Thí Sinh</h1>
-                    <p style={styles.subtitle}>
+                    <Title level={3} style={{ margin: "0 0 8px", color: "#0f172a" }}>
+                        Cổng Thông Tin Thí Sinh
+                    </Title>
+                    <Text type="secondary" style={{ fontSize: 14 }}>
                         Đăng nhập để xem kết quả xét tuyển và tra cứu điểm thi
-                    </p>
+                    </Text>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} style={styles.form}>
-                    <div style={styles.fieldGroup}>
-                        <label style={styles.label}>Số CCCD / CMND</label>
-                        <div style={styles.inputWrap}>
-                            <span style={styles.inputIcon}>🪪</span>
-                            <input
-                                type="text"
-                                value={cccd}
-                                onChange={(e) => setCccd(e.target.value.replace(/\D/g, ""))}
-                                placeholder="Nhập số CCCD (9–12 chữ số)"
-                                maxLength={12}
-                                style={styles.input}
-                                autoComplete="username"
-                            />
-                        </div>
-                    </div>
+                <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={handleSubmit}
+                    requiredMark={false}
+                    size="large"
+                >
+                    <Form.Item
+                        label={<Text strong style={{ fontSize: 13 }}>Số CCCD / CMND</Text>}
+                        name="cccd"
+                        rules={[
+                            { required: true, message: "Vui lòng nhập số CCCD" },
+                            { pattern: /^\d{9,12}$/, message: "CCCD phải gồm 9–12 chữ số" },
+                        ]}
+                    >
+                        <Input
+                            prefix={<IdcardOutlined style={{ color: "#bfbfbf" }} />}
+                            placeholder="Nhập số CCCD (9–12 chữ số)"
+                            maxLength={12}
+                            onChange={(e) => form.setFieldValue("cccd", e.target.value.replace(/\D/g, ""))}
+                            style={{ borderRadius: 8, fontFamily: "'Courier New', monospace", letterSpacing: "1px" }}
+                        />
+                    </Form.Item>
 
-                    <div style={styles.fieldGroup}>
-                        <label style={styles.label}>Ngày sinh <span style={styles.hint}>(Mật khẩu: DDMMYYYY)</span></label>
-                        <div style={styles.inputWrap}>
-                            <span style={styles.inputIcon}>📅</span>
-                            <input
-                                type="text"
-                                value={ngaySinh}
-                                onChange={(e) => setNgaySinh(e.target.value.replace(/\D/g, ""))}
-                                placeholder="VD: 15032005"
-                                maxLength={8}
-                                style={styles.input}
-                                autoComplete="current-password"
-                            />
-                        </div>
-                        <p style={styles.fieldNote}>
-                            Định dạng: <strong>DDMMYYYY</strong> — ngày tháng năm sinh liền nhau
-                        </p>
-                    </div>
+                    <Form.Item
+                        label={
+                            <Space>
+                                <Text strong style={{ fontSize: 13 }}>Ngày sinh</Text>
+                                <Text type="secondary" style={{ fontSize: 11, background: "#f0f0f0", padding: "1px 6px", borderRadius: 4 }}>
+                                    Mật khẩu: DDMMYYYY
+                                </Text>
+                            </Space>
+                        }
+                        name="ngaySinh"
+                        rules={[
+                            { required: true, message: "Vui lòng nhập ngày sinh" },
+                            { pattern: /^\d{8}$/, message: "Ngày sinh phải đúng 8 chữ số (DDMMYYYY)" },
+                        ]}
+                        extra={<Text type="secondary" style={{ fontSize: 12 }}>Định dạng: <strong>DDMMYYYY</strong> — VD: 15032005</Text>}
+                    >
+                        <Input
+                            prefix={<CalendarOutlined style={{ color: "#bfbfbf" }} />}
+                            placeholder="VD: 15032005"
+                            maxLength={8}
+                            onChange={(e) => form.setFieldValue("ngaySinh", e.target.value.replace(/\D/g, ""))}
+                            style={{ borderRadius: 8, fontFamily: "'Courier New', monospace", letterSpacing: "2px" }}
+                        />
+                    </Form.Item>
 
                     {error && (
-                        <div style={styles.errorBox}>
-                            <span>⚠️</span> {error}
-                        </div>
+                        <Form.Item>
+                            <Alert message={error} type="error" showIcon style={{ borderRadius: 8 }} />
+                        </Form.Item>
                     )}
 
-                    <button type="submit" style={styles.btn} disabled={loading}>
-                        {loading ? (
-                            <span>⏳ Đang đăng nhập...</span>
-                        ) : (
-                            <span>🔐 Đăng nhập</span>
-                        )}
-                    </button>
-                </form>
+                    <Form.Item style={{ marginBottom: 8 }}>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            loading={loading}
+                            icon={<LoginOutlined />}
+                            block
+                            style={{ height: 48, borderRadius: 8, fontSize: 15, fontWeight: 600 }}
+                        >
+                            Đăng nhập
+                        </Button>
+                    </Form.Item>
+                </Form>
 
-                {/* Footer note */}
-                <div style={styles.footerNote}>
-                    <p>
+                {/* Footer */}
+                <div style={{ textAlign: "center", marginTop: 20 }}>
+                    <Text type="secondary" style={{ fontSize: 13 }}>
                         Tra cứu nhanh (không cần đăng nhập)?{" "}
-                        <a href="/" style={styles.link}>
+                        <a href="/tra-cuu" style={{ color: "#1890ff", fontWeight: 600 }}>
                             Vào trang tra cứu →
                         </a>
-                    </p>
+                    </Text>
                 </div>
-            </div>
+            </Card>
         </div>
     );
 }
-
-const BLUE = "#1a56db";
-const BLUE_LIGHT = "#e8f0fe";
-const DARK = "#0f172a";
-const GRAY = "#64748b";
-
-const styles = {
-    page: {
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px",
-        position: "relative",
-        overflow: "hidden",
-    },
-    bgCircle1: {
-        position: "absolute",
-        width: 400,
-        height: 400,
-        borderRadius: "50%",
-        background: "rgba(26,86,219,0.15)",
-        top: -100,
-        right: -100,
-        pointerEvents: "none",
-    },
-    bgCircle2: {
-        position: "absolute",
-        width: 300,
-        height: 300,
-        borderRadius: "50%",
-        background: "rgba(26,86,219,0.1)",
-        bottom: -80,
-        left: -80,
-        pointerEvents: "none",
-    },
-    card: {
-        background: "#fff",
-        borderRadius: 20,
-        padding: "40px 36px",
-        width: "100%",
-        maxWidth: 440,
-        boxShadow: "0 25px 60px rgba(0,0,0,0.35)",
-        position: "relative",
-        zIndex: 1,
-    },
-    cardHeader: {
-        textAlign: "center",
-        marginBottom: 32,
-    },
-    logoWrap: {
-        width: 64,
-        height: 64,
-        borderRadius: "50%",
-        background: "linear-gradient(135deg, #1a56db, #3b82f6)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        margin: "0 auto 16px",
-        fontSize: 28,
-        boxShadow: "0 4px 16px rgba(26,86,219,0.4)",
-    },
-    logoIcon: { fontSize: 28 },
-    title: {
-        fontSize: 22,
-        fontWeight: 700,
-        color: DARK,
-        margin: "0 0 8px",
-        letterSpacing: "-0.3px",
-    },
-    subtitle: {
-        fontSize: 14,
-        color: GRAY,
-        margin: 0,
-        lineHeight: 1.5,
-    },
-    form: {
-        display: "flex",
-        flexDirection: "column",
-        gap: 20,
-    },
-    fieldGroup: {
-        display: "flex",
-        flexDirection: "column",
-        gap: 6,
-    },
-    label: {
-        fontSize: 13,
-        fontWeight: 600,
-        color: DARK,
-        display: "flex",
-        alignItems: "center",
-        gap: 6,
-    },
-    hint: {
-        fontSize: 11,
-        fontWeight: 400,
-        color: GRAY,
-        background: "#f1f5f9",
-        padding: "2px 6px",
-        borderRadius: 4,
-    },
-    inputWrap: {
-        display: "flex",
-        alignItems: "center",
-        border: "1.5px solid #e2e8f0",
-        borderRadius: 10,
-        background: "#f8fafc",
-        overflow: "hidden",
-        transition: "border-color 0.2s",
-    },
-    inputIcon: {
-        padding: "0 12px",
-        fontSize: 16,
-        borderRight: "1.5px solid #e2e8f0",
-        background: "#f1f5f9",
-        height: 46,
-        display: "flex",
-        alignItems: "center",
-    },
-    input: {
-        border: "none",
-        outline: "none",
-        background: "transparent",
-        padding: "0 14px",
-        height: 46,
-        fontSize: 15,
-        color: DARK,
-        flex: 1,
-        width: "100%",
-        fontFamily: "'Courier New', monospace",
-        letterSpacing: "1px",
-    },
-    fieldNote: {
-        fontSize: 12,
-        color: GRAY,
-        margin: "2px 0 0",
-    },
-    errorBox: {
-        background: "#fef2f2",
-        border: "1px solid #fca5a5",
-        borderRadius: 8,
-        padding: "10px 14px",
-        fontSize: 13,
-        color: "#dc2626",
-        display: "flex",
-        gap: 8,
-        alignItems: "flex-start",
-    },
-    btn: {
-        background: "linear-gradient(135deg, #1a56db, #3b82f6)",
-        color: "#fff",
-        border: "none",
-        borderRadius: 10,
-        height: 48,
-        fontSize: 15,
-        fontWeight: 600,
-        cursor: "pointer",
-        width: "100%",
-        transition: "opacity 0.2s, transform 0.1s",
-        boxShadow: "0 4px 14px rgba(26,86,219,0.4)",
-    },
-    footerNote: {
-        textAlign: "center",
-        marginTop: 24,
-        fontSize: 13,
-        color: GRAY,
-    },
-    link: {
-        color: BLUE,
-        textDecoration: "none",
-        fontWeight: 600,
-    },
-};

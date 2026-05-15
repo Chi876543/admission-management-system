@@ -72,7 +72,7 @@ public class StudentController {
      * Dùng DiemThiXetTuyenBUS để tra cứu điểm theo từng phương thức.
      */
     @GetMapping("/diem-thi")
-    public ResponseEntity<?> getDiemThi(@RequestParam String cccd) {
+    public ResponseEntity<?> getDiemThi(@RequestParam(name = "cccd") String cccd) {
         if (cccd == null || cccd.isBlank()) {
             return ResponseEntity.badRequest().body("Thiếu CCCD");
         }
