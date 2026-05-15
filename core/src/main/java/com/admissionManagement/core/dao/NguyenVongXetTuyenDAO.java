@@ -58,4 +58,12 @@ public class NguyenVongXetTuyenDAO {
                 .setParameter("cccd", cccd)
                 .getResultList();
     }
+
+    public List<NguyenVongXetTuyen> getByKetQuaYesWithSession(Session session) {
+        return session.createQuery(
+                        "FROM NguyenVongXetTuyen nv WHERE nv.ketQua = :ketqua",
+                        NguyenVongXetTuyen.class)
+                .setParameter("ketqua", "yes")
+                .getResultList();
+    }
 }
