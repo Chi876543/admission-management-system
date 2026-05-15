@@ -157,9 +157,9 @@ public class NganhToHopBUS {
              CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
              Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            Map<String, Nganh> cacheNganh = nganhdao.getAllWithSession(session).stream()
+            Map<String, Nganh> cacheNganh = nganhdao.getAllWithSession(session, 0, 0).stream()
                     .collect(Collectors.toMap(Nganh::getMaNganh, n -> n));
-            Map<String, ToHopMonThi> cacheToHop = tohopmonthidao.getAllWithSession(session).stream()
+            Map<String, ToHopMonThi> cacheToHop = tohopmonthidao.getAllWithSession(session, 0, 0).stream()
                     .collect(Collectors.toMap(ToHopMonThi::getMaToHop, t -> t));
 
             String[] line;
@@ -234,9 +234,9 @@ public class NganhToHopBUS {
         }
     }
 
-    public List<NganhToHopDTO> getAllNganhToHop(){
+    public List<NganhToHopDTO> getAllNganhToHop(int pageIndex, int pageSize){
         try(Session session = factory.openSession()){
-            List<NganhToHop> result = dao.getAllWithSession(session);
+            List<NganhToHop> result = dao.getAllWithSession(session, pageIndex, pageSize);
             if(!result.isEmpty())
                 return mapListEntityToListDTO(result);
             return Collections.emptyList();

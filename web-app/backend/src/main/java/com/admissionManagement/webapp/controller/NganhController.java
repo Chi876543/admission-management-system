@@ -18,7 +18,7 @@ public class NganhController {
 
     @GetMapping
     public ResponseEntity<List<NganhDTO>> getAll() {
-        return ResponseEntity.ok(nganhBUS.getAllNganh());
+        return ResponseEntity.ok(nganhBUS.getAllNganh(0, 0));
     }
 
     @GetMapping("/{id}")

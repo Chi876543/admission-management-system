@@ -78,7 +78,7 @@ public class BangQuyDoiBUS {
         }
     }
 
-    public List<BangQuyDoiDTO> getAllBangQuyDoi(String keyWord) {
+    public List<BangQuyDoiDTO> getAllBangQuyDoi(String keyWord, int pageIndex, int pageSize) {
         String phuongThuc = null;
         String toHop = null;
         String mon = null;
@@ -95,7 +95,7 @@ public class BangQuyDoiBUS {
         }
 
         try (Session session = factory.openSession()) {
-            List<BangQuyDoi> result = dao.getAllWithSession(session, phuongThuc, toHop, mon);
+            List<BangQuyDoi> result = dao.getAllWithSession(session, phuongThuc, toHop, mon, pageIndex, pageSize);
             if(!result.isEmpty())
                 return mapListEntityToListDTO(result);
             return java.util.Collections.emptyList();

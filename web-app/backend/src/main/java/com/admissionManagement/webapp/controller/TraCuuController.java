@@ -48,6 +48,6 @@ public class TraCuuController {
      */
     @GetMapping("/nganh")
     public ResponseEntity<List<NganhDTO>> getAllNganh() {
-        return ResponseEntity.ok(nganhBUS.getAllNganh());
+        return ResponseEntity.ok(nganhBUS.getAllNganh(0, 0));
     }
 }

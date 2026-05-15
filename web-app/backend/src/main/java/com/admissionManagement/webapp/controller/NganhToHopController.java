@@ -20,8 +20,8 @@ public class NganhToHopController {
     // Lấy tất cả hoặc lọc theo mã ngành
     @GetMapping
     public ResponseEntity<List<NganhToHopDTO>> getAll(
-            @RequestParam(required = false) String maNganh) {
-        List<NganhToHopDTO> list = nganhToHopBUS.getAllNganhToHop();
+            @RequestParam(name = "maNganh", required = false) String maNganh) {
+        List<NganhToHopDTO> list = nganhToHopBUS.getAllNganhToHop(0, 0);
         if (maNganh != null && !maNganh.isEmpty()) {
             list = list.stream()
                     .filter(dto -> dto.getMaNganh().equals(maNganh))

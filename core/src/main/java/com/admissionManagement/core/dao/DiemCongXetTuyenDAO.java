@@ -21,11 +21,10 @@ public class DiemCongXetTuyenDAO {
     }
 
     public DiemCongXetTuyen getWithSession(Session session, int id){
-        DiemCongXetTuyen diemCongXetTuyen = session.get(DiemCongXetTuyen.class, id);
-        return diemCongXetTuyen;
+        return session.get(DiemCongXetTuyen.class, id);
     }
 
-    public List<DiemCongXetTuyen> getAllWithSession(Session session, String cccd){
+    public List<DiemCongXetTuyen> getAllWithSession(Session session, String cccd, int pageSize, int pageIndex){
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<DiemCongXetTuyen> cq = cb.createQuery(DiemCongXetTuyen.class);
         Root<DiemCongXetTuyen> root = cq.from(DiemCongXetTuyen.class);
@@ -36,14 +35,21 @@ public class DiemCongXetTuyenDAO {
 
         cq.orderBy(cb.desc(root.get("idDiemCong")));
 
-        return session.createQuery(cq).getResultList();
+        if(pageIndex == 0 || pageSize == 0)
+            return session.createQuery(cq).getResultList();
+
+        int offset = pageIndex * pageSize;
+        return session.createQuery(cq).setFirstResult(offset).setMaxResults(pageSize).getResultList();
     }
 
-    public List<DiemCongXetTuyen> getAll(Session session){
-        return session.createQuery(
-                "FROM DiemCongXetTuyen ORDER BY idDiemCong DESC",
-                DiemCongXetTuyen.class
-        ).getResultList();
+    public List<DiemCongXetTuyen> getAll(Session session, int pageSize, int pageIndex){
+        String query = "FROM DiemCongXetTuyen ORDER BY idDiemCong DESC";
+
+        if(pageIndex == 0 || pageSize == 0)
+            return session.createQuery(query, DiemCongXetTuyen.class).list();
+
+        int offset = pageIndex * pageSize;
+        return session.createQuery(query, DiemCongXetTuyen.class).setFirstResult(offset).setMaxResults(pageSize).getResultList();
     }
 
     public List<Predicate> buildConditions(CriteriaBuilder cb, Root<DiemCongXetTuyen> root, String cccd) {

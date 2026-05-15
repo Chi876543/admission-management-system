@@ -17,8 +17,7 @@ public class NganhDAO {
     }
 
     public Nganh getWithSession(Session session, int id){
-        Nganh nganh = session.get(Nganh.class, id);
-        return nganh;
+        return session.get(Nganh.class, id);
     }
 
     public Nganh getByMaNganhWithSession(Session session, String maNganh){
@@ -27,13 +26,16 @@ public class NganhDAO {
                 .uniqueResult();
     }
 
-    public List<Nganh> getAllWithSession(Session session){
+    public List<Nganh> getAllWithSession(Session session, int pageIndex, int pageSize){
         String query = "FROM Nganh";
-        List listNganh = session.createQuery(query).list();
-        return listNganh;
+
+        if(pageIndex == 0 || pageSize == 0)
+            return session.createQuery(query, Nganh.class).getResultList();
+        int offset = pageIndex * pageSize;
+        return session.createQuery(query, Nganh.class).setFirstResult(offset).setMaxResults(pageSize).getResultList();
     }
 
-    public List<NganhWithRegistryCountDTO> getAllWithCountWithSession(Session session){
+    public List<NganhWithRegistryCountDTO> getAllWithCountWithSession(Session session, int pageIndex, int pageSize){
         String hql =
                 "SELECT new com.admissionManagement.core.dto.NganhWithRegistryCountDTO(" +
                 "n.idNganh, n.maNganh, n.tenNganh, n.toHopGoc, n.chiTieu, " +
@@ -46,7 +48,11 @@ public class NganhDAO {
                 "n.diemSan, n.diemTrungTuyen, n.tuyenThang, n.dgnl, n.thpt, n.vsat, " +
                 "n.slXtt, n.slDgnl, n.slVsat, n.slThpt";
 
-        return session.createQuery(hql, NganhWithRegistryCountDTO.class).list();
+        if(pageIndex == 0 || pageSize == 0)
+            return session.createQuery(hql, NganhWithRegistryCountDTO.class).getResultList();
+
+        int offset = pageIndex * pageSize;
+        return session.createQuery(hql, NganhWithRegistryCountDTO.class).setFirstResult(offset).setMaxResults(pageSize).getResultList();
     }
 
     public List<String> getAllMaNganh(Session session) {

@@ -16,8 +16,7 @@ public class DiemThiXetTuyenDAO {
     }
 
     public DiemThiXetTuyen getWithSession(Session session, int id){
-        DiemThiXetTuyen diemThiXetTuyen = session.get(DiemThiXetTuyen.class, id);
-        return diemThiXetTuyen;
+        return session.get(DiemThiXetTuyen.class, id);
     }
 
     public DiemThiXetTuyen getByCccdWithSession(Session session, String cccd) {
@@ -26,10 +25,14 @@ public class DiemThiXetTuyenDAO {
                 .uniqueResult();
     }
 
-    public List<DiemThiXetTuyen> getAllWithSession(Session session){
+    public List<DiemThiXetTuyen> getAllWithSession(Session session, int pageIndex, int pageSize){
         String query = "FROM DiemThiXetTuyen ORDER BY idDiemThi DESC";
-        List listDiemThiXetTuyen = session.createQuery(query).list();
-        return listDiemThiXetTuyen;
+
+        if(pageIndex == 0 || pageSize == 0)
+            return session.createQuery(query, DiemThiXetTuyen.class).getResultList();
+
+        int offset = pageIndex * pageSize;
+        return session.createQuery(query, DiemThiXetTuyen.class).setFirstResult(offset).setMaxResults(pageSize).getResultList();
     }
 
     public void updateWithSession(Session session, DiemThiXetTuyen newDiemThiXetTuyen) {

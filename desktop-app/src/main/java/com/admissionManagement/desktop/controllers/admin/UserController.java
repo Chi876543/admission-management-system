@@ -164,7 +164,7 @@ public class UserController implements Initializable {
 
     // ── Data ──────────────────────────────────────────
     private void loadData() {
-        List<UserDTO> users = userBUS.getAllUsers();
+        List<UserDTO> users = userBUS.getAllUsers(0, 0);
         List<UserRow> rows = new ArrayList<>();
         for (int i = users.size() - 1; i >= 0; i--) {
             UserDTO u = users.get(i);

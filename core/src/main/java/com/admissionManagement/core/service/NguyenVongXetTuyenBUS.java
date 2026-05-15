@@ -118,9 +118,9 @@ public class NguyenVongXetTuyenBUS {
         }
     }
 
-    public List<NguyenVongXetTuyenDTO> getAllNganhToHop(){
+    public List<NguyenVongXetTuyenDTO> getAllNganhToHop(int pagIndex, int pageSize){
         try(Session session = factory.openSession()){
-            List<NguyenVongXetTuyen> result = dao.getAllWithSession(session);
+            List<NguyenVongXetTuyen> result = dao.getAllWithSession(session, pagIndex, pageSize);
             if(!result.isEmpty())
                 return mapListEntityToListDTO(result);
             return Collections.emptyList();

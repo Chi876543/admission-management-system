@@ -107,7 +107,7 @@ public class BangQuyDoiDialogController extends BaseController {
     /** Load mã tổ hợp từ DB và build map tổ hợp → môn */
     private void loadToHopFromDb() {
         try {
-            List<ToHopMonThiDTO> danhSach = toHopBUS.getAllToHopMonThi();
+            List<ToHopMonThiDTO> danhSach = toHopBUS.getAllToHopMonThi(0, 0);
             List<String> maToHopList = danhSach.stream()
                     .map(ToHopMonThiDTO::getMaToHop)
                     .sorted()

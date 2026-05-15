@@ -20,8 +20,7 @@ public class NganhToHopDAO {
 
 
     public NganhToHop getWithSession(Session session, int id){
-        NganhToHop nganhToHop  = session.get(NganhToHop.class, id);
-        return nganhToHop;
+        return session.get(NganhToHop.class, id);
     }
 
     public List<NganhToHop> getAllByMaNganhWithSession(Session session, String maNganh) {
@@ -34,10 +33,14 @@ public class NganhToHopDAO {
 
     }
 
-    public List<NganhToHop> getAllWithSession(Session session){
+    public List<NganhToHop> getAllWithSession(Session session, int pageIndex, int pageSize){
         String query = "FROM NganhToHop ";
-        List listNganhToHop = session.createQuery(query).list();
-        return listNganhToHop;
+
+        if (pageIndex == 0 || pageSize == 0)
+            return session.createQuery(query, NganhToHop.class).getResultList();
+
+        int offset = pageIndex * pageSize;
+        return session.createQuery(query, NganhToHop.class).setFirstResult(offset).setMaxResults(pageSize).getResultList();
     }
 
     public void updateWithSession(Session session, NganhToHop newNganhToHop) {

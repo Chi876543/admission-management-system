@@ -76,7 +76,7 @@ public class BangQuyDoiController extends BaseController implements Initializabl
     }
 
     private void loadData() {
-        allData.setAll(bangQuyDoiBUS.getAllBangQuyDoi(""));
+        allData.setAll(bangQuyDoiBUS.getAllBangQuyDoi("", 0, 0));
         lblCount.setText(allData.size() + " bản ghi");
     }
 
@@ -164,7 +164,7 @@ public class BangQuyDoiController extends BaseController implements Initializabl
                 if (row == null) {
                     // ADD: lấy 1 record mới nhất từ DB (id desc → index 0) thêm vào đầu list
                     // Chỉ query để lấy ID thật, không reload toàn bộ
-                    List<BangQuyDoiDTO> fresh = bangQuyDoiBUS.getAllBangQuyDoi("");
+                    List<BangQuyDoiDTO> fresh = bangQuyDoiBUS.getAllBangQuyDoi("", 0, 0);
                     if (!fresh.isEmpty()) {
                         BangQuyDoiDTO newRecord = fresh.get(0); // mới nhất do sắp xếp DESC
                         allData.add(0, newRecord);

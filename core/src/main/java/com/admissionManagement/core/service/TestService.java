@@ -33,7 +33,7 @@ public class TestService {
 
         NganhBUS nganhBUS = new NganhBUS();
 
-        List<NganhWithRegistryCountDTO> ketqua = nganhBUS.getAllNganhWithRegistryCount();
+        List<NganhWithRegistryCountDTO> ketqua = nganhBUS.getAllNganhWithRegistryCount(1, 20);
 
         System.out.println("\n--- DANH SÁCH NGÀNH TUYỂN SINH ---");
         String headerFormat = "| %-10s | %-30s | %-8s | %-8s | %-8s | %-12s |%n";

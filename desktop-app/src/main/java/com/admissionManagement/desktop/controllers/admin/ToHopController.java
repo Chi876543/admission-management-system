@@ -84,7 +84,7 @@ public class ToHopController extends BaseController implements Initializable {
     }
 
     public void loadData() {
-        List<ToHopMonThiDTO> list = new ArrayList<>(toHopBUS.getAllToHopMonThi());
+        List<ToHopMonThiDTO> list = new ArrayList<>(toHopBUS.getAllToHopMonThi(0, 0));
         Collections.reverse(list);
         allData.setAll(list.stream().map(dto -> new ToHopRow(
                 dto.getIdToHop(), dto.getMaToHop(), dto.getTenToHop(),

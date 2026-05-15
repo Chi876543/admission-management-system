@@ -129,9 +129,9 @@ public class ToHopMonThiBUS {
         }
     }
 
-    public List<ToHopMonThiDTO> getAllToHopMonThi(){
+    public List<ToHopMonThiDTO> getAllToHopMonThi(int pageIndex, int pageSize){
         try(Session session = factory.openSession()){
-            List<ToHopMonThi> result = dao.getAllWithSession(session);
+            List<ToHopMonThi> result = dao.getAllWithSession(session, pageIndex, pageSize);
             if(!result.isEmpty())
                 return mapListEntityToListDTO(result);
             return Collections.emptyList();

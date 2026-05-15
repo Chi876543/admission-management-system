@@ -21,9 +21,14 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<User> getAllWithSession(Session session) {
-        return session.createQuery("FROM User ORDER BY id ASC", User.class)
-                .getResultList();
+    public List<User> getAllWithSession(Session session, int pageIndex, int pageSize) {
+        String query = "FROM User ORDER BY id ASC";
+
+        if(pageIndex == 0 || pageSize == 0)
+            return session.createQuery(query, User.class).getResultList();
+
+        int offset = pageIndex * pageSize;
+        return session.createQuery(query, User.class).setFirstResult(offset).setMaxResults(pageSize).getResultList();
     }
 
     public void updateWithSession(Session session, User user) {

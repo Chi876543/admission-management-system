@@ -66,7 +66,7 @@ public class NganhController extends BaseController implements Initializable {
     }
 
     public void loadData() {
-        List<NganhWithRegistryCountDTO> list = new ArrayList<>(nganhBUS.getAllNganhWithRegistryCount());
+        List<NganhWithRegistryCountDTO> list = new ArrayList<>(nganhBUS.getAllNganhWithRegistryCount(0, 0));
         Collections.reverse(list);
         allData.setAll(list.stream().map(dto -> new NganhRow(
                 dto.getIdNganh(), dto.getMaNganh(), dto.getTenNganh(),

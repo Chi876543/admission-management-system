@@ -245,218 +245,229 @@ export default function Dashboard() {
             onCancel={() => { setIsCalcVisible(false); setCalcResultDGNL(null); setCalcResultVSAT(null); }}
             footer={null} width={820} style={{ top: 16 }}>
 
-          <Tabs defaultActiveKey="1" type="card">
-
-            {/* TAB 1: ĐGNL */}
-            <Tabs.TabPane tab="Xét tuyển ĐGNL" key="1">
-              <Form form={formDGNL} layout="vertical" onFinish={onCalculateDGNL}>
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Form.Item label="Điểm ĐGNL (thang 1200)" name="diemDGNL"
-                               rules={[{ required: true }]}>
-                      <InputNumber min={0} max={1200} style={{ width: "100%" }}
-                                   placeholder="VD: 900" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item label="Ngành đăng ký" name="nganhId"
-                               rules={[{ required: true }]}>
-                      <Select placeholder="Chọn ngành" loading={nganhsLoading}>
-                        {nganhs.map(n => (
-                            <Option key={n.idNganh} value={n.idNganh}>{n.tenNganh}</Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={16}>
-                  <Col span={8}>
-                    <Form.Item label="Khu vực" name="khuVuc" initialValue="KV3">
-                      <Select>
-                        <Option value="KV3">KV3 (+0đ)</Option>
-                        <Option value="KV2">KV2 (+0.25đ)</Option>
-                        <Option value="KV2-NT">KV2-NT (+0.5đ)</Option>
-                        <Option value="KV1">KV1 (+0.75đ)</Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Đối tượng" name="doiTuong" initialValue="None">
-                      <Select>
-                        <Option value="None">Không (+0đ)</Option>
-                        <Option value="01">Nhóm ƯT 1 (+2đ)</Option>
-                        <Option value="05">Nhóm ƯT 2 (+1đ)</Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Điểm cộng khác" name="diemCongKhac">
-                      <InputNumber min={0} max={10} step={0.25} style={{ width: "100%" }} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Button type="primary" htmlType="submit" block>TÍNH ĐIỂM ĐGNL</Button>
-              </Form>
-
-              {calcResultDGNL && (
-                  <div style={{ marginTop: 20, padding: 16, background: "#f0f5ff", borderRadius: 8 }}>
-                    <Descriptions bordered size="small" column={1}>
-                      <Descriptions.Item label="Ngành">{calcResultDGNL.nganh}</Descriptions.Item>
-                      <Descriptions.Item label="Điểm quy đổi (thang 30)">
-                        <Text strong type="success">{calcResultDGNL.diemQuyDoi}</Text>
-                      </Descriptions.Item>
-                      <Descriptions.Item label="Tổng điểm ưu tiên">+{calcResultDGNL.tongUuTien}</Descriptions.Item>
-                      <Descriptions.Item label={<Text strong style={{ color: "#f5222d" }}>TỔNG ĐIỂM XÉT TUYỂN</Text>}>
-                        <Text strong style={{ color: "#f5222d", fontSize: 20 }}>{calcResultDGNL.tongXetTuyen}</Text>
-                      </Descriptions.Item>
-                    </Descriptions>
-                    <Space direction="vertical" style={{ width: "100%", marginTop: 12 }}>
-                      <Alert type={calcResultDGNL.datSan ? "success" : "error"} showIcon
-                             message={`Điểm sàn (${calcResultDGNL.diemSan}): ${calcResultDGNL.datSan ? "ĐẠT" : "KHÔNG ĐẠT"}`} />
-                      <Alert type={calcResultDGNL.datChuan ? "success" : "warning"} showIcon
-                             message={`Điểm chuẩn (${calcResultDGNL.diemChuan}): ${calcResultDGNL.datChuan ? "ĐẬU" : "CHƯA ĐẠT"}`} />
-                    </Space>
-                  </div>
-              )}
-            </Tabs.TabPane>
-
-            {/* TAB 2: THPT / V-SAT */}
-            <Tabs.TabPane tab="Xét tuyển THPT / V-SAT" key="2">
-              <Form form={formVSAT} layout="vertical" onFinish={onCalculateVSAT}>
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Form.Item label="Phương thức" name="loaiDiem" initialValue="THPT">
-                      <Radio.Group buttonStyle="solid">
-                        <Radio.Button value="THPT">THPT (thang 10)</Radio.Button>
-                        <Radio.Button value="VSAT">V-SAT (thang 150)</Radio.Button>
-                      </Radio.Group>
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item label="Ngành đăng ký" name="nganhId" rules={[{ required: true }]}>
-                      <Select placeholder="Chọn ngành" loading={nganhsLoading}>
-                        {nganhs.map(n => (
-                            <Option key={n.idNganh} value={n.idNganh}>{n.tenNganh}</Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                </Row>
-
-                <Alert type="info" style={{ marginBottom: 12 }}
-                       message="Nhập điểm các môn bạn có. Môn chưa nhập sẽ được tính là 0." />
-
-                <Row gutter={10}>
-                  {[["toan","Toán"],["ly","Lý"],["hoa","Hóa"],["sinh","Sinh"],
-                    ["van","Văn"],["su","Sử"],["dia","Địa"],["anh","Anh"]].map(([key, label]) => (
-                      <Col span={6} key={key}>
-                        <Form.Item label={label} name={key}>
-                          <InputNumber style={{ width: "100%" }} min={0} max={150} />
+          <Tabs defaultActiveKey="1" type="card" items={[
+            {
+              key: "1",
+              label: "Xét tuyển ĐGNL",
+              children: (
+                <>
+                  <Form form={formDGNL} layout="vertical" onFinish={onCalculateDGNL}>
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        <Form.Item label="Điểm ĐGNL (thang 1200)" name="diemDGNL"
+                                   rules={[{ required: true, message: "Vui lòng nhập điểm ĐGNL!" }]}>
+                          <InputNumber min={0} max={1200} style={{ width: "100%" }}
+                                       placeholder="VD: 900" />
                         </Form.Item>
                       </Col>
-                  ))}
-                </Row>
+                      <Col span={12}>
+                        <Form.Item label="Ngành đăng ký" name="nganhId"
+                                   rules={[{ required: true, message: "Vui lòng chọn ngành!" }]}>
+                          <Select placeholder="Chọn ngành" loading={nganhsLoading}>
+                            {nganhs.map(n => (
+                                <Option key={n.idNganh} value={n.idNganh}>{n.tenNganh}</Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={16}>
+                      <Col span={8}>
+                        <Form.Item label="Khu vực" name="khuVuc" initialValue="KV3">
+                          <Select>
+                            <Option value="KV3">KV3 (+0đ)</Option>
+                            <Option value="KV2">KV2 (+0.25đ)</Option>
+                            <Option value="KV2-NT">KV2-NT (+0.5đ)</Option>
+                            <Option value="KV1">KV1 (+0.75đ)</Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col span={8}>
+                        <Form.Item label="Đối tượng" name="doiTuong" initialValue="None">
+                          <Select>
+                            <Option value="None">Không (+0đ)</Option>
+                            <Option value="01">Nhóm ƯT 1 (+2đ)</Option>
+                            <Option value="05">Nhóm ƯT 2 (+1đ)</Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col span={8}>
+                        <Form.Item label="Điểm cộng khác" name="diemCongKhac">
+                          <InputNumber min={0} max={10} step={0.25} style={{ width: "100%" }} />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Button type="primary" htmlType="submit" block>TÍNH ĐIỂM ĐGNL</Button>
+                  </Form>
 
-                <Row gutter={16}>
-                  <Col span={8}>
-                    <Form.Item label="Khu vực" name="khuVuc" initialValue="KV3">
-                      <Select>
-                        <Option value="KV3">KV3 (+0)</Option>
-                        <Option value="KV2">KV2 (+0.25)</Option>
-                        <Option value="KV2-NT">KV2-NT (+0.5)</Option>
-                        <Option value="KV1">KV1 (+0.75)</Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Đối tượng" name="doiTuong" initialValue="None">
-                      <Select>
-                        <Option value="None">Không</Option>
-                        <Option value="01">Nhóm 1 (+2)</Option>
-                        <Option value="05">Nhóm 2 (+1)</Option>
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                </Row>
+                  {calcResultDGNL && (
+                      <div style={{ marginTop: 20, padding: 16, background: "#f0f5ff", borderRadius: 8 }}>
+                        <Descriptions bordered size="small" column={1}>
+                          <Descriptions.Item label="Ngành">{calcResultDGNL.nganh}</Descriptions.Item>
+                          <Descriptions.Item label="Điểm quy đổi (thang 30)">
+                            <Text strong type="success">{calcResultDGNL.diemQuyDoi}</Text>
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Tổng điểm ưu tiên">+{calcResultDGNL.tongUuTien}</Descriptions.Item>
+                          <Descriptions.Item label={<Text strong style={{ color: "#f5222d" }}>TỔNG ĐIỂM XÉT TUYỂN</Text>}>
+                            <Text strong style={{ color: "#f5222d", fontSize: 20 }}>{calcResultDGNL.tongXetTuyen}</Text>
+                          </Descriptions.Item>
+                        </Descriptions>
+                        <Space direction="vertical" style={{ width: "100%", marginTop: 12 }}>
+                          <Alert type={calcResultDGNL.datSan ? "success" : "error"} showIcon
+                                 message={`Điểm sàn (${calcResultDGNL.diemSan}): ${calcResultDGNL.datSan ? "ĐẠT" : "KHÔNG ĐẠT"}`} />
+                          <Alert type={calcResultDGNL.datChuan ? "success" : "warning"} showIcon
+                                 message={`Điểm chuẩn (${calcResultDGNL.diemChuan}): ${calcResultDGNL.datChuan ? "ĐẬU" : "CHƯA ĐẠT"}`} />
+                        </Space>
+                      </div>
+                  )}
+                </>
+              ),
+            },
+            {
+              key: "2",
+              label: "Xét tuyển THPT / V-SAT",
+              children: (
+                <>
+                  <Form form={formVSAT} layout="vertical" onFinish={onCalculateVSAT}>
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        <Form.Item label="Phương thức" name="loaiDiem" initialValue="THPT">
+                          <Radio.Group buttonStyle="solid">
+                            <Radio.Button value="THPT">THPT (thang 10)</Radio.Button>
+                            <Radio.Button value="VSAT">V-SAT (thang 150)</Radio.Button>
+                          </Radio.Group>
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item label="Ngành đăng ký" name="nganhId"
+                                   rules={[{ required: true, message: "Vui lòng chọn ngành!" }]}>
+                          <Select placeholder="Chọn ngành" loading={nganhsLoading}>
+                            {nganhs.map(n => (
+                                <Option key={n.idNganh} value={n.idNganh}>{n.tenNganh}</Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    </Row>
 
-                <div style={{ background: "#fafafa", padding: 12, borderRadius: 8, marginBottom: 12 }}>
-                  <Text strong style={{ display: "block", marginBottom: 8 }}>Điểm cộng từng môn (nếu có):</Text>
-                  <Form.List name="danhSachMonCong">
-                    {(fields, { add, remove }) => (
-                        <>
-                          {fields.map(({ key, name, ...rest }) => (
-                              <Space key={key} style={{ display: "flex", marginBottom: 8 }} align="baseline">
-                                <Form.Item {...rest} name={[name, "mon"]} rules={[{ required: true }]}>
-                                  <Select placeholder="Môn" style={{ width: 130 }}>
-                                    {[["toan","Toán"],["ly","Lý"],["hoa","Hóa"],["sinh","Sinh"],
-                                      ["van","Văn"],["su","Sử"],["dia","Địa"],["anh","Anh"]].map(([v,l]) => (
-                                        <Option key={v} value={v}>{l}</Option>
-                                    ))}
-                                  </Select>
-                                </Form.Item>
-                                <Form.Item {...rest} name={[name, "diem"]} rules={[{ required: true }]}>
-                                  <InputNumber placeholder="Mức cộng" min={0} max={10} step={0.25} style={{ width: 120 }} />
-                                </Form.Item>
-                                <MinusCircleOutlined onClick={() => remove(name)} style={{ color: "red" }} />
-                              </Space>
-                          ))}
-                          <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                            Thêm môn có điểm cộng
-                          </Button>
-                        </>
-                    )}
-                  </Form.List>
-                </div>
+                    <Alert type="info" style={{ marginBottom: 12 }}
+                           message="Nhập điểm các môn bạn có. Môn chưa nhập sẽ được tính là 0." />
 
-                <Button type="primary" htmlType="submit" block
-                        style={{ background: "#52c41a", borderColor: "#52c41a" }}>
-                  TÍNH ĐIỂM THPT / V-SAT
-                </Button>
-              </Form>
+                    <Row gutter={10}>
+                      {[["toan","Toán"],["ly","Lý"],["hoa","Hóa"],["sinh","Sinh"],
+                        ["van","Văn"],["su","Sử"],["dia","Địa"],["anh","Anh"]].map(([key, label]) => (
+                          <Col span={6} key={key}>
+                            <Form.Item label={label} name={key}>
+                              <InputNumber style={{ width: "100%" }} min={0} max={150} />
+                            </Form.Item>
+                          </Col>
+                      ))}
+                    </Row>
 
-              {calcResultVSAT && (
-                  <div style={{ marginTop: 20 }}>
-                    <Title level={5} style={{ textAlign: "center" }}>
-                      Kết quả: <Text type="danger">{calcResultVSAT.nganh}</Text>
-                      <Text type="secondary" style={{ fontSize: 13, fontWeight: 400 }}>
-                        {" "}(Tổ hợp gốc: <Tag color="purple">{calcResultVSAT.toHopGoc}</Tag>
-                        — Ưu tiên: +{calcResultVSAT.tongUuTien})
-                      </Text>
-                    </Title>
-                    <List
-                        grid={{ gutter: 12, column: 2 }}
-                        dataSource={calcResultVSAT.ketQua}
-                        renderItem={item => (
-                            <List.Item>
-                              <Card size="small" bordered
-                                    style={{ borderColor: item.laToHopGoc ? "#1890ff" : "#d9d9d9" }}
-                                    title={
-                                      <>{item.laToHopGoc && <Tag color="blue">GỐC</Tag>}{" "}
-                                        <Tag>{item.maToHop}</Tag> {item.tenMon}</>
-                                    }>
-                                <p>Tổng 3 môn: <Text strong>{item.tong3Mon}</Text></p>
-                                <p>Tổng xét tuyển:{" "}
-                                  <Text strong style={{ color: "#f5222d", fontSize: 16 }}>
-                                    {item.tongXetTuyen}
-                                  </Text>
-                                </p>
-                                <Divider style={{ margin: "8px 0" }} />
-                                <Space>
-                                  <Tag color={item.datSan ? "green" : "red"}>
-                                    Sàn ({calcResultVSAT.diemSan}): {item.datSan ? "ĐẠT" : "TRƯỢT"}
-                                  </Tag>
-                                  <Tag color={item.datChuan ? "green" : "orange"}>
-                                    Chuẩn ({calcResultVSAT.diemChuan}): {item.datChuan ? "ĐẬU" : "CHƯA ĐẠT"}
-                                  </Tag>
-                                </Space>
-                              </Card>
-                            </List.Item>
+                    <Row gutter={16}>
+                      <Col span={8}>
+                        <Form.Item label="Khu vực" name="khuVuc" initialValue="KV3">
+                          <Select>
+                            <Option value="KV3">KV3 (+0)</Option>
+                            <Option value="KV2">KV2 (+0.25)</Option>
+                            <Option value="KV2-NT">KV2-NT (+0.5)</Option>
+                            <Option value="KV1">KV1 (+0.75)</Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col span={8}>
+                        <Form.Item label="Đối tượng" name="doiTuong" initialValue="None">
+                          <Select>
+                            <Option value="None">Không</Option>
+                            <Option value="01">Nhóm 1 (+2)</Option>
+                            <Option value="05">Nhóm 2 (+1)</Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+
+                    <div style={{ background: "#fafafa", padding: 12, borderRadius: 8, marginBottom: 12 }}>
+                      <Text strong style={{ display: "block", marginBottom: 8 }}>Điểm cộng từng môn (nếu có):</Text>
+                      <Form.List name="danhSachMonCong">
+                        {(fields, { add, remove }) => (
+                            <>
+                              {fields.map(({ key, name, ...rest }) => (
+                                  <Space key={key} style={{ display: "flex", marginBottom: 8 }} align="baseline">
+                                    <Form.Item {...rest} name={[name, "mon"]}
+                                               rules={[{ required: true, message: "Chọn môn!" }]}>
+                                      <Select placeholder="Môn" style={{ width: 130 }}>
+                                        {[["toan","Toán"],["ly","Lý"],["hoa","Hóa"],["sinh","Sinh"],
+                                          ["van","Văn"],["su","Sử"],["dia","Địa"],["anh","Anh"]].map(([v,l]) => (
+                                            <Option key={v} value={v}>{l}</Option>
+                                        ))}
+                                      </Select>
+                                    </Form.Item>
+                                    <Form.Item {...rest} name={[name, "diem"]}
+                                               rules={[{ required: true, message: "Nhập điểm!" }]}>
+                                      <InputNumber placeholder="Mức cộng" min={0} max={10} step={0.25} style={{ width: 120 }} />
+                                    </Form.Item>
+                                    <MinusCircleOutlined onClick={() => remove(name)} style={{ color: "red" }} />
+                                  </Space>
+                              ))}
+                              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                Thêm môn có điểm cộng
+                              </Button>
+                            </>
                         )}
-                    />
-                  </div>
-              )}
-            </Tabs.TabPane>
-          </Tabs>
+                      </Form.List>
+                    </div>
+
+                    <Button type="primary" htmlType="submit" block
+                            style={{ background: "#52c41a", borderColor: "#52c41a" }}>
+                      TÍNH ĐIỂM THPT / V-SAT
+                    </Button>
+                  </Form>
+
+                  {calcResultVSAT && (
+                      <div style={{ marginTop: 20 }}>
+                        <Title level={5} style={{ textAlign: "center" }}>
+                          Kết quả: <Text type="danger">{calcResultVSAT.nganh}</Text>
+                          <Text type="secondary" style={{ fontSize: 13, fontWeight: 400 }}>
+                            {" "}(Tổ hợp gốc: <Tag color="purple">{calcResultVSAT.toHopGoc}</Tag>
+                            — Ưu tiên: +{calcResultVSAT.tongUuTien})
+                          </Text>
+                        </Title>
+                        <List
+                            grid={{ gutter: 12, column: 2 }}
+                            dataSource={calcResultVSAT.ketQua}
+                            renderItem={item => (
+                                <List.Item>
+                                  <Card size="small" bordered
+                                        style={{ borderColor: item.laToHopGoc ? "#1890ff" : "#d9d9d9" }}
+                                        title={
+                                          <>{item.laToHopGoc && <Tag color="blue">GỐC</Tag>}{" "}
+                                            <Tag>{item.maToHop}</Tag> {item.tenMon}</>
+                                        }>
+                                    <p>Tổng 3 môn: <Text strong>{item.tong3Mon}</Text></p>
+                                    <p>Tổng xét tuyển:{" "}
+                                      <Text strong style={{ color: "#f5222d", fontSize: 16 }}>
+                                        {item.tongXetTuyen}
+                                      </Text>
+                                    </p>
+                                    <Divider style={{ margin: "8px 0" }} />
+                                    <Space>
+                                      <Tag color={item.datSan ? "green" : "red"}>
+                                        Sàn ({calcResultVSAT.diemSan}): {item.datSan ? "ĐẠT" : "TRƯỢT"}
+                                      </Tag>
+                                      <Tag color={item.datChuan ? "green" : "orange"}>
+                                        Chuẩn ({calcResultVSAT.diemChuan}): {item.datChuan ? "ĐẬU" : "CHƯA ĐẠT"}
+                                      </Tag>
+                                    </Space>
+                                  </Card>
+                                </List.Item>
+                            )}
+                        />
+                      </div>
+                  )}
+                </>
+              ),
+            },
+          ]} />
         </Modal>
       </div>
   );
