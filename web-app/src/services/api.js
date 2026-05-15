@@ -28,6 +28,25 @@ export const nganhApi = {
     getAll: () => request("/nganh"),
 };
 
+// ── Student Portal (dashboard mới) ─────────────────
+export const studentApi = {
+    /**
+     * Đăng nhập thí sinh: cccd + ngaySinh (DDMMYYYY)
+     * Trả về { thiSinh, nguyenVong }
+     */
+    login: (cccd, ngaySinh) =>
+        request("/student/login", {
+            method: "POST",
+            body: JSON.stringify({ cccd, ngaySinh }),
+        }),
+
+    /**
+     * Lấy bảng điểm thi chi tiết theo CCCD
+     * Trả về DiemThiXetTuyenDTO
+     */
+    getDiemThi: (cccd) => request(`/student/diem-thi?cccd=${cccd}`),
+};
+
 export const toHopApi = {
     getAll: () => request("/to-hop"),
     getByNganh: (maNganh) => request(`/nganh-to-hop?maNganh=${maNganh}`),
