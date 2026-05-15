@@ -2,6 +2,8 @@ package com.admissionManagement.core.service;
 
 import com.admissionManagement.core.dao.*;
 import com.admissionManagement.core.dto.DiemCongXetTuyenDTO;
+import com.admissionManagement.core.dto.DiemCongXetTuyenRequestDTO;
+import com.admissionManagement.core.dto.DiemCongXetTuyenRequestDTO.GiaiThuongHsgDTO;
 import com.admissionManagement.core.entity.*;
 import com.admissionManagement.core.helper.DatabaseHelper;
 import com.admissionManagement.core.util.HibernateUtil;
@@ -59,32 +61,127 @@ public class DiemCongXetTuyenBUS {
         return entities.stream().map(this::toDTO).toList();
     }
 
-    public String addDiemCongXetTuyen(DiemCongXetTuyenDTO diemCongXetTuyenDTO){
+    public String addDiemCongXetTuyen(DiemCongXetTuyenRequestDTO request) {
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
 
-            ThiSinh thiSinhGoc = thisinhdao.getByCccdWithSesstion(session, diemCongXetTuyenDTO.getTsCccd());
+            ThiSinh thiSinhGoc = thisinhdao.getByCccdWithSesstion(session, request.getTsCccd());
             if (thiSinhGoc == null) {
-                return "Lỗi: Không tìm thấy Thí sinh có cccd " + diemCongXetTuyenDTO.getTsCccd();
+                return "Lỗi: Không tìm thấy Thí sinh có CCCD " + request.getTsCccd();
             }
 
-            DiemCongXetTuyen diemCongXetTuyen = new DiemCongXetTuyen();
-            diemCongXetTuyen.setThiSinh(thiSinhGoc);
-            diemCongXetTuyen.setMon(diemCongXetTuyenDTO.getMon());
-            diemCongXetTuyen.setPhuongThuc(diemCongXetTuyenDTO.getPhuongThuc());
-            diemCongXetTuyen.setDiemUtxtToHop(diemCongXetTuyenDTO.getDiemUtxtToHop());
-            diemCongXetTuyen.setDiemUtxtKhongXetToHop(diemCongXetTuyenDTO.getDiemUtxtKhongXetToHop());
-            diemCongXetTuyen.setDiemCc(diemCongXetTuyenDTO.getDiemCc());
-            diemCongXetTuyen.setDiemTongThxt(diemCongXetTuyenDTO.getDiemTongThxt());
-            diemCongXetTuyen.setDiemTongKhongXetThxt(diemCongXetTuyenDTO.getDiemTongKhongXetThxt());
-            diemCongXetTuyen.setGhiChu(diemCongXetTuyenDTO.getGhiChu());
+            List<DiemCongXetTuyen> listDiemCu = dao.getListByCccdWithSession(session, thiSinhGoc.getCccd());
+            Map<String, DiemCongXetTuyen> mapDiemCu = listDiemCu.stream()
+                    .collect(Collectors.toMap(d -> d.getPhuongThuc() + "_" + d.getMon(), d -> d));
 
-            dao.addWithSession(session, diemCongXetTuyen);
+            String[] danhSachPhuongThuc = {"THPT", "DGNL", "VSAT"};
+
+            if (request.getChungChi() != null) {
+                String monMoi = "N1";
+
+                BigDecimal diemQuyDoiThang10 = DatabaseHelper.tinhDiemQuyDoiTuDiemGoc(request.getChungChi());
+                if (diemQuyDoiThang10.compareTo(BigDecimal.ZERO) > 0) {
+                    String mucDiemStr = diemQuyDoiThang10.toString();
+                    String ghiChuMoi = request.getChungChi().getTenChungChi();
+                    if (request.getChungChi().getMucDiem() != null && !request.getChungChi().getMucDiem().trim().isEmpty()) {
+                        ghiChuMoi += " " + request.getChungChi().getMucDiem().trim();
+                    } else if (ghiChuMoi.toUpperCase().contains("TOEIC 4")) {
+                        ghiChuMoi = "TOEIC 4 kỹ năng";
+                    }
+
+                    for (String pt : danhSachPhuongThuc) {
+                        BigDecimal diemCC = DatabaseHelper.tinhDiemChungChiTiengAnh(mucDiemStr, pt);
+
+                        String key = pt + "_" + monMoi;
+                        DiemCongXetTuyen entity = mapDiemCu.get(key);
+                        boolean isNew = false;
+
+                        if (entity == null) {
+                            entity = new DiemCongXetTuyen();
+                            entity.setThiSinh(thiSinhGoc);
+                            entity.setPhuongThuc(pt);
+                            entity.setMon(monMoi);
+                            entity.setDiemUtxtToHop(BigDecimal.ZERO);
+                            entity.setDiemUtxtKhongXetToHop(BigDecimal.ZERO);
+                            entity.setGhiChu(request.getChungChi().getTenChungChi());
+                            isNew = true;
+                            mapDiemCu.put(key, entity);
+                        } else {
+                            String ghiChuCu = entity.getGhiChu() != null ? entity.getGhiChu() : "";
+                            if (ghiChuCu.isEmpty()) {
+                                entity.setGhiChu(ghiChuMoi);
+                            } else if (!ghiChuCu.contains(ghiChuMoi)) {
+                                entity.setGhiChu(ghiChuCu + ", " + ghiChuMoi);
+                            }
+                        }
+                        entity.setDiemCc(diemCC);
+
+                        BigDecimal utxtToHop = entity.getDiemUtxtToHop() != null ? entity.getDiemUtxtToHop() : BigDecimal.ZERO;
+                        BigDecimal utxtKhongToHop = entity.getDiemUtxtKhongXetToHop() != null ? entity.getDiemUtxtKhongXetToHop() : BigDecimal.ZERO;
+
+                        entity.setDiemTongThxt(utxtToHop);
+                        entity.setDiemTongKhongXetThxt(utxtKhongToHop.add(diemCC));
+
+                        if (isNew) {
+                            dao.addWithSession(session, entity);
+                        }
+                    }
+                }
+            }
+
+            if (request.getDanhSachGiaiThuong() != null) {
+                for (GiaiThuongHsgDTO giai : request.getDanhSachGiaiThuong()) {
+                    String ghiChuMoi = "Giải " + giai.getLoaiGiai() + " - Học sinh giỏi cấp " + giai.getCap();
+                    for (String pt : danhSachPhuongThuc) {
+                        BigDecimal[] diemUTXT = DatabaseHelper.tinhDiemUtxt(giai.getCap(), giai.getLoaiGiai(), pt);
+
+                        String key = pt + "_" + giai.getMon();
+                        DiemCongXetTuyen entity = mapDiemCu.get(key);
+                        boolean isNew = false;
+
+                        if (entity == null) {
+                            entity = new DiemCongXetTuyen();
+                            entity.setThiSinh(thiSinhGoc);
+                            entity.setPhuongThuc(pt);
+                            entity.setMon(giai.getMon());
+                            entity.setDiemCc(BigDecimal.ZERO);
+                            entity.setDiemUtxtToHop(BigDecimal.ZERO);
+                            entity.setDiemUtxtKhongXetToHop(BigDecimal.ZERO);
+                            entity.setGhiChu(request.getChungChi().getTenChungChi());
+                            isNew = true;
+                            mapDiemCu.put(key, entity);
+                        } else {
+                            String ghiChuCu = entity.getGhiChu() != null ? entity.getGhiChu() : "";
+                            if (ghiChuCu.isEmpty()) {
+                                entity.setGhiChu(ghiChuMoi);
+                            } else if (!ghiChuCu.contains(ghiChuMoi)) {
+                                entity.setGhiChu(ghiChuCu + ", " + ghiChuMoi);
+                            }
+                        }
+
+                        BigDecimal diemToHopHienTai = entity.getDiemUtxtToHop() != null ? entity.getDiemUtxtToHop() : BigDecimal.ZERO;
+                        BigDecimal diemKhongToHopHienTai = entity.getDiemUtxtKhongXetToHop() != null ? entity.getDiemUtxtKhongXetToHop() : BigDecimal.ZERO;
+
+                        entity.setDiemUtxtToHop(diemToHopHienTai.max(diemUTXT[0]));
+                        entity.setDiemUtxtKhongXetToHop(diemKhongToHopHienTai.max(diemUTXT[1]));
+
+                        BigDecimal cc = entity.getDiemCc() != null ? entity.getDiemCc() : BigDecimal.ZERO;
+
+                        entity.setDiemTongThxt(entity.getDiemUtxtToHop());
+                        entity.setDiemTongKhongXetThxt(entity.getDiemUtxtKhongXetToHop().add(cc));
+
+                        if (isNew) {
+                            dao.addWithSession(session, entity);
+                        }
+                    }
+                }
+            }
 
             tx.commit();
-            return "Added successfully";
+            return "Thêm điểm cộng thành công cho 3 phương thức!";
+
         } catch (Exception e) {
             if(tx != null) tx.rollback();
             e.printStackTrace();
