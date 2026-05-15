@@ -287,6 +287,15 @@ public class DiemThiXetTuyenBUS {
         }
     }
 
+    /** Dùng cho Student Portal: lấy bảng điểm thi theo CCCD thí sinh */
+    public DiemThiXetTuyenDTO getByCccd(String cccd) {
+        try (Session session = factory.openSession()) {
+            DiemThiXetTuyen result = dao.getByCccdWithSession(session, cccd);
+            if (result != null) return toDTO(result);
+            return null;
+        }
+    }
+
     public List<DiemThiXetTuyenDTO> getAllDiemThiXetTuyen(){
         try(Session session = factory.openSession()){
             List<DiemThiXetTuyen> result = dao.getAllWithSession(session);
