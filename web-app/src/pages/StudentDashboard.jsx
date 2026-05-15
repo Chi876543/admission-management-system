@@ -53,6 +53,8 @@ export default function StudentDashboard() {
     // ── Điểm thi chi tiết ────────────────────────────────────────────────
     const [diemThi, setDiemThi]         = useState(null);
     const [diemLoading, setDiemLoading] = useState(false);
+    const [diemError, setDiemError]     = useState("");
+    const [diemLoaded, setDiemLoaded]   = useState(false); // đã từng load (kể cả thất bại)
     const [diemTab, setDiemTab]         = useState("THPT"); // "THPT" | "VSAT" | "DGNL"
 
     // ── Tính điểm (tool) ─────────────────────────────────────────────────
@@ -84,13 +86,20 @@ export default function StudentDashboard() {
 
     // ── Load điểm thi chi tiết ────────────────────────────────────────────
     const loadDiemThi = async () => {
-        if (!thiSinh || diemThi) return;
+        if (!thiSinh || diemLoading) return;
         setDiemLoading(true);
+        setDiemError("");
         try {
             const data = await studentApi.getDiemThi(thiSinh.cccd);
             setDiemThi(data);
-        } catch { setDiemThi(null); }
-        finally { setDiemLoading(false); }
+            setDiemLoaded(true);
+        } catch (err) {
+            setDiemThi(null);
+            setDiemError(err.message || "Không tải được bảng điểm. Vui lòng thử lại.");
+            setDiemLoaded(true);
+        } finally {
+            setDiemLoading(false);
+        }
     };
 
     // ── Logout ────────────────────────────────────────────────────────────
@@ -101,8 +110,16 @@ export default function StudentDashboard() {
 
     // ── Tính điểm ĐGNL ───────────────────────────────────────────────────
     const calcDGNL = () => {
+        setCalcError("");
         const nganh = nganhs.find(n => n.idNganh === parseInt(selectedNganh));
-        if (!nganh || !diemDGNL) return;
+        if (!selectedNganh || !nganh) {
+            setCalcError("Vui lòng chọn ngành xét tuyển.");
+            return;
+        }
+        if (!diemDGNL || parseFloat(diemDGNL) <= 0) {
+            setCalcError("Vui lòng nhập điểm ĐGNL hợp lệ (thang 1200).");
+            return;
+        }
         const diemQuyDoi   = (parseFloat(diemDGNL) * 30) / 1200;
         const tongUuTien   = tinhDiemUuTien(khuVuc, doiTuong) + parseFloat(diemCongKhac || 0);
         const tongXetTuyen = diemQuyDoi + tongUuTien;
@@ -118,8 +135,18 @@ export default function StudentDashboard() {
     };
 
     // ── Tính điểm THPT/VSAT dùng điểm thi thực từ DB ────────────────────
+    const [calcError, setCalcError] = useState("");
+
     const calcTHPTVSAT = () => {
-        if (!diemThi || !selectedNganh) return;
+        setCalcError("");
+        if (!selectedNganh) {
+            setCalcError("Vui lòng chọn ngành xét tuyển.");
+            return;
+        }
+        if (!diemThi) {
+            setCalcError("Chưa có bảng điểm. Vui lòng bấm \"Tải bảng điểm\" ở mục Bảng điểm thi chi tiết trước.");
+            return;
+        }
         const nganh = nganhs.find(n => n.idNganh === parseInt(selectedNganh));
         if (!nganh) return;
 
@@ -253,6 +280,8 @@ export default function StudentDashboard() {
                                                     <span style={{...s.resultBadge, background:"#dcfce7", color:"#16a34a"}}>✅ Trúng tuyển</span>
                                                 ) : nv.ketQua === "duoisan" ? (
                                                     <span style={{...s.resultBadge, background:"#fee2e2", color:"#dc2626"}}>❌ Dưới sàn</span>
+                                                ) : nv.ketQua != null && nv.ketQua !== "" ? (
+                                                    <span style={{...s.resultBadge, background:"#f3f4f6", color:"#374151"}}>ℹ️ {nv.ketQua}</span>
                                                 ) : (
                                                     <span style={{...s.resultBadge, background:"#fef9c3", color:"#854d0e"}}>🔄 Đang xử lý</span>
                                                 )}
@@ -269,14 +298,20 @@ export default function StudentDashboard() {
                 <section style={s.section}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
                         <h2 style={{...s.sectionTitle, marginBottom:0}}>📊 Bảng điểm thi chi tiết</h2>
-                        {!diemThi && !diemLoading && (
+                        {!diemLoading && (
                             <button style={s.loadBtn} onClick={loadDiemThi}>
-                                Tải bảng điểm
+                                {diemLoaded ? "🔄 Tải lại" : "Tải bảng điểm"}
                             </button>
                         )}
                     </div>
 
                     {diemLoading && <div style={s.loadingMsg}>⏳ Đang tải bảng điểm...</div>}
+
+                    {diemError && !diemLoading && (
+                        <div style={{ background:"#fef2f2", border:"1px solid #fca5a5", borderRadius:8, padding:"10px 14px", fontSize:13, color:"#dc2626", marginBottom:12 }}>
+                            ⚠️ {diemError}
+                        </div>
+                    )}
 
                     {diemThi && (
                         <>
@@ -438,11 +473,20 @@ export default function StudentDashboard() {
                                             </button>
                                         ))}
                                     </div>
-                                    {!diemThi && (
-                                        <p style={{ fontSize:12, color:"#b45309", marginTop:8 }}>
-                                            ⚠️ Chưa tải bảng điểm. Nhấn "Tải bảng điểm" ở mục trên trước.
+                                    {!diemThi && !diemLoading && (
+                                        <p style={{ fontSize:13, color:"#b45309", marginTop:8, background:"#fef9c3", borderRadius:6, padding:"8px 12px" }}>
+                                            ⚠️ Chưa có bảng điểm. Vui lòng tải bảng điểm ở mục trên trước khi tính điểm THPT/V-SAT.
                                         </p>
                                     )}
+                                    {diemLoading && (
+                                        <p style={{ fontSize:13, color:"#1d4ed8", marginTop:8 }}>⏳ Đang tải bảng điểm...</p>
+                                    )}
+                                </div>
+                            )}
+
+                            {calcError && (
+                                <div style={{ background:"#fef2f2", border:"1px solid #fca5a5", borderRadius:8, padding:"10px 14px", fontSize:13, color:"#dc2626" }}>
+                                    ⚠️ {calcError}
                                 </div>
                             )}
 
@@ -533,140 +577,154 @@ export default function StudentDashboard() {
 
 // ─── Styles ─────────────────────────────────────────────────────────────────
 const s = {
-    page: { minHeight:"100vh", background:"#f1f5f9" },
+    page: { minHeight:"100vh", background:"#f0f2f5", fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif", fontSize:14 },
     nav: {
-        background:"#fff", borderBottom:"1px solid #e2e8f0",
+        background:"#fff", borderBottom:"1px solid #f0f0f0",
         display:"flex", alignItems:"center", justifyContent:"space-between",
-        padding:"0 24px", height:60, position:"sticky", top:0, zIndex:100,
-        boxShadow:"0 1px 3px rgba(0,0,0,0.08)",
+        padding:"0 24px", height:64, position:"sticky", top:0, zIndex:100,
+        boxShadow:"0 1px 4px rgba(0,21,41,0.08)",
     },
     navBrand: { display:"flex", alignItems:"center", gap:10 },
     navIcon: { fontSize:22 },
-    navTitle: { fontWeight:700, fontSize:16, color:"#0f172a" },
+    navTitle: { fontWeight:600, fontSize:16, color:"#1890ff" },
     navRight: { display:"flex", alignItems:"center", gap:16 },
-    navUser: { fontSize:14, color:"#374151", fontWeight:500 },
+    navUser: { fontSize:14, color:"rgba(0,0,0,0.65)", fontWeight:400 },
     logoutBtn: {
-        border:"1px solid #e2e8f0", background:"#fff", borderRadius:8,
-        padding:"6px 14px", fontSize:13, cursor:"pointer", color:"#dc2626",
+        border:"1px solid #d9d9d9", background:"#fff", borderRadius:6,
+        padding:"5px 15px", fontSize:14, cursor:"pointer", color:"#ff4d4f",
+        transition:"all 0.3s",
     },
     oldDashboardLink: {
-        fontSize:13, color:"#1a56db", textDecoration:"none", fontWeight:500,
+        fontSize:14, color:"#1890ff", textDecoration:"none", fontWeight:400,
     },
     container: { maxWidth:1100, margin:"0 auto", padding:"24px 16px" },
     section: {
-        background:"#fff", borderRadius:16, padding:24,
-        marginBottom:20, boxShadow:"0 1px 4px rgba(0,0,0,0.06)",
+        background:"#fff", borderRadius:8, padding:24,
+        marginBottom:16, boxShadow:"0 1px 2px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.06)",
     },
-    sectionTitle: { fontSize:18, fontWeight:700, color:"#0f172a", marginBottom:20, marginTop:0 },
+    sectionTitle: { fontSize:16, fontWeight:600, color:"rgba(0,0,0,0.85)", marginBottom:20, marginTop:0 },
     infoGrid: {
         display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(220px,1fr))",
         gap:12,
     },
     infoItem: {
-        background:"#f8fafc", borderRadius:10, padding:"12px 14px",
+        background:"#fafafa", borderRadius:6, padding:"12px 14px",
         display:"flex", flexDirection:"column", gap:4,
+        border:"1px solid #f0f0f0",
     },
-    infoLabel: { fontSize:11, color:"#64748b", fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px" },
-    infoValue: { fontSize:14, color:"#0f172a", fontWeight:600 },
+    infoLabel: { fontSize:12, color:"rgba(0,0,0,0.45)", fontWeight:400 },
+    infoValue: { fontSize:14, color:"rgba(0,0,0,0.85)", fontWeight:500 },
     tableWrap: { overflowX:"auto" },
-    table: { width:"100%", borderCollapse:"collapse", fontSize:13 },
+    table: { width:"100%", borderCollapse:"collapse", fontSize:14 },
     th: {
-        background:"#f1f5f9", padding:"10px 12px", textAlign:"left",
-        fontWeight:600, color:"#374151", borderBottom:"2px solid #e2e8f0",
+        background:"#fafafa", padding:"12px 8px", textAlign:"left",
+        fontWeight:500, color:"rgba(0,0,0,0.85)", borderBottom:"1px solid #f0f0f0",
         whiteSpace:"nowrap",
     },
-    td: { padding:"10px 12px", borderBottom:"1px solid #f1f5f9", color:"#374151" },
+    td: { padding:"12px 8px", borderBottom:"1px solid #f0f0f0", color:"rgba(0,0,0,0.65)" },
     badge: {
-        background:"#e0f2fe", color:"#0369a1", padding:"2px 8px",
-        borderRadius:12, fontSize:12, fontWeight:600,
+        background:"#e6f7ff", color:"#1890ff", padding:"2px 8px",
+        borderRadius:4, fontSize:12, fontWeight:500,
+        border:"1px solid #91d5ff",
     },
-    ptBadge: { padding:"3px 10px", borderRadius:12, fontSize:12, fontWeight:600 },
-    resultBadge: { padding:"3px 10px", borderRadius:12, fontSize:12, fontWeight:600, whiteSpace:"nowrap" },
+    ptBadge: { padding:"2px 8px", borderRadius:4, fontSize:12, fontWeight:500, border:"1px solid transparent" },
+    resultBadge: { padding:"2px 8px", borderRadius:4, fontSize:12, fontWeight:500, whiteSpace:"nowrap", border:"1px solid transparent" },
     loadBtn: {
-        background:"linear-gradient(135deg,#1a56db,#3b82f6)",
-        color:"#fff", border:"none", borderRadius:8,
-        padding:"8px 18px", fontSize:13, fontWeight:600, cursor:"pointer",
+        background:"#1890ff",
+        color:"#fff", border:"none", borderRadius:6,
+        padding:"6px 16px", fontSize:14, fontWeight:400, cursor:"pointer",
+        transition:"background 0.3s",
     },
-    loadingMsg: { color:"#64748b", fontSize:14, padding:8 },
+    loadingMsg: { color:"rgba(0,0,0,0.45)", fontSize:14, padding:8 },
     emptyBox: {
-        background:"#f8fafc", border:"1px dashed #cbd5e1",
-        borderRadius:10, padding:"20px", textAlign:"center",
-        color:"#94a3b8", fontSize:14,
+        background:"#fafafa", border:"1px dashed #d9d9d9",
+        borderRadius:6, padding:"20px", textAlign:"center",
+        color:"rgba(0,0,0,0.25)", fontSize:14,
     },
     tabBar: { display:"flex", gap:8, marginBottom:20, flexWrap:"wrap" },
     tabBtn: {
-        border:"1px solid #e2e8f0", background:"#f8fafc", borderRadius:8,
-        padding:"8px 16px", fontSize:13, fontWeight:500, cursor:"pointer", color:"#64748b",
+        border:"1px solid #d9d9d9", background:"#fff", borderRadius:6,
+        padding:"6px 16px", fontSize:14, fontWeight:400, cursor:"pointer", color:"rgba(0,0,0,0.65)",
+        transition:"all 0.3s",
     },
     tabBtnActive: {
-        background:"linear-gradient(135deg,#1a56db,#3b82f6)",
-        color:"#fff", border:"1px solid #1a56db",
+        background:"#1890ff",
+        color:"#fff", border:"1px solid #1890ff",
     },
     scoreGrid: {
         display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(130px,1fr))", gap:12,
     },
     scoreCard: {
-        background:"#f8fafc", borderRadius:12, padding:14,
-        textAlign:"center", borderTop:"3px solid #1a56db",
+        background:"#fafafa", borderRadius:8, padding:14,
+        textAlign:"center", borderTop:"3px solid #1890ff",
+        border:"1px solid #f0f0f0",
     },
-    scoreLabel: { fontSize:11, color:"#64748b", marginBottom:4 },
-    scoreVal: { fontSize:26, fontWeight:700, color:"#1a56db" },
-    scoreScale: { fontSize:11, color:"#94a3b8" },
+    scoreLabel: { fontSize:12, color:"rgba(0,0,0,0.45)", marginBottom:4 },
+    scoreVal: { fontSize:24, fontWeight:600, color:"#1890ff" },
+    scoreScale: { fontSize:12, color:"rgba(0,0,0,0.25)" },
     calcForm: {
-        border:"1px solid #e2e8f0", borderRadius:12, padding:20,
+        border:"1px solid #f0f0f0", borderRadius:8, padding:20,
         background:"#fafafa", display:"flex", flexDirection:"column", gap:16,
         marginBottom:20,
     },
     formRow: { display:"flex", flexDirection:"column", gap:6 },
-    formLabel: { fontSize:13, fontWeight:600, color:"#374151" },
+    formLabel: { fontSize:14, fontWeight:500, color:"rgba(0,0,0,0.85)" },
     select: {
-        border:"1.5px solid #e2e8f0", borderRadius:8, padding:"9px 12px",
-        fontSize:14, color:"#0f172a", background:"#fff",
+        border:"1px solid #d9d9d9", borderRadius:6, padding:"8px 11px",
+        fontSize:14, color:"rgba(0,0,0,0.85)", background:"#fff",
+        outline:"none", cursor:"pointer",
+        transition:"border 0.3s",
     },
     inputField: {
-        border:"1.5px solid #e2e8f0", borderRadius:8, padding:"9px 12px",
-        fontSize:14, color:"#0f172a", background:"#fff",
+        border:"1px solid #d9d9d9", borderRadius:6, padding:"8px 11px",
+        fontSize:14, color:"rgba(0,0,0,0.85)", background:"#fff",
+        outline:"none",
+        transition:"border 0.3s",
     },
     toggleBtn: {
-        border:"1.5px solid #e2e8f0", background:"#fff", borderRadius:8,
-        padding:"8px 16px", fontSize:13, cursor:"pointer", color:"#374151",
+        border:"1px solid #d9d9d9", background:"#fff", borderRadius:6,
+        padding:"6px 16px", fontSize:14, cursor:"pointer", color:"rgba(0,0,0,0.65)",
+        transition:"all 0.3s",
     },
     toggleBtnActive: {
-        background:"#1a56db", color:"#fff", border:"1.5px solid #1a56db",
+        background:"#1890ff", color:"#fff", border:"1px solid #1890ff",
     },
     calcBtn: {
-        background:"linear-gradient(135deg,#0f172a,#1e293b)",
-        color:"#fff", border:"none", borderRadius:10,
-        padding:"12px 20px", fontSize:14, fontWeight:700, cursor:"pointer",
+        background:"#1890ff",
+        color:"#fff", border:"none", borderRadius:6,
+        padding:"9px 16px", fontSize:14, fontWeight:500, cursor:"pointer",
+        transition:"background 0.3s",
     },
     resultBox: {
-        background:"#fff", border:"1.5px solid #e2e8f0", borderRadius:12, padding:20,
+        background:"#fff", border:"1px solid #f0f0f0", borderRadius:8, padding:20,
     },
-    resultTitle: { fontSize:15, fontWeight:700, color:"#0f172a", margin:"0 0 16px" },
+    resultTitle: { fontSize:15, fontWeight:600, color:"rgba(0,0,0,0.85)", margin:"0 0 16px" },
     resultGrid: {
         display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12,
     },
     resultItem: {
-        background:"#f8fafc", borderRadius:8, padding:"12px 14px",
+        background:"#fafafa", borderRadius:6, padding:"12px 14px",
         display:"flex", flexDirection:"column", gap:4,
+        border:"1px solid #f0f0f0",
     },
-    resultLabel: { fontSize:11, color:"#64748b", fontWeight:600, textTransform:"uppercase" },
-    resultNum: { fontSize:22, fontWeight:700, color:"#0f172a" },
+    resultLabel: { fontSize:12, color:"rgba(0,0,0,0.45)", fontWeight:400 },
+    resultNum: { fontSize:20, fontWeight:600, color:"rgba(0,0,0,0.85)" },
     verdict: {
-        padding:"6px 14px", borderRadius:8, fontSize:13, fontWeight:600,
+        padding:"5px 12px", borderRadius:6, fontSize:14, fontWeight:400,
+        border:"1px solid transparent",
     },
     toHopGrid: {
         display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:12,
     },
     toHopCard: {
-        border:"1.5px solid #e2e8f0", borderRadius:12, padding:14, background:"#fff",
+        border:"1px solid #f0f0f0", borderRadius:8, padding:14, background:"#fff",
     },
     toHopHeader: {
         display:"flex", flexDirection:"column", gap:2, marginBottom:10,
     },
     toHopDiem: { display:"flex", flexWrap:"wrap", gap:6, marginBottom:8 },
     monDiem: {
-        background:"#f1f5f9", borderRadius:6, padding:"3px 8px", fontSize:12, color:"#374151",
+        background:"#f5f5f5", borderRadius:4, padding:"2px 8px", fontSize:12, color:"rgba(0,0,0,0.65)",
     },
-    verdictSmall: { padding:"3px 8px", borderRadius:6, fontSize:11, fontWeight:600 },
+    verdictSmall: { padding:"2px 8px", borderRadius:4, fontSize:12, fontWeight:400, border:"1px solid transparent" },
 };
