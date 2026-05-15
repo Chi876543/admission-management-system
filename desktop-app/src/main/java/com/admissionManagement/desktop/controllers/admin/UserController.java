@@ -158,10 +158,11 @@ public class UserController implements Initializable {
 
     /** Load từ DB theo trang — server-side */
     private void loadData(int pageIndex) {
+        String keyword = tfSearch.getText() == null ? "" : tfSearch.getText().trim();
         Task<List<UserDTO>> task = new Task<>() {
             @Override protected List<UserDTO> call() {
-                if (pageIndex == 0) totalRecords = userBUS.getTotal();
-                return userBUS.getAllUsers(pageIndex, PAGE_SIZE);
+                if (pageIndex == 0) totalRecords = userBUS.getTotal(keyword.isEmpty() ? null : keyword);
+                return userBUS.getAllUsers(keyword.isEmpty() ? null : keyword, pageIndex, PAGE_SIZE);
             }
         };
 

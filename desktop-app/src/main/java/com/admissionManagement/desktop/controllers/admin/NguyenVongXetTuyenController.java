@@ -80,13 +80,14 @@ public class NguyenVongXetTuyenController extends BaseController implements Init
     }
 
     private void loadData(int pageIndex) {
+        String keyword = tfSearch != null ? tfSearch.getText().trim() : "";
         Task<List<NguyenVongXetTuyenDTO>> task = new Task<>() {
             @Override
             protected List<NguyenVongXetTuyenDTO> call() {
                 if (pageIndex == 0) {
-                    totalRecords = bus.getTotal();
+                    totalRecords = bus.getTotal(keyword.isEmpty() ? null : keyword);
                 }
-                return bus.getAllNganhToHop(pageIndex, PAGE_SIZE);
+                return bus.getAllNganhToHop(keyword.isEmpty() ? null : keyword, pageIndex, PAGE_SIZE);
             }
         };
 

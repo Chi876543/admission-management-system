@@ -119,14 +119,28 @@ public class NguyenVongXetTuyenBUS {
     }
 
     public long getTotal() {
+        return getTotal(null);
+    }
+
+    public long getTotal(String keyword) {
         try(Session session = factory.openSession()){
+            if (keyword != null && !keyword.trim().isEmpty())
+                return dao.getTotalByCccdWithSession(session, keyword);
             return dao.getTotalWithSession(session);
         }
     }
 
     public List<NguyenVongXetTuyenDTO> getAllNganhToHop(int pagIndex, int pageSize){
+        return getAllNganhToHop(null, pagIndex, pageSize);
+    }
+
+    public List<NguyenVongXetTuyenDTO> getAllNganhToHop(String keyword, int pagIndex, int pageSize){
         try(Session session = factory.openSession()){
-            List<NguyenVongXetTuyen> result = dao.getAllWithSession(session, pagIndex, pageSize);
+            List<NguyenVongXetTuyen> result;
+            if (keyword != null && !keyword.trim().isEmpty())
+                result = dao.getAllByCccdWithSession(session, keyword, pagIndex, pageSize);
+            else
+                result = dao.getAllWithSession(session, pagIndex, pageSize);
             if(!result.isEmpty())
                 return mapListEntityToListDTO(result);
             return Collections.emptyList();

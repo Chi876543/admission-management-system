@@ -87,18 +87,33 @@ export default function StudentLogin() {
                     size="large"
                 >
                     <Form.Item
-                        label={<Text strong style={{ fontSize: 13 }}>Số CCCD / CMND</Text>}
+                        label={<Text strong style={{ fontSize: 13 }}>Số CCCD / CMND / Mã thí sinh</Text>}
                         name="cccd"
                         rules={[
-                            { required: true, message: "Vui lòng nhập số CCCD" },
-                            { pattern: /^\d{9,12}$/, message: "CCCD phải gồm 9–12 chữ số" },
+                            { required: true, message: "Vui lòng nhập số CCCD hoặc mã thí sinh" },
+                            {
+                                validator: (_, value) => {
+                                    if (!value) return Promise.resolve();
+                                    if (/^\d{9,12}$/.test(value)) return Promise.resolve();
+                                    if (/^TS_\d+$/i.test(value)) return Promise.resolve();
+                                    return Promise.reject("CCCD phải gồm 9–12 chữ số, hoặc mã thí sinh dạng TS_xxxx");
+                                },
+                            },
                         ]}
                     >
                         <Input
                             prefix={<IdcardOutlined style={{ color: "#bfbfbf" }} />}
-                            placeholder="Nhập số CCCD (9–12 chữ số)"
-                            maxLength={12}
-                            onChange={(e) => form.setFieldValue("cccd", e.target.value.replace(/\D/g, ""))}
+                            placeholder="Nhập CCCD (9–12 chữ số) hoặc TS_xxxx"
+                            maxLength={20}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                // Chỉ strip ký tự không hợp lệ, giữ lại TS_ prefix
+                                if (/^ts_?/i.test(val)) {
+                                    form.setFieldValue("cccd", val.toUpperCase());
+                                } else {
+                                    form.setFieldValue("cccd", val.replace(/\D/g, ""));
+                                }
+                            }}
                             style={{ borderRadius: 8, fontFamily: "'Courier New', monospace", letterSpacing: "1px" }}
                         />
                     </Form.Item>

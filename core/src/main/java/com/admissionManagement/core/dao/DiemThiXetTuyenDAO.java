@@ -28,7 +28,7 @@ public class DiemThiXetTuyenDAO {
     public List<DiemThiXetTuyen> getAllWithSession(Session session, int pageIndex, int pageSize){
         String query = "FROM DiemThiXetTuyen ORDER BY idDiemThi DESC";
 
-        if(pageIndex == 0 || pageSize == 0)
+        if(pageSize <= 0)
             return session.createQuery(query, DiemThiXetTuyen.class).getResultList();
 
         int offset = pageIndex * pageSize;

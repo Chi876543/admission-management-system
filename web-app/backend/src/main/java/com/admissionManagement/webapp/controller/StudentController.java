@@ -35,17 +35,19 @@ public class StudentController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-        String cccd = body.get("cccd");
+        String cccdRaw = body.get("cccd");
         String ngaySinhRaw = body.get("ngaySinh"); // DDMMYYYY
 
-        if (cccd == null || ngaySinhRaw == null) {
+        if (cccdRaw == null || ngaySinhRaw == null) {
             return ResponseEntity.badRequest().body("Thiếu CCCD hoặc ngày sinh");
         }
+
+        String cccd = cccdRaw.trim();
 
         // Format ngày sinh từ DDMMYYYY → DD/MM/YYYY (format lưu trong DB)
         String ngaySinhFormatted = ngaySinhRaw.replaceAll("(\\d{2})(\\d{2})(\\d{4})", "$1/$2/$3");
 
-        // Tìm thí sinh theo CCCD
+        // Tìm thí sinh theo CCCD (hỗ trợ cả CCCD số thông thường và TS_xxxx)
         ThiSinhDTO thiSinh = thiSinhBUS.getByCccd(cccd);
 
         if (thiSinh == null) {
@@ -58,7 +60,7 @@ public class StudentController {
         }
 
         // Lấy danh sách nguyện vọng
-        List<NguyenVongXetTuyenDTO> nguyenVong = nguyenVongBUS.getByThiSinhCccd(cccd);
+        List<NguyenVongXetTuyenDTO> nguyenVong = nguyenVongBUS.getByThiSinhCccd(thiSinh.getCccd());
 
         return ResponseEntity.ok(Map.of(
                 "thiSinh", thiSinh,

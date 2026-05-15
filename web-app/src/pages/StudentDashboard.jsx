@@ -52,11 +52,23 @@ const MON_LABELS_SHORT = {
     diemVan:"Văn", diemSu:"Sử", diemDia:"Địa", n1Thi:"Anh",
 };
 
+// ─── Normalize ketQua value ────────────────────────────────────────────────
+function isKetQuaTrungTuyen(kq) {
+    if (!kq) return false;
+    const v = kq.toString().trim().toLowerCase();
+    return v === "yes" || v === "trúng tuyển" || v === "trung tuyen" || v === "trúng" || v === "trung";
+}
+function isKetQuaDuoiSan(kq) {
+    if (!kq) return false;
+    const v = kq.toString().trim().toLowerCase();
+    return v === "duoisan" || v === "dưới sàn" || v === "duoi san" || v === "không đạt sàn" || v === "khong dat san";
+}
+
 // ─── Kết quả badge ────────────────────────────────────────────────────────────
 function KetQuaBadge({ ketQua }) {
-    if (ketQua === "yes")
+    if (isKetQuaTrungTuyen(ketQua))
         return <Tag icon={<CheckCircleOutlined />} color="success" style={{ fontWeight: 600, fontSize: 13, padding: "3px 10px" }}>Trúng tuyển</Tag>;
-    if (ketQua === "duoisan")
+    if (isKetQuaDuoiSan(ketQua))
         return <Tag icon={<CloseCircleOutlined />} color="error" style={{ fontWeight: 600, fontSize: 13, padding: "3px 10px" }}>Dưới sàn</Tag>;
     if (ketQua != null && ketQua !== "")
         return <Tag color="default" style={{ fontSize: 13, padding: "3px 10px" }}>{ketQua}</Tag>;
@@ -235,8 +247,8 @@ export default function StudentDashboard() {
     ];
 
     // ── Stats từ nguyện vọng ─────────────────────────────────────────────────
-    const soTrungTuyen = nguyenVong.filter(nv => nv.ketQua === "yes" || nv.ketQua === "YES" || nv.ketQua === "trúng tuyển").length;
-    const soDuoiSan = nguyenVong.filter(nv => nv.ketQua === "duoisan" || nv.ketQua === "dưới sàn").length;
+    const soTrungTuyen = nguyenVong.filter(nv => isKetQuaTrungTuyen(nv.ketQua)).length;
+    const soDuoiSan = nguyenVong.filter(nv => isKetQuaDuoiSan(nv.ketQua)).length;
 
     return (
         <Layout style={{ minHeight: "100vh", background: "#f0f2f5" }}>
@@ -318,9 +330,8 @@ export default function StudentDashboard() {
                             scroll={{ x: "max-content" }}
                             size="middle"
                             rowClassName={(record) => {
-                                const kq = record.ketQua;
-                                if (kq === "yes" || kq === "YES") return "nv-row-trung";
-                                if (kq === "duoisan") return "nv-row-truot";
+                                if (isKetQuaTrungTuyen(record.ketQua)) return "nv-row-trung";
+                                if (isKetQuaDuoiSan(record.ketQua)) return "nv-row-truot";
                                 return "";
                             }}
                         />

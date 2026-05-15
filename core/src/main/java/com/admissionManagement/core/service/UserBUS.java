@@ -45,14 +45,22 @@ public class UserBUS {
 
     // ── Lấy tất cả ──────────────────────────────────
     public long getTotal() {
+        return getTotal(null);
+    }
+
+    public long getTotal(String keyword) {
         try(Session session = factory.openSession()){
-            return dao.getTotalWithSession(session);
+            return dao.getTotalWithSession(session, keyword);
         }
     }
 
     public List<UserDTO> getAllUsers(int pageIndex, int pageSize) {
+        return getAllUsers(null, pageIndex, pageSize);
+    }
+
+    public List<UserDTO> getAllUsers(String keyword, int pageIndex, int pageSize) {
         try (Session session = factory.openSession()) {
-            return dao.getAllWithSession(session, pageIndex, pageSize).stream().map(this::toDTO).toList();
+            return dao.getAllWithSession(session, keyword, pageIndex, pageSize).stream().map(this::toDTO).toList();
         }
     }
 

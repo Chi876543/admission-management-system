@@ -35,7 +35,7 @@ public class DiemCongXetTuyenDAO {
 
         cq.orderBy(cb.desc(root.get("idDiemCong")));
 
-        if(pageIndex == 0 || pageSize == 0)
+        if(pageSize <= 0)
             return session.createQuery(cq).getResultList();
 
         int offset = pageIndex * pageSize;
@@ -45,7 +45,7 @@ public class DiemCongXetTuyenDAO {
     public List<DiemCongXetTuyen> getAll(Session session, int pageSize, int pageIndex){
         String query = "FROM DiemCongXetTuyen ORDER BY idDiemCong DESC";
 
-        if(pageIndex == 0 || pageSize == 0)
+        if(pageSize <= 0)
             return session.createQuery(query, DiemCongXetTuyen.class).list();
 
         int offset = pageIndex * pageSize;

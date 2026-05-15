@@ -22,13 +22,35 @@ public class UserDAO {
     }
 
     public List<User> getAllWithSession(Session session, int pageIndex, int pageSize) {
-        String query = "FROM User ORDER BY id ASC";
+        return getAllWithSession(session, null, pageIndex, pageSize);
+    }
 
-        if(pageIndex == 0 || pageSize == 0)
-            return session.createQuery(query, User.class).getResultList();
+    public List<User> getAllWithSession(Session session, String keyword, int pageIndex, int pageSize) {
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        String query = hasKeyword
+                ? "FROM User WHERE LOWER(username) LIKE :kw OR LOWER(hoTen) LIKE :kw OR LOWER(email) LIKE :kw ORDER BY id ASC"
+                : "FROM User ORDER BY id ASC";
+
+        if(pageSize <= 0) {
+            var q = session.createQuery(query, User.class);
+            if (hasKeyword) q.setParameter("kw", "%" + keyword.trim().toLowerCase() + "%");
+            return q.getResultList();
+        }
 
         int offset = pageIndex * pageSize;
-        return session.createQuery(query, User.class).setFirstResult(offset).setMaxResults(pageSize).getResultList();
+        var q = session.createQuery(query, User.class).setFirstResult(offset).setMaxResults(pageSize);
+        if (hasKeyword) q.setParameter("kw", "%" + keyword.trim().toLowerCase() + "%");
+        return q.getResultList();
+    }
+
+    public long getTotalWithSession(Session session, String keyword) {
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        String query = hasKeyword
+                ? "SELECT COUNT(u) FROM User u WHERE LOWER(u.username) LIKE :kw OR LOWER(u.hoTen) LIKE :kw OR LOWER(u.email) LIKE :kw"
+                : "SELECT COUNT(u) FROM User u";
+        var q = session.createQuery(query, Long.class);
+        if (hasKeyword) q.setParameter("kw", "%" + keyword.trim().toLowerCase() + "%");
+        return q.getSingleResult();
     }
 
     public void updateWithSession(Session session, User user) {
@@ -36,7 +58,7 @@ public class UserDAO {
     }
 
     public long getTotalWithSession(Session session) {
-        return session.createQuery("SELECT COUNT(u) FROM User u", Long.class).getSingleResult();
+        return getTotalWithSession(session, null);
     }
 
     public void deleteWithSession(Session session, User user) {

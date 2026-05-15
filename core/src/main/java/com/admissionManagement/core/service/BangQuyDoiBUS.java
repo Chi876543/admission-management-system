@@ -79,8 +79,19 @@ public class BangQuyDoiBUS {
     }
 
     public long getTotal() {
+        return getTotal(null);
+    }
+
+    public long getTotal(String keyword) {
+        String phuongThuc = null, toHop = null, mon = null;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String key = keyword.trim().toUpperCase();
+            if (key.matches("[A-Z]\\d{2}")) toHop = keyword.trim();
+            else if (key.equals("DGNL") || key.equals("VSAT") || key.equals("THPT")) phuongThuc = keyword.trim();
+            else mon = keyword.trim();
+        }
         try(Session session = factory.openSession()){
-            return dao.getTotalWithSession(session);
+            return dao.getTotalWithSession(session, phuongThuc, toHop, mon);
         }
     }
 

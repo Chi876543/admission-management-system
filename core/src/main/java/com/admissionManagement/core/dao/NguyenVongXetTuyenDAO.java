@@ -38,7 +38,7 @@ public class NguyenVongXetTuyenDAO {
     public List<NguyenVongXetTuyen> getAllWithSession(Session session, int pagIndex, int pageSize){
         String query = "FROM NguyenVongXetTuyen ORDER BY idNv DESC";
 
-        if(pagIndex == 0 || pageSize == 0)
+        if(pageSize <= 0)
             return session.createQuery(query, NguyenVongXetTuyen.class).getResultList();
 
         int offset = pagIndex * pageSize;
@@ -51,6 +51,23 @@ public class NguyenVongXetTuyenDAO {
 
     public long getTotalWithSession(Session session) {
         return session.createQuery("SELECT COUNT(n) FROM NguyenVongXetTuyen n", Long.class).getSingleResult();
+    }
+
+    public long getTotalByCccdWithSession(Session session, String cccd) {
+        return session.createQuery(
+                "SELECT COUNT(n) FROM NguyenVongXetTuyen n WHERE n.thiSinh.cccd LIKE :kw", Long.class)
+                .setParameter("kw", "%" + cccd.trim() + "%")
+                .getSingleResult();
+    }
+
+    public List<NguyenVongXetTuyen> getAllByCccdWithSession(Session session, String cccd, int pageIndex, int pageSize) {
+        String hql = "FROM NguyenVongXetTuyen n WHERE n.thiSinh.cccd LIKE :kw ORDER BY n.idNv DESC";
+        int offset = pageIndex * pageSize;
+        return session.createQuery(hql, NguyenVongXetTuyen.class)
+                .setParameter("kw", "%" + cccd.trim() + "%")
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
     public void deleteWithSession(Session session, NguyenVongXetTuyen nguyenVongXetTuyen) {

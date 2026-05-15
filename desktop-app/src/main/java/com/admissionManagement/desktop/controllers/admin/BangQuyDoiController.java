@@ -76,7 +76,7 @@ public class BangQuyDoiController extends BaseController implements Initializabl
             @Override
             protected List<BangQuyDoiDTO> call() {
                 if (pageIndex == 0) {
-                    totalRecords = bangQuyDoiBUS.getTotal();
+                    totalRecords = bangQuyDoiBUS.getTotal(keyword.isEmpty() ? null : keyword);
                 }
                 return bangQuyDoiBUS.getAllBangQuyDoi(keyword, pageIndex, PAGE_SIZE);
             }

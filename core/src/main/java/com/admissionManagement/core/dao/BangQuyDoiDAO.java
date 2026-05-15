@@ -38,7 +38,7 @@ public class BangQuyDoiDAO {
 
         cq.orderBy(cb.desc(root.get("idqd")));
 
-        if(pageIndex == 0 || pageSize == 0)
+        if(pageSize <= 0)
             return session.createQuery(cq).getResultList();
 
         int offset = pageIndex * pageSize;
@@ -68,7 +68,17 @@ public class BangQuyDoiDAO {
     }
 
     public long getTotalWithSession(Session session) {
-        return session.createQuery("SELECT COUNT(b) FROM BangQuyDoi b", Long.class).getSingleResult();
+        return getTotalWithSession(session, null, null, null);
+    }
+
+    public long getTotalWithSession(Session session, String phuongthuc, String tohop, String mon) {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        Root<BangQuyDoi> root = cq.from(BangQuyDoi.class);
+        List<Predicate> conditions = buildConditions(cb, root, phuongthuc, tohop, mon);
+        cq.select(cb.count(root));
+        if (!conditions.isEmpty()) cq.where(conditions.toArray(new Predicate[0]));
+        return session.createQuery(cq).getSingleResult();
     }
 
     public void deleteWithSession(Session session, BangQuyDoi bangQuyDoi) {
