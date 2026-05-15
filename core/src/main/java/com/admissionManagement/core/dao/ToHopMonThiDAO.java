@@ -23,8 +23,7 @@ public class ToHopMonThiDAO {
     }
 
     public ToHopMonThi getWithSession(Session session, int id){
-        ToHopMonThi toHopMonThi = session.get(ToHopMonThi.class, id);
-        return toHopMonThi;
+        return session.get(ToHopMonThi.class, id);
     }
 
     public ToHopMonThi getByMaToHopWithSession(Session session, String maToHop){
@@ -33,10 +32,13 @@ public class ToHopMonThiDAO {
                 .uniqueResult();
     }
 
-    public List<ToHopMonThi> getAllWithSession(Session session){
+    public List<ToHopMonThi> getAllWithSession(Session session, int pageIndex, int pageSize){
         String query = "FROM ToHopMonThi ";
-        List listToHopMonThi= session.createQuery(query).list();
-        return listToHopMonThi;
+
+        if(pageIndex == 0 || pageSize == 0)
+            return session.createQuery(query, ToHopMonThi.class).getResultList();
+        int offset = pageIndex * pageSize;
+        return session.createQuery(query, ToHopMonThi.class).setFirstResult(offset).setMaxResults(pageSize).getResultList();
     }
 
     public List<String> getAllMaToHop(Session session) {

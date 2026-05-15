@@ -389,16 +389,16 @@ public class DiemCongXetTuyenBUS {
         }
     }
 
-    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyen(){
+    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyen(int pageSize, int pageIndex){
         try(Session session = factory.openSession()){
-            List<DiemCongXetTuyen> result = dao.getAll(session);
+            List<DiemCongXetTuyen> result = dao.getAll(session, pageSize, pageIndex);
             if(!result.isEmpty())
                 return mapListEntityToListDTO(result);
             return java.util.Collections.emptyList();
         }
     }
 
-    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyenWithCccd(String keyword){
+    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyenWithCccd(String keyword, int pageSize, int pageIndex){
         String cccd = null;
 
         if(keyword != null && !keyword.trim().isEmpty()) {
@@ -408,7 +408,7 @@ public class DiemCongXetTuyenBUS {
         }
 
         try(Session session = factory.openSession()){
-            List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAllWithSession(session, cccd);
+            List<DiemCongXetTuyen> listDiemCongXetTuyen = dao.getAllWithSession(session, cccd, pageSize, pageIndex);
             return mapListEntityToListDTO(listDiemCongXetTuyen);
         }
     }

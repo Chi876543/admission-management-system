@@ -115,7 +115,7 @@ public class NguyenVongXetTuyenController
     }
 
     private void loadData() {
-        allData.setAll(bus.getAllNganhToHop());
+        allData.setAll(bus.getAllNganhToHop(0, 0));
         currentPage = 0;
         updatePage();
     }

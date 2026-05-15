@@ -159,7 +159,7 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
 
     /** Load lần đầu hoặc sau import — gọi DB */
     private void loadData() {
-        allData.setAll(bus.getAllDiemThiXetTuyen());
+        allData.setAll(bus.getAllDiemThiXetTuyen(0, 0));
         thongKeData = bus.getThongKeDiem();
         updateStatCards();
         updateChart();

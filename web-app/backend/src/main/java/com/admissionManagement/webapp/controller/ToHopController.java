@@ -18,7 +18,7 @@ public class ToHopController {
 
     @GetMapping
     public ResponseEntity<List<ToHopMonThiDTO>> getAll() {
-        return ResponseEntity.ok(toHopBUS.getAllToHopMonThi());
+        return ResponseEntity.ok(toHopBUS.getAllToHopMonThi(0, 0));
     }
 
     @GetMapping("/{id}")

@@ -23,11 +23,10 @@ public class BangQuyDoiDAO {
     }
 
     public BangQuyDoi getWithSession(Session session, int id){
-        BangQuyDoi bangQuyDoi = session.get(BangQuyDoi.class, id);
-        return bangQuyDoi;
+        return session.get(BangQuyDoi.class, id);
     }
 
-    public List<BangQuyDoi> getAllWithSession(Session session, String phuongthuc, String tohop, String mon){
+    public List<BangQuyDoi> getAllWithSession(Session session, String phuongthuc, String tohop, String mon, int pageIndex, int pageSize){
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<BangQuyDoi> cq = cb.createQuery(BangQuyDoi.class);
         Root<BangQuyDoi> root = cq.from(BangQuyDoi.class);
@@ -39,7 +38,11 @@ public class BangQuyDoiDAO {
 
         cq.orderBy(cb.desc(root.get("idqd")));
 
-        return session.createQuery(cq).getResultList();
+        if(pageIndex == 0 || pageSize == 0)
+            return session.createQuery(cq).getResultList();
+
+        int offset = pageIndex * pageSize;
+        return session.createQuery(cq).setFirstResult(offset).setMaxResults(pageSize).getResultList();
     }
 
     public List<Predicate> buildConditions(CriteriaBuilder cb, Root<BangQuyDoi> root, String phuongthuc, String tohop, String mon) {

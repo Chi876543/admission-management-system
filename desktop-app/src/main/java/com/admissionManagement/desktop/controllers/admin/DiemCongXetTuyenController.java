@@ -157,7 +157,7 @@ public class DiemCongXetTuyenController extends BaseController implements Initia
                     protected ObservableList<DiemCongXetTuyenDTO> call() {
 
                         return FXCollections.observableArrayList(
-                                bus.getAllDiemCongXetTuyen()
+                                bus.getAllDiemCongXetTuyen(0, 0)
                         );
                     }
                 };

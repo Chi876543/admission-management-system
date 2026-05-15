@@ -142,8 +142,8 @@ public class NganhToHopController extends BaseController implements Initializabl
 
     // ── Load ──────────────────────────────────────────
     public void loadAllData() {
-        danhSachNganh.setAll(nganhBUS.getAllNganh());
-        danhSachToHop.setAll(toHopBUS.getAllToHopMonThi());
+        danhSachNganh.setAll(nganhBUS.getAllNganh(0, 0));
+        danhSachToHop.setAll(toHopBUS.getAllToHopMonThi(0, 0));
         cbToHopGan.setItems(danhSachToHop);
         if (selectedNganh != null) {
             selectedNganh = danhSachNganh.stream()
@@ -155,7 +155,7 @@ public class NganhToHopController extends BaseController implements Initializabl
 
     private void loadToHopCuaNganh() {
         if (selectedNganh == null) { toHopCuaNganh.clear(); return; }
-        List<NganhToHopDTO> list = nganhToHopBUS.getAllNganhToHop().stream()
+        List<NganhToHopDTO> list = nganhToHopBUS.getAllNganhToHop(0, 0).stream()
                 .filter(dto -> dto.getMaNganh().equals(selectedNganh.getMaNganh()))
                 .collect(Collectors.toList());
         toHopCuaNganh.setAll(list);
@@ -163,7 +163,7 @@ public class NganhToHopController extends BaseController implements Initializabl
 
     @FXML private void onSearchNganh() {
         String kw = tfSearchNganh.getText().trim().toLowerCase();
-        List<NganhDTO> f = nganhBUS.getAllNganh().stream()
+        List<NganhDTO> f = nganhBUS.getAllNganh(0, 0).stream()
                 .filter(n -> kw.isEmpty()
                         || n.getMaNganh().toLowerCase().contains(kw)
                         || n.getTenNganh().toLowerCase().contains(kw))

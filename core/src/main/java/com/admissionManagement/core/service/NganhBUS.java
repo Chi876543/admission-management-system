@@ -141,18 +141,18 @@ public class NganhBUS {
         }
     }
 
-    public List<NganhDTO> getAllNganh(){
+    public List<NganhDTO> getAllNganh(int pageIndex, int pageSize){
         try(Session session = factory.openSession()){
-            List<Nganh> result = dao.getAllWithSession(session);
+            List<Nganh> result = dao.getAllWithSession(session, pageIndex, pageSize);
             if(!result.isEmpty())
                 return mapListEntityToListDTO(result);
             return Collections.emptyList();
         }
     }
 
-    public List<NganhWithRegistryCountDTO> getAllNganhWithRegistryCount(){
+    public List<NganhWithRegistryCountDTO> getAllNganhWithRegistryCount(int pageIndex, int pageSize){
         try(Session session = factory.openSession()){
-            List<NganhWithRegistryCountDTO> result = dao.getAllWithCountWithSession(session);
+            List<NganhWithRegistryCountDTO> result = dao.getAllWithCountWithSession(session, pageIndex, pageSize);
             if(!result.isEmpty())
                 return result;
             return Collections.emptyList();

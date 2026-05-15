@@ -21,7 +21,7 @@ public class NganhToHopController {
     @GetMapping
     public ResponseEntity<List<NganhToHopDTO>> getAll(
             @RequestParam(name = "maNganh", required = false) String maNganh) {
-        List<NganhToHopDTO> list = nganhToHopBUS.getAllNganhToHop();
+        List<NganhToHopDTO> list = nganhToHopBUS.getAllNganhToHop(0, 0);
         if (maNganh != null && !maNganh.isEmpty()) {
             list = list.stream()
                     .filter(dto -> dto.getMaNganh().equals(maNganh))

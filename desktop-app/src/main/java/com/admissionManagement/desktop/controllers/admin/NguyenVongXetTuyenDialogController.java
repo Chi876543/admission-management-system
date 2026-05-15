@@ -58,7 +58,7 @@ public class NguyenVongXetTuyenDialogController extends BaseController {
     /** Load danh sách mã ngành từ DB thay vì hardcode */
     private void loadDanhSachNganh() {
         try {
-            List<NganhDTO> danhSachNganh = nganhBUS.getAllNganh();
+            List<NganhDTO> danhSachNganh = nganhBUS.getAllNganh(0, 0);
             List<String> maNganhList = danhSachNganh.stream()
                     .map(NganhDTO::getMaNganh)
                     .sorted()

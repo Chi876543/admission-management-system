@@ -32,15 +32,17 @@ public class NguyenVongXetTuyenDAO {
     }
 
     public NguyenVongXetTuyen getWithSession(Session session, int id){
-        NguyenVongXetTuyen nguyenVongXetTuyen = session.get(NguyenVongXetTuyen.class, id);
-        return nguyenVongXetTuyen;
+        return session.get(NguyenVongXetTuyen.class, id);
     }
 
-    public List<NguyenVongXetTuyen> getAllWithSession(Session session){
-        return session.createQuery(
-                "FROM NguyenVongXetTuyen ORDER BY idNv DESC",
-                NguyenVongXetTuyen.class
-        ).getResultList();
+    public List<NguyenVongXetTuyen> getAllWithSession(Session session, int pagIndex, int pageSize){
+        String query = "FROM NguyenVongXetTuyen ORDER BY idNv DESC";
+
+        if(pagIndex == 0 || pageSize == 0)
+            return session.createQuery(query, NguyenVongXetTuyen.class).getResultList();
+
+        int offset = pagIndex * pageSize;
+        return session.createQuery(query, NguyenVongXetTuyen.class).setFirstResult(offset).setMaxResults(pageSize).getResultList();
     }
 
     public void updateWithSession(Session session, NguyenVongXetTuyen newNguyenVongXetTuyen) {
