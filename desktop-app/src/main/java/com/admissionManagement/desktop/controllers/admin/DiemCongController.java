@@ -65,7 +65,10 @@ public class DiemCongController extends BaseController implements Initializable 
                 .filter(r -> kw.isEmpty() || r.getCccd().contains(kw) || r.getHoTen().toLowerCase().contains(kw))
                 .filter(r -> fil == null || r.getLoai().equals(fil))
                 .collect(Collectors.toList());
-        tblDiemCong.setItems(FXCollections.observableArrayList(f));
+        // BUG FIX: phải setItems + refresh() để table hiển thị đúng sau khi filter
+        ObservableList<DiemCongRow> filtered = FXCollections.observableArrayList(f);
+        tblDiemCong.setItems(filtered);
+        tblDiemCong.refresh();
         lblCount.setText(f.size() + " bản ghi");
     }
 

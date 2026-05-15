@@ -55,8 +55,9 @@ public class DiemCongXetTuyenDAO {
     public List<Predicate> buildConditions(CriteriaBuilder cb, Root<DiemCongXetTuyen> root, String cccd) {
         List<Predicate> conditions = new ArrayList<>();
 
+        // BUG FIX: DiemCongXetTuyen không có field "cccd" trực tiếp — phải join qua thiSinh
         if(cccd != null && !cccd.trim().isEmpty())
-            conditions.add(cb.equal(root.get("cccd"), cccd.trim()));
+            conditions.add(cb.equal(root.get("thiSinh").get("cccd"), cccd.trim()));
 
         return conditions;
     }

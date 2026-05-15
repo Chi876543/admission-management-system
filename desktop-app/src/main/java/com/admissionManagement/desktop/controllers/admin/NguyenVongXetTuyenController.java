@@ -84,7 +84,9 @@ public class NguyenVongXetTuyenController extends BaseController implements Init
         Task<List<NguyenVongXetTuyenDTO>> task = new Task<>() {
             @Override
             protected List<NguyenVongXetTuyenDTO> call() {
-                if (pageIndex == 0) {
+                // BUG FIX: luôn cập nhật totalRecords khi pageIndex == 0 hoặc khi có keyword
+                // Trước đây chỉ update khi pageIndex == 0, dẫn đến total sai khi search từ trang > 0
+                if (pageIndex == 0 || !keyword.isEmpty()) {
                     totalRecords = bus.getTotal(keyword.isEmpty() ? null : keyword);
                 }
                 return bus.getAllNganhToHop(keyword.isEmpty() ? null : keyword, pageIndex, PAGE_SIZE);
