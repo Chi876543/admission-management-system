@@ -63,6 +63,10 @@ public class NganhDAO {
         session.merge(newNganh);
     }
 
+    public long getTotalWithSession(Session session) {
+        return session.createQuery("SELECT COUNT(n) FROM Nganh n", Long.class).getSingleResult();
+    }
+
     public void deleteWithSession(Session session, Nganh nganh) {
         session.remove(nganh);
     }

@@ -296,6 +296,12 @@ public class DiemThiXetTuyenBUS {
         }
     }
 
+    public long getTotal() {
+        try(Session session = factory.openSession()){
+            return dao.getTotalWithSession(session);
+        }
+    }
+
     public List<DiemThiXetTuyenDTO> getAllDiemThiXetTuyen(int pageIndex, int pageSize){
         try(Session session = factory.openSession()){
             List<DiemThiXetTuyen> result = dao.getAllWithSession(session, pageIndex, pageSize);

@@ -123,3 +123,19 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+
+/* Kết quả xét tuyển - row highlight */
+.nv-row-trung td {
+  background-color: #f6ffed !important;
+  border-left: 3px solid #52c41a !important;
+}
+.nv-row-trung:hover td {
+  background-color: #d9f7be !important;
+}
+.nv-row-truot td {
+  background-color: #fff2f0 !important;
+  border-left: 3px solid #ff4d4f !important;
+}
+.nv-row-truot:hover td {
+  background-color: #ffccc7 !important;
+}

@@ -39,6 +39,10 @@ public class DiemThiXetTuyenDAO {
         session.merge(newDiemThiXetTuyen);
     }
 
+    public long getTotalWithSession(Session session) {
+        return session.createQuery("SELECT COUNT(d) FROM DiemThiXetTuyen d", Long.class).getSingleResult();
+    }
+
     public void deleteWithSession(Session session, DiemThiXetTuyen diemThiXetTuyen) {
         session.remove(diemThiXetTuyen);
     }

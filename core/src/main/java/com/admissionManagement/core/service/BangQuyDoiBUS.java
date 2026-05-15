@@ -78,6 +78,12 @@ public class BangQuyDoiBUS {
         }
     }
 
+    public long getTotal() {
+        try(Session session = factory.openSession()){
+            return dao.getTotalWithSession(session);
+        }
+    }
+
     public List<BangQuyDoiDTO> getAllBangQuyDoi(String keyWord, int pageIndex, int pageSize) {
         String phuongThuc = null;
         String toHop = null;

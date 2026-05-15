@@ -2,10 +2,10 @@ package com.admissionManagement.desktop.controllers.admin;
 
 import com.admissionManagement.core.dto.BangQuyDoiDTO;
 import com.admissionManagement.core.service.BangQuyDoiBUS;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -16,55 +16,49 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.text.Normalizer;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class BangQuyDoiController extends BaseController implements Initializable {
 
     private final BangQuyDoiBUS bangQuyDoiBUS = new BangQuyDoiBUS();
-
-    private final ObservableList<BangQuyDoiDTO> allData =
-            FXCollections.observableArrayList();
-
-    private FilteredList<BangQuyDoiDTO> filteredData;
+    private final ObservableList<BangQuyDoiDTO> pageData = FXCollections.observableArrayList();
+    private PauseTransition searchDebounce;
+    private long totalRecords = 0;
 
     @FXML private TextField tfSearch;
     @FXML private TableView<BangQuyDoiDTO> tblBangQuyDoi;
-    @FXML private TableColumn<BangQuyDoiDTO, Integer> colId;
-    @FXML private TableColumn<BangQuyDoiDTO, String> colPhuongThuc, colToHop, colMon;
+    @FXML private TableColumn<BangQuyDoiDTO, Integer>    colId;
+    @FXML private TableColumn<BangQuyDoiDTO, String>     colPhuongThuc, colToHop, colMon;
     @FXML private TableColumn<BangQuyDoiDTO, BigDecimal> colDiemA, colDiemB, colDiemC, colDiemD;
     @FXML private Label lblCount;
+    @FXML private Pagination pagination;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         setupTable();
-        loadData();
 
-        filteredData = new FilteredList<>(allData, b -> true);
+        searchDebounce = new PauseTransition(Duration.millis(400));
+        searchDebounce.setOnFinished(e -> loadData(0));
+        tfSearch.textProperty().addListener((obs, old, val) -> searchDebounce.playFromStart());
 
-        tfSearch.textProperty().addListener((obs, oldVal, newVal) -> {
-            String keyword = normalize(newVal);
-            filteredData.setPredicate(item -> {
-                if (keyword.isEmpty()) return true;
-                return String.valueOf(item.getIdqd()).contains(keyword)
-                        || contains(item.getPhuongThuc(), keyword)
-                        || contains(item.getToHop(), keyword)
-                        || contains(item.getMon(), keyword);
-            });
-        });
+        if (pagination != null) {
+            pagination.currentPageIndexProperty().addListener((obs, oldVal, newVal) ->
+                    loadData(newVal.intValue())
+            );
+        }
 
-        SortedList<BangQuyDoiDTO> sortedData = new SortedList<>(filteredData);
-        sortedData.comparatorProperty().bind(tblBangQuyDoi.comparatorProperty());
-        tblBangQuyDoi.setItems(sortedData);
+        loadData(0);
     }
 
     private void setupTable() {
+        tblBangQuyDoi.setItems(pageData);
         colId.setCellValueFactory(new PropertyValueFactory<>("idqd"));
         colPhuongThuc.setCellValueFactory(new PropertyValueFactory<>("phuongThuc"));
         colToHop.setCellValueFactory(new PropertyValueFactory<>("toHop"));
@@ -75,51 +69,56 @@ public class BangQuyDoiController extends BaseController implements Initializabl
         colDiemD.setCellValueFactory(new PropertyValueFactory<>("diemD"));
     }
 
-    private void loadData() {
-        allData.setAll(bangQuyDoiBUS.getAllBangQuyDoi("", 0, 0));
-        lblCount.setText(allData.size() + " bản ghi");
-    }
+    private void loadData(int pageIndex) {
+        String keyword = tfSearch != null ? tfSearch.getText().trim() : "";
 
-    private boolean contains(String source, String keyword) {
-        return normalize(source).contains(keyword);
-    }
+        Task<List<BangQuyDoiDTO>> task = new Task<>() {
+            @Override
+            protected List<BangQuyDoiDTO> call() {
+                if (pageIndex == 0) {
+                    totalRecords = bangQuyDoiBUS.getTotal();
+                }
+                return bangQuyDoiBUS.getAllBangQuyDoi(keyword, pageIndex, PAGE_SIZE);
+            }
+        };
 
-    private String normalize(String text) {
-        if (text == null) return "";
-        String normalized = Normalizer.normalize(text, Normalizer.Form.NFD);
-        return normalized.replaceAll("\\p{M}", "").toLowerCase().trim();
+        task.setOnSucceeded(e -> {
+            pageData.setAll(task.getValue());
+
+            int totalPages = Math.max(1, (int) Math.ceil((double) totalRecords / PAGE_SIZE));
+            if (pagination != null) {
+                pagination.setPageCount(totalPages);
+                if (pagination.getCurrentPageIndex() != pageIndex)
+                    pagination.setCurrentPageIndex(pageIndex);
+            }
+            if (lblCount != null)
+                lblCount.setText(totalRecords + " bản ghi (trang " + (pageIndex + 1) + "/" + totalPages + ")");
+        });
+
+        task.setOnFailed(e -> showError("Lỗi tải dữ liệu: " + task.getException().getMessage()));
+        new Thread(task).start();
     }
 
     @FXML
-    private void onAdd() {
-        openDialog(null);
-    }
+    private void onAdd() { openDialog(null); }
 
     @FXML
     private void onEdit() {
         BangQuyDoiDTO selected = tblBangQuyDoi.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showError("Vui lòng chọn dòng cần sửa.");
-            return;
-        }
+        if (selected == null) { showError("Vui lòng chọn dòng cần sửa."); return; }
         openDialog(selected);
     }
 
     @FXML
     private void onDeleteSelected() {
         BangQuyDoiDTO selected = tblBangQuyDoi.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showError("Vui lòng chọn dòng cần xóa.");
-            return;
-        }
-
+        if (selected == null) { showError("Vui lòng chọn dòng cần xóa."); return; }
         if (confirmDelete("Luật quy đổi ID: " + selected.getIdqd())) {
             String result = bangQuyDoiBUS.deleteBangQuyDoi(selected.getIdqd());
-
             if (!result.startsWith("Lỗi")) {
-                allData.remove(selected); // xóa trực tiếp khỏi list
-                lblCount.setText(allData.size() + " bản ghi");
                 showInfo("Thành công", "Đã xóa bản ghi.");
+                int cur = pagination != null ? pagination.getCurrentPageIndex() : 0;
+                loadData(cur);
             } else {
                 showError(result);
             }
@@ -128,55 +127,38 @@ public class BangQuyDoiController extends BaseController implements Initializabl
 
     @FXML
     private void onImport() {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Chọn file CSV quy đổi");
-        chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("CSV Files", "*.csv")
-        );
-        File file = chooser.showOpenDialog(tblBangQuyDoi.getScene().getWindow());
-        if (file == null) return;
-
-        String result = bangQuyDoiBUS.importCsv(file);
-        showInfo("Kết quả Import", result);
-        // Reload sau import
-        loadData();
-        lblCount.setText(allData.size() + " bản ghi");
+        File file = chooseCSV((Stage) tblBangQuyDoi.getScene().getWindow());
+        if (file != null) {
+            Task<String> importTask = new Task<>() {
+                @Override protected String call() { return bangQuyDoiBUS.importCsv(file); }
+            };
+            importTask.setOnSucceeded(e -> {
+                showInfo("Kết quả Import", importTask.getValue());
+                loadData(0);
+            });
+            importTask.setOnFailed(e -> showError(importTask.getException().getMessage()));
+            new Thread(importTask).start();
+        }
     }
 
     private void openDialog(BangQuyDoiDTO row) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/com/admissionManagement/desktop/views/admin/BangQuyDoiDialogUI.fxml"
-                    )
-            );
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/com/admissionManagement/desktop/views/admin/BangQuyDoiDialogUI.fxml"));
             Parent root = loader.load();
             BangQuyDoiDialogController dialogCtrl = loader.getController();
 
             Stage stage = new Stage();
-            stage.setTitle(row == null ? "Thêm luật mới" : "Cập nhật luật");
+            stage.setTitle(row == null ? "Thêm luật quy đổi" : "Sửa luật quy đổi");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
             dialogCtrl.init(stage, row, bangQuyDoiBUS);
             stage.showAndWait();
 
             if (dialogCtrl.getIsSaved()) {
-                if (row == null) {
-                    // ADD: lấy 1 record mới nhất từ DB (id desc → index 0) thêm vào đầu list
-                    // Chỉ query để lấy ID thật, không reload toàn bộ
-                    List<BangQuyDoiDTO> fresh = bangQuyDoiBUS.getAllBangQuyDoi("", 0, 0);
-                    if (!fresh.isEmpty()) {
-                        BangQuyDoiDTO newRecord = fresh.get(0); // mới nhất do sắp xếp DESC
-                        allData.add(0, newRecord);
-                    }
-                } else {
-                    // EDIT: editingRow đã được sửa trực tiếp (cùng reference trong allData)
-                    // Chỉ cần refresh lại UI
-                    tblBangQuyDoi.refresh();
-                }
-                lblCount.setText(allData.size() + " bản ghi");
+                int cur = pagination != null ? pagination.getCurrentPageIndex() : 0;
+                loadData(cur);
             }
-
         } catch (IOException e) {
             showError("Lỗi giao diện: " + e.getMessage());
         }

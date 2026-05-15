@@ -50,6 +50,10 @@ public class ToHopMonThiDAO {
     }
 
 
+    public long getTotalWithSession(Session session) {
+        return session.createQuery("SELECT COUNT(t) FROM ToHopMonThi t", Long.class).getSingleResult();
+    }
+
     public void deleteWithSession(Session session, ToHopMonThi toHopMonThi) {
         session.remove(toHopMonThi);
     }

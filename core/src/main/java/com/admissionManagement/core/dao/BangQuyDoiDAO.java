@@ -67,6 +67,10 @@ public class BangQuyDoiDAO {
         session.merge(newBangQuyDoi);
     }
 
+    public long getTotalWithSession(Session session) {
+        return session.createQuery("SELECT COUNT(b) FROM BangQuyDoi b", Long.class).getSingleResult();
+    }
+
     public void deleteWithSession(Session session, BangQuyDoi bangQuyDoi) {
         session.remove(bangQuyDoi);
     }

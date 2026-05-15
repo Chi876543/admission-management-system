@@ -49,6 +49,10 @@ public class NguyenVongXetTuyenDAO {
         session.merge(newNguyenVongXetTuyen);
     }
 
+    public long getTotalWithSession(Session session) {
+        return session.createQuery("SELECT COUNT(n) FROM NguyenVongXetTuyen n", Long.class).getSingleResult();
+    }
+
     public void deleteWithSession(Session session, NguyenVongXetTuyen nguyenVongXetTuyen) {
         session.remove(nguyenVongXetTuyen);
     }

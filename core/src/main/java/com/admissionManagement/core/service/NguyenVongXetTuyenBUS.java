@@ -118,6 +118,12 @@ public class NguyenVongXetTuyenBUS {
         }
     }
 
+    public long getTotal() {
+        try(Session session = factory.openSession()){
+            return dao.getTotalWithSession(session);
+        }
+    }
+
     public List<NguyenVongXetTuyenDTO> getAllNganhToHop(int pagIndex, int pageSize){
         try(Session session = factory.openSession()){
             List<NguyenVongXetTuyen> result = dao.getAllWithSession(session, pagIndex, pageSize);
@@ -404,7 +410,7 @@ public class NguyenVongXetTuyenBUS {
 
         BigDecimal diemSan = nganh.getDiemSan();
         String ketqua = "duoisan";
-        if (diemSan.compareTo(diemXetTuyen) < 0) {
+        if (diemSan.compareTo(diemXetTuyen) <= 0) {
             ketqua = "yes";
         }
 

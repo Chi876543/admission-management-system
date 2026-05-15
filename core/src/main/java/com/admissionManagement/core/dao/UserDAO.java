@@ -35,6 +35,10 @@ public class UserDAO {
         session.merge(user);
     }
 
+    public long getTotalWithSession(Session session) {
+        return session.createQuery("SELECT COUNT(u) FROM User u", Long.class).getSingleResult();
+    }
+
     public void deleteWithSession(Session session, User user) {
         session.remove(user);
     }

@@ -89,11 +89,16 @@
         </TableView>
 
         <HBox styleClass="pagination-bar"
-              alignment="CENTER_RIGHT">
+              alignment="CENTER_RIGHT" spacing="12">
 
             <Label fx:id="lblCount"
                    text="0 bản ghi"
                    styleClass="record-count"/>
+
+            <Pagination fx:id="pagination"
+                        pageCount="1"
+                        maxPageIndicatorCount="5"
+                        styleClass="pagination"/>
 
         </HBox>
 

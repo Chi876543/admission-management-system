@@ -223,8 +223,8 @@ export default function StudentDashboard() {
     ];
 
     // ── Stats từ nguyện vọng ─────────────────────────────────────────────────
-    const soTrungTuyen = nguyenVong.filter(nv => nv.ketQua === "yes").length;
-    const soDuoiSan = nguyenVong.filter(nv => nv.ketQua === "duoisan").length;
+    const soTrungTuyen = nguyenVong.filter(nv => nv.ketQua === "yes" || nv.ketQua === "YES" || nv.ketQua === "trúng tuyển").length;
+    const soDuoiSan = nguyenVong.filter(nv => nv.ketQua === "duoisan" || nv.ketQua === "dưới sàn").length;
 
     return (
         <Layout style={{ minHeight: "100vh", background: "#f0f2f5" }}>
@@ -305,7 +305,12 @@ export default function StudentDashboard() {
                             pagination={false}
                             scroll={{ x: "max-content" }}
                             size="middle"
-                            rowClassName={(_, i) => i % 2 === 0 ? "" : "ant-table-row-striped"}
+                            rowClassName={(record) => {
+                                const kq = record.ketQua;
+                                if (kq === "yes" || kq === "YES") return "nv-row-trung";
+                                if (kq === "duoisan") return "nv-row-truot";
+                                return "";
+                            }}
                         />
                     )}
                 </Card>

@@ -141,6 +141,12 @@ public class NganhBUS {
         }
     }
 
+    public long getTotal() {
+        try(Session session = factory.openSession()){
+            return dao.getTotalWithSession(session);
+        }
+    }
+
     public List<NganhDTO> getAllNganh(int pageIndex, int pageSize){
         try(Session session = factory.openSession()){
             List<Nganh> result = dao.getAllWithSession(session, pageIndex, pageSize);

@@ -6,6 +6,7 @@ import com.admissionManagement.core.service.DiemThiXetTuyenBUS;
 import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,7 +16,6 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.Pagination;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -25,22 +25,19 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class DiemThiXetTuyenController extends BaseController implements Initializable {
 
     private final DiemThiXetTuyenBUS bus = new DiemThiXetTuyenBUS();
-    // Toàn bộ dữ liệu – chỉ load 1 lần, không gọi DB lại mỗi thao tác
-    private final ObservableList<DiemThiXetTuyenDTO> allData    = FXCollections.observableArrayList();
-    private final ObservableList<DiemThiXetTuyenDTO> masterData = FXCollections.observableArrayList();
-    private final ObservableList<DiemThiXetTuyenDTO> displayData= FXCollections.observableArrayList();
+    private final ObservableList<DiemThiXetTuyenDTO> pageData = FXCollections.observableArrayList();
     private List<ThongKeDiemDTO> thongKeData;
     private PauseTransition searchDebounce;
+    private long totalRecords = 0;
 
-    private static final int PAGE_SIZE = 50;
-    private int currentPage = 0;
+    // PAGE_SIZE nhỏ hơn để load nhanh hơn
+    private static final int PAGE_SIZE = 20;
 
     // ── Stat cards ───────────────────────────────────
     @FXML private Label lblTbThpt, lblTbVsat, lblTbDgnl, lblDaNhap, lblDaNhapSub;
@@ -56,7 +53,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
     @FXML private TableView<DiemThiXetTuyenDTO> tblDiem;
 
     @FXML private TableColumn<DiemThiXetTuyenDTO, String>     colCccd, colSbd;
-
     @FXML private TableColumn<DiemThiXetTuyenDTO, BigDecimal> colToan, colVan, colLy, colHoa,
             colSinh, colSu, colDia, colTin,
             colKtpl, colN1Thi, colN1Cc;
@@ -73,8 +69,8 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        searchDebounce = new PauseTransition(Duration.millis(300));
-        searchDebounce.setOnFinished(e -> applyFilter());
+        searchDebounce = new PauseTransition(Duration.millis(400));
+        searchDebounce.setOnFinished(e -> loadData(0));
         tfSearch.textProperty().addListener((obs, old, val) -> searchDebounce.playFromStart());
 
         cbLoaiDiem.setItems(FXCollections.observableArrayList("THPT", "VSAT", "ĐGNL", "Năng khiếu"));
@@ -82,15 +78,22 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         cbLoaiDiem.setOnAction(e -> updateChart());
 
         setupTable();
-        loadData();
+
+        // Listener phân trang — chỉ gọi DB khi người dùng bấm nút trang
+        pagination.currentPageIndexProperty().addListener((obs, oldVal, newVal) ->
+                loadData(newVal.intValue())
+        );
+
+        loadData(0);
+        loadStatAndChart();
     }
 
     private void setupTable() {
         tblDiem.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        tblDiem.setItems(pageData);
 
         colCccd.setCellValueFactory(new PropertyValueFactory<>("cccd"));
         colSbd.setCellValueFactory(new PropertyValueFactory<>("soBaoDanh"));
-
         colToan.setCellValueFactory(new PropertyValueFactory<>("diemToan"));
         colVan.setCellValueFactory(new PropertyValueFactory<>("diemVan"));
         colLy.setCellValueFactory(new PropertyValueFactory<>("diemLy"));
@@ -102,7 +105,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         colKtpl.setCellValueFactory(new PropertyValueFactory<>("diemKtpl"));
         colN1Thi.setCellValueFactory(new PropertyValueFactory<>("n1Thi"));
         colN1Cc.setCellValueFactory(new PropertyValueFactory<>("n1Cc"));
-
         colToanVsat.setCellValueFactory(new PropertyValueFactory<>("diemToanVSAT"));
         colVanVsat.setCellValueFactory(new PropertyValueFactory<>("diemVanVSAT"));
         colLyVsat.setCellValueFactory(new PropertyValueFactory<>("diemLyVSAT"));
@@ -111,7 +113,6 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         colSuVsat.setCellValueFactory(new PropertyValueFactory<>("diemSuVSAT"));
         colDiaVsat.setCellValueFactory(new PropertyValueFactory<>("diemDiaVSAT"));
         colN1Vsat.setCellValueFactory(new PropertyValueFactory<>("n1VSAT"));
-
         colNl1.setCellValueFactory(new PropertyValueFactory<>("nl1"));
         colCncn.setCellValueFactory(new PropertyValueFactory<>("cncn"));
         colCnnn.setCellValueFactory(new PropertyValueFactory<>("cnnn"));
@@ -121,66 +122,58 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         colNk4.setCellValueFactory(new PropertyValueFactory<>("nk4"));
         colNk5.setCellValueFactory(new PropertyValueFactory<>("nk5"));
         colNk6.setCellValueFactory(new PropertyValueFactory<>("nk6"));
-
-        tblDiem.setItems(displayData);
     }
 
-    private void refreshPagination() {
-        int totalItems = masterData.size();
-        int totalPages = Math.max(1, (int) Math.ceil((double) totalItems / PAGE_SIZE));
+    /** Load dữ liệu trang từ DB — server-side pagination */
+    private void loadData(int pageIndex) {
+        String keyword = tfSearch.getText().trim();
 
-        if (currentPage >= totalPages) currentPage = totalPages - 1;
-        if (currentPage < 0) currentPage = 0;
+        Task<List<DiemThiXetTuyenDTO>> task = new Task<>() {
+            @Override
+            protected List<DiemThiXetTuyenDTO> call() {
+                // Gọi getTotal mỗi lần search thay đổi (pageIndex == 0)
+                // Khi chỉ chuyển trang, dùng lại totalRecords
+                if (pageIndex == 0) {
+                    totalRecords = bus.getTotal();
+                }
+                return bus.getAllDiemThiXetTuyen(pageIndex, PAGE_SIZE);
+            }
+        };
 
-        int from = currentPage * PAGE_SIZE;
-        int to   = Math.min(from + PAGE_SIZE, totalItems);
-        displayData.setAll(masterData.subList(from, to));
+        task.setOnSucceeded(e -> {
+            pageData.setAll(task.getValue());
 
-        if (lblCount != null) lblCount.setText(totalItems + " bản ghi");
+            int totalPages = (int) Math.ceil((double) totalRecords / PAGE_SIZE);
+            totalPages = Math.max(1, totalPages);
 
-        if (pagination != null) {
-            // Tạm thời gỡ listener để tránh trigger khi set pageCount / currentPage
+            // Tạm gỡ listener để tránh vòng lặp khi setPageCount
             pagination.setPageCount(totalPages);
-            pagination.setCurrentPageIndex(currentPage);
-            pagination.setPageFactory(pageIndex -> {
-                // Mỗi lần Pagination chuyển trang → cập nhật displayData
-                currentPage = pageIndex;
-                int f = currentPage * PAGE_SIZE;
-                int t = Math.min(f + PAGE_SIZE, masterData.size());
-                displayData.setAll(masterData.subList(f, t));
+            if (pagination.getCurrentPageIndex() != pageIndex) {
+                pagination.setCurrentPageIndex(pageIndex);
+            }
 
-                javafx.scene.layout.Region dummyNode = new javafx.scene.layout.Region();
-                dummyNode.setPrefSize(0, 0);
-                return dummyNode;
-            });
-        }
+            lblCount.setText(totalRecords + " bản ghi (trang " + (pageIndex + 1) + "/" + totalPages + ")");
+        });
+
+        task.setOnFailed(e -> showError("Lỗi tải dữ liệu: " + task.getException().getMessage()));
+
+        new Thread(task).start();
     }
 
-
-    /** Load lần đầu hoặc sau import — gọi DB */
-    private void loadData() {
-        allData.setAll(bus.getAllDiemThiXetTuyen(0, 0));
-        thongKeData = bus.getThongKeDiem();
-        updateStatCards();
-        updateChart();
-        applyFilter();
-    }
-
-    /** Lọc từ allData — KHÔNG gọi DB */
-    private void applyFilter() {
-        String key  = tfSearch.getText().trim().toLowerCase();
-
-        List<DiemThiXetTuyenDTO> filtered = new ArrayList<>();
-        for (DiemThiXetTuyenDTO d : allData) {
-            boolean matchKey = key.isEmpty()
-                    || d.getCccd().toLowerCase().contains(key)
-                    || (d.getSoBaoDanh() != null && d.getSoBaoDanh().toLowerCase().contains(key));
-            if (matchKey) filtered.add(d);
-        }
-
-        masterData.setAll(filtered);
-        currentPage = 0;
-        refreshPagination();
+    /** Load thống kê và chart riêng — không block UI */
+    private void loadStatAndChart() {
+        Task<List<ThongKeDiemDTO>> task = new Task<>() {
+            @Override
+            protected List<ThongKeDiemDTO> call() {
+                return bus.getThongKeDiem();
+            }
+        };
+        task.setOnSucceeded(e -> {
+            thongKeData = task.getValue();
+            updateStatCards();
+            updateChart();
+        });
+        new Thread(task).start();
     }
 
     private void updateStatCards() {
@@ -188,34 +181,24 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
 
         thongKeData.stream()
                 .filter(t -> t.getLoaiKyThi().equals("THPT") && t.getSoLuong() > 0)
-                .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh)
-                .average()
-                .ifPresentOrElse(
-                        avg -> lblTbThpt.setText(String.format("%.2f", avg)),
-                        () -> lblTbThpt.setText("--")
-                );
+                .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh).average()
+                .ifPresentOrElse(avg -> lblTbThpt.setText(String.format("%.2f", avg)),
+                        () -> lblTbThpt.setText("--"));
 
         thongKeData.stream()
                 .filter(t -> t.getLoaiKyThi().equals("VSAT") && t.getSoLuong() > 0)
-                .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh)
-                .average()
-                .ifPresentOrElse(
-                        avg -> lblTbVsat.setText(String.format("%.2f", avg)),
-                        () -> lblTbVsat.setText("--")
-                );
+                .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh).average()
+                .ifPresentOrElse(avg -> lblTbVsat.setText(String.format("%.2f", avg)),
+                        () -> lblTbVsat.setText("--"));
 
         thongKeData.stream()
                 .filter(t -> t.getLoaiKyThi().equals("ĐGNL") && t.getSoLuong() > 0)
-                .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh)
-                .average()
-                .ifPresentOrElse(
-                        avg -> lblTbDgnl.setText(String.format("%.2f", avg)),
-                        () -> lblTbDgnl.setText("--")
-                );
+                .mapToDouble(ThongKeDiemDTO::getDiemTrungBinh).average()
+                .ifPresentOrElse(avg -> lblTbDgnl.setText(String.format("%.2f", avg)),
+                        () -> lblTbDgnl.setText("--"));
 
-        long total = allData.size();
-        lblDaNhap.setText(String.valueOf(total));
-        lblDaNhapSub.setText("/ " + total + " thí sinh");
+        lblDaNhap.setText(String.valueOf(totalRecords));
+        lblDaNhapSub.setText("/ " + totalRecords + " thí sinh");
     }
 
     @FXML private void onChartFilter() { updateChart(); }
@@ -224,40 +207,40 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         if (thongKeData == null) return;
         String loai = cbLoaiDiem.getValue();
         if (loai == null) return;
-
         barChart.getData().clear();
         XYChart.Series<String, Number> seriesAvg = new XYChart.Series<>();
         seriesAvg.setName("Điểm TB");
-
         thongKeData.stream()
                 .filter(t -> t.getLoaiKyThi().equals(loai))
                 .forEach(t -> seriesAvg.getData().add(
-                        new XYChart.Data<>(t.getTenMon(), t.getDiemTrungBinh())
-                ));
-
+                        new XYChart.Data<>(t.getTenMon(), t.getDiemTrungBinh())));
         barChart.getData().add(seriesAvg);
     }
 
-    @FXML private void onAdd() { openDialog(null); }
+    @FXML private void onAdd()    { openDialog(null); }
+    @FXML private void onFilter() { loadData(0); }
+    @FXML private void onSearch() { loadData(0); }
 
     @FXML
     private void onEdit() {
         DiemThiXetTuyenDTO selected = tblDiem.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showError("Vui lòng chọn dòng cần sửa.");
-            return;
-        }
+        if (selected == null) { showError("Vui lòng chọn dòng cần sửa."); return; }
         openDialog(selected);
     }
 
     @FXML
     private void onDeleteSelected() {
         DiemThiXetTuyenDTO selected = tblDiem.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showError("Vui lòng chọn dòng cần xóa.");
-            return;
+        if (selected == null) { showError("Vui lòng chọn dòng cần xóa."); return; }
+        if (confirmDelete("Bảng điểm của thí sinh: " + selected.getCccd())) {
+            String result = bus.deleteDiemThiXetTuyen(selected.getCccd());
+            if (result.contains("successfully")) {
+                showInfo("Thành công", "Đã xóa bảng điểm.");
+                loadData(pagination.getCurrentPageIndex());
+            } else {
+                showError(result);
+            }
         }
-        onDelete(selected);
     }
 
     @FXML
@@ -274,40 +257,18 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
         fc.setTitle("Chọn file CSV " + type);
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         File file = fc.showOpenDialog(null);
-
         if (file != null) {
-            String msg = type.equals("VSAT")
-                    ? bus.importVsatCsvData(file)
-                    : bus.importDGNLCsvData(file);
+            String msg = type.equals("VSAT") ? bus.importVsatCsvData(file) : bus.importDGNLCsvData(file);
             showInfo("Kết quả Import", msg);
-            loadData(); // Reload sau import
-        }
-    }
-
-    @FXML private void onFilter() { applyFilter(); }
-    @FXML private void onSearch() { applyFilter(); }
-
-    private void onDelete(DiemThiXetTuyenDTO row) {
-        if (confirmDelete("Bảng điểm của thí sinh: " + row.getCccd())) {
-            String result = bus.deleteDiemThiXetTuyen(row.getCccd());
-            if (result.contains("successfully")) {
-                // Xóa khỏi allData — không gọi DB
-                allData.remove(row);
-                applyFilter();
-                showInfo("Thành công", "Đã xóa bảng điểm.");
-            } else {
-                showError(result);
-            }
+            loadData(0);
+            loadStatAndChart();
         }
     }
 
     private void openDialog(DiemThiXetTuyenDTO row) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/com/admissionManagement/desktop/views/admin/DiemThiXetTuyenDialogUI.fxml"
-                    )
-            );
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/com/admissionManagement/desktop/views/admin/DiemThiXetTuyenDialogUI.fxml"));
             Parent root = loader.load();
             DiemThiXetTuyenDialogController dialogCtrl = loader.getController();
 
@@ -320,39 +281,10 @@ public class DiemThiXetTuyenController extends BaseController implements Initial
             stage.showAndWait();
 
             if (dialogCtrl.getIsSaved()) {
-                DiemThiXetTuyenDTO saved = dialogCtrl.getSavedDTO();
-                if (saved != null) {
-                    if (row == null) {
-                        // THÊM MỚI: thêm vào đầu allData, không getAll
-                        allData.add(0, saved);
-                    } else {
-                        // SỬA: cập nhật tại chỗ trong allData
-                        for (int i = 0; i < allData.size(); i++) {
-                            if (allData.get(i).getCccd().equals(saved.getCccd())) {
-                                allData.set(i, saved);
-                                break;
-                            }
-                        }
-                    }
-                    applyFilter();
-                    // Scroll đến dòng vừa thao tác
-                    scrollToRow(saved);
-                }
+                loadData(pagination.getCurrentPageIndex());
             }
-
         } catch (IOException e) {
             showError("Lỗi giao diện: " + e.getMessage());
-        }
-    }
-
-    /** Scroll và select dòng vừa thêm/sửa trong bảng hiện tại */
-    private void scrollToRow(DiemThiXetTuyenDTO target) {
-        for (int i = 0; i < displayData.size(); i++) {
-            if (displayData.get(i).getCccd().equals(target.getCccd())) {
-                tblDiem.getSelectionModel().select(i);
-                tblDiem.scrollTo(i);
-                return;
-            }
         }
     }
 }

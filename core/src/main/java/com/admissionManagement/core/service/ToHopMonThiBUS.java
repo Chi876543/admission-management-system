@@ -129,6 +129,12 @@ public class ToHopMonThiBUS {
         }
     }
 
+    public long getTotal() {
+        try(Session session = factory.openSession()){
+            return dao.getTotalWithSession(session);
+        }
+    }
+
     public List<ToHopMonThiDTO> getAllToHopMonThi(int pageIndex, int pageSize){
         try(Session session = factory.openSession()){
             List<ToHopMonThi> result = dao.getAllWithSession(session, pageIndex, pageSize);
