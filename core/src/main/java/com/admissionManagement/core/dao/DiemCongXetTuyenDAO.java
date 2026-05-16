@@ -52,12 +52,18 @@ public class DiemCongXetTuyenDAO {
         return session.createQuery(query, DiemCongXetTuyen.class).setFirstResult(offset).setMaxResults(pageSize).getResultList();
     }
 
-    public List<Predicate> buildConditions(CriteriaBuilder cb, Root<DiemCongXetTuyen> root, String cccd) {
+    /**
+     * Build search conditions: keyword khớp CCCD, môn, hoặc phương thức (OR).
+     */
+    public List<Predicate> buildConditions(CriteriaBuilder cb, Root<DiemCongXetTuyen> root, String keyword) {
         List<Predicate> conditions = new ArrayList<>();
 
-        if(cccd != null && !cccd.trim().isEmpty()) {
-            String kw = "%" + cccd.trim() + "%";
-            conditions.add(cb.like(root.get("thiSinh").get("cccd"), kw));
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = "%" + keyword.trim().toLowerCase() + "%";
+            Predicate byCccd       = cb.like(cb.lower(root.get("thiSinh").get("cccd")), kw);
+            Predicate byMon        = cb.like(cb.lower(root.get("mon")), kw);
+            Predicate byPhuongThuc = cb.like(cb.lower(root.get("phuongThuc")), kw);
+            conditions.add(cb.or(byCccd, byMon, byPhuongThuc));
         }
 
         return conditions;
@@ -77,11 +83,18 @@ public class DiemCongXetTuyenDAO {
         return session.createQuery("SELECT COUNT(d) FROM DiemCongXetTuyen d", Long.class).getSingleResult();
     }
 
-    public long getTotalByCccdWithSession(Session session, String cccd) {
-        return session.createQuery(
-                "SELECT COUNT(d) FROM DiemCongXetTuyen d WHERE d.thiSinh.cccd LIKE :cccd", Long.class)
-                .setParameter("cccd", "%" + cccd.trim() + "%")
-                .getSingleResult();
+    public long getTotalByKeyword(Session session, String keyword) {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        Root<DiemCongXetTuyen> root = cq.from(DiemCongXetTuyen.class);
+        cq.select(cb.count(root));
+
+        List<Predicate> conditions = buildConditions(cb, root, keyword);
+        if (!conditions.isEmpty()) {
+            cq.where(conditions.toArray(new Predicate[0]));
+        }
+
+        return session.createQuery(cq).getSingleResult();
     }
 
     public void deleteWithSession(Session session, DiemCongXetTuyen diemCongXetTuyen) {

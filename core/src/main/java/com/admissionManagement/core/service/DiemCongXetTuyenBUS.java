@@ -395,9 +395,9 @@ public class DiemCongXetTuyenBUS {
         }
     }
 
-    public long getTotalByCccd(String cccd) {
+    public long getTotalByKeyword(String keyword) {
         try (Session session = factory.openSession()) {
-            return dao.getTotalByCccdWithSession(session, cccd);
+            return dao.getTotalByKeyword(session, keyword);
         }
     }
 
@@ -410,7 +410,7 @@ public class DiemCongXetTuyenBUS {
         }
     }
 
-    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyenWithCccd(String keyword, int pageSize, int pageIndex){
+    public List<DiemCongXetTuyenDTO> getAllDiemCongXetTuyenWithKeyword(String keyword, int pageSize, int pageIndex){
         String kw = (keyword != null && !keyword.trim().isEmpty()) ? keyword.trim() : null;
 
         try(Session session = factory.openSession()){

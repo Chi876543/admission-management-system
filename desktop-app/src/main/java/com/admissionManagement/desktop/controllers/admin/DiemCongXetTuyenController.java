@@ -83,12 +83,11 @@ public class DiemCongXetTuyenController extends BaseController implements Initia
                     if (pageIndex == 0) {
                         totalRecords = bus.getTotal();
                     }
-                    // getAllDiemCongXetTuyen(pageSize, pageIndex) — lưu ý thứ tự tham số ngược
                     return bus.getAllDiemCongXetTuyen(PAGE_SIZE, pageIndex);
                 } else {
-                    // Tìm theo CCCD — luôn cập nhật total theo keyword
-                    totalRecords = bus.getTotalByCccd(keyword);
-                    return bus.getAllDiemCongXetTuyenWithCccd(keyword, PAGE_SIZE, pageIndex);
+                    // Tìm theo CCCD, môn, hoặc phương thức
+                    totalRecords = bus.getTotalByKeyword(keyword);
+                    return bus.getAllDiemCongXetTuyenWithKeyword(keyword, PAGE_SIZE, pageIndex);
                 }
             }
         };
