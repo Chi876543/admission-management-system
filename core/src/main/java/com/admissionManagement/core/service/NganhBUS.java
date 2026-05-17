@@ -118,10 +118,20 @@ public class NganhBUS {
                     entity.setToHopGoc(line[3].trim());
                     entity.setChiTieu(Integer.parseInt(line[4].trim()));
                     entity.setDiemSan(new BigDecimal(line[5].trim()));
-                    entity.setTuyenThang("1");
-                    entity.setDgnl("1");
-                    entity.setThpt("1");
-                    entity.setVsat("1");
+                    String tenNganh = line[2].trim().toLowerCase();
+                    if (tenNganh.equals("giáo dục mầm non")) {
+                        entity.setThpt("1");
+                    } else if (tenNganh.equals("giáo dục tiểu học")
+                            || tenNganh.equals("giáo dục chính trị")
+                            || tenNganh.contains("sư phạm")) {
+                        entity.setTuyenThang("1");
+                        entity.setThpt("1");
+                    } else {
+                        entity.setThpt("1");
+                        entity.setDgnl("1");
+                        entity.setTuyenThang("1");
+                        entity.setVsat("1");
+                    }
                     session.persist(entity);
                     successCount++;
                 } catch (Exception e) {

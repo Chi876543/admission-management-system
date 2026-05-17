@@ -8,7 +8,7 @@ import {
   SearchOutlined, CalculatorOutlined, PlusOutlined,
   MinusCircleOutlined, TrophyOutlined,
 } from "@ant-design/icons";
-import { traCuuApi } from "../services/api";
+import { traCuuApi, nganhApi, bangQuyDoiApi } from "../services/api";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -18,7 +18,7 @@ const VSAT_HE_SO = 10 / 150;
 
 // ── Tính điểm ưu tiên ───────────────────────────────
 function tinhDiemUuTien(khuVuc, doiTuong) {
-  const kv = { KV1: 0.75, "KV2-NT": 0.5, KV2: 0.25, KV3: 0 }[khuVuc] ?? 0;
+  const kv = { KV1: 0.75, "KV2NT": 0.5, KV2: 0.25, KV3: 0 }[khuVuc] ?? 0;
   const dt = ["01","02","03","04"].includes(doiTuong) ? 2
       : ["05","06","07"].includes(doiTuong) ? 1 : 0;
   return kv + dt;
@@ -42,7 +42,7 @@ export default function Dashboard() {
 
   // ── Load danh sách ngành từ API ───────────────────
   useEffect(() => {
-    traCuuApi.getAllNganh()
+    nganhApi.getAll()
         .then(setNganhs)
         .catch(() => setNganhs([]))
         .finally(() => setNganhsLoading(false));
@@ -64,23 +64,29 @@ export default function Dashboard() {
   };
 
   // ── Tính điểm ĐGNL ───────────────────────────────
-  const onCalculateDGNL = (values) => {
+  const onCalculateDGNL = async (values) => {
     const nganh = nganhs.find(n => n.idNganh === values.nganhId);
     if (!nganh) return;
 
-    const diemQuyDoi     = (values.diemDGNL * 30) / 1200;
-    const tongUuTien     = tinhDiemUuTien(values.khuVuc, values.doiTuong) + (values.diemCongKhac || 0);
-    const tongXetTuyen   = diemQuyDoi + tongUuTien;
+    const bangQuyDoi = await bangQuyDoiApi.traCuuDiemQuyDoi("DGNL", values.diemDGNL, null, nganh.toHopGoc);
+    const diemQuyDoi = await traCuuApi.quyDoiDiemVSATVaDGNL(values.diemDGNL, bangQuyDoi.diemA, bangQuyDoi.diemB, bangQuyDoi.diemC, bangQuyDoi.diemD); 
+
+    const diemUuTien     = await traCuuApi.tinhDiemUuTien(values.doiTuong, values.khuVuc, values.diemCongKhac, diemQuyDoi);
+    const diemNguong = diemQuyDoi + diemUuTien;
+    const tongXetTuyen   = diemQuyDoi + diemUuTien + values.diemCongKhac;
 
     setCalcResultDGNL({
       nganh: nganh.tenNganh,
+      toHopGoc: nganh.toHopGoc,
       diemSan: nganh.diemSan,
-      diemChuan: nganh.diemTrungTuyen,
-      diemQuyDoi: diemQuyDoi.toFixed(2),
-      tongUuTien: tongUuTien.toFixed(2),
+      diemChuan: nganh.diemTrungTuyen != null ? nganh.diemTrungTuyen : "Chưa cập nhật",
+      diemQuyDoi: diemQuyDoi,
+      diemUuTien: diemUuTien,
+      diemCong: values.diemCongKhac,
+      diemNguong: diemNguong,
       tongXetTuyen: tongXetTuyen.toFixed(2),
-      datSan: tongXetTuyen >= nganh.diemSan,
-      datChuan: tongXetTuyen >= nganh.diemTrungTuyen,
+      datSan: diemNguong >= nganh.diemSan,
+      datChuan: nganh.diemTrungTuyen != null && tongXetTuyen >= nganh.diemTrungTuyen,
     });
   };
 
@@ -264,7 +270,7 @@ export default function Dashboard() {
                         <Form.Item label="Ngành đăng ký" name="nganhId"
                                    rules={[{ required: true, message: "Vui lòng chọn ngành!" }]}>
                           <Select placeholder="Chọn ngành" loading={nganhsLoading}>
-                            {nganhs.map(n => (
+                            {nganhs.filter(n => n.dgnl === "1").map(n => (
                                 <Option key={n.idNganh} value={n.idNganh}>{n.tenNganh}</Option>
                             ))}
                           </Select>
@@ -275,25 +281,25 @@ export default function Dashboard() {
                       <Col span={8}>
                         <Form.Item label="Khu vực" name="khuVuc" initialValue="KV3">
                           <Select>
-                            <Option value="KV3">KV3 (+0đ)</Option>
-                            <Option value="KV2">KV2 (+0.25đ)</Option>
-                            <Option value="KV2-NT">KV2-NT (+0.5đ)</Option>
-                            <Option value="KV1">KV1 (+0.75đ)</Option>
+                            <Option value="KV3">KV3</Option>
+                            <Option value="KV2">KV2</Option>
+                            <Option value="KV2NT">KV2NT</Option>
+                            <Option value="KV1">KV1</Option>
                           </Select>
                         </Form.Item>
                       </Col>
                       <Col span={8}>
                         <Form.Item label="Đối tượng" name="doiTuong" initialValue="None">
                           <Select>
-                            <Option value="None">Không (+0đ)</Option>
-                            <Option value="01">Nhóm ƯT 1 (+2đ)</Option>
-                            <Option value="05">Nhóm ƯT 2 (+1đ)</Option>
+                            <Option value="None">Không</Option>
+                            <Option value="01">UT1</Option>
+                            <Option value="05">UT2</Option>
                           </Select>
                         </Form.Item>
                       </Col>
                       <Col span={8}>
                         <Form.Item label="Điểm cộng khác" name="diemCongKhac">
-                          <InputNumber min={0} max={10} step={0.25} style={{ width: "100%" }} />
+                          <InputNumber min={0} max={3} step={0.25} style={{ width: "100%" }} />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -304,10 +310,14 @@ export default function Dashboard() {
                       <div style={{ marginTop: 20, padding: 16, background: "#f0f5ff", borderRadius: 8 }}>
                         <Descriptions bordered size="small" column={1}>
                           <Descriptions.Item label="Ngành">{calcResultDGNL.nganh}</Descriptions.Item>
+                          <Descriptions.Item label="Tổ hợp gốc">{calcResultDGNL.toHopGoc}</Descriptions.Item>
                           <Descriptions.Item label="Điểm quy đổi (thang 30)">
                             <Text strong type="success">{calcResultDGNL.diemQuyDoi}</Text>
                           </Descriptions.Item>
-                          <Descriptions.Item label="Tổng điểm ưu tiên">+{calcResultDGNL.tongUuTien}</Descriptions.Item>
+                          <Descriptions.Item label="Điểm cộng">
+                            <Text strong type="success">{calcResultDGNL.diemCong}</Text>
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Điểm ưu tiên quy đổi">+{calcResultDGNL.diemUuTien}</Descriptions.Item>
                           <Descriptions.Item label={<Text strong style={{ color: "#f5222d" }}>TỔNG ĐIỂM XÉT TUYỂN</Text>}>
                             <Text strong style={{ color: "#f5222d", fontSize: 20 }}>{calcResultDGNL.tongXetTuyen}</Text>
                           </Descriptions.Item>
@@ -342,7 +352,7 @@ export default function Dashboard() {
                         <Form.Item label="Ngành đăng ký" name="nganhId"
                                    rules={[{ required: true, message: "Vui lòng chọn ngành!" }]}>
                           <Select placeholder="Chọn ngành" loading={nganhsLoading}>
-                            {nganhs.map(n => (
+                            {nganhs.filter(n => n.thpt === "1").map(n => (
                                 <Option key={n.idNganh} value={n.idNganh}>{n.tenNganh}</Option>
                             ))}
                           </Select>
@@ -370,7 +380,7 @@ export default function Dashboard() {
                           <Select>
                             <Option value="KV3">KV3 (+0)</Option>
                             <Option value="KV2">KV2 (+0.25)</Option>
-                            <Option value="KV2-NT">KV2-NT (+0.5)</Option>
+                            <Option value="KV2NT">KV2NT (+0.5)</Option>
                             <Option value="KV1">KV1 (+0.75)</Option>
                           </Select>
                         </Form.Item>

@@ -3,13 +3,16 @@ package com.admissionManagement.webapp.controller;
 import com.admissionManagement.core.dto.NganhDTO;
 import com.admissionManagement.core.dto.NguyenVongXetTuyenDTO;
 import com.admissionManagement.core.dto.ThiSinhDTO;
+import com.admissionManagement.core.dto.BangQuyDoiDTO;
 import com.admissionManagement.core.service.NganhBUS;
 import com.admissionManagement.core.service.NguyenVongXetTuyenBUS;
 import com.admissionManagement.core.service.ThiSinhBUS;
+import com.admissionManagement.core.helper.DatabaseHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -49,5 +52,37 @@ public class TraCuuController {
     @GetMapping("/nganh")
     public ResponseEntity<List<NganhDTO>> getAllNganh() {
         return ResponseEntity.ok(nganhBUS.getAllNganh(0, 0));
+    }
+
+    @GetMapping("/tinhdiemuutien")
+    public ResponseEntity<BigDecimal> tinhDiemUuTien(
+        @RequestParam(name = "doiTuong", required = false, defaultValue = "") String doiTuong,
+        @RequestParam(name = "khuVuc", required = false, defaultValue = "") String khuVuc,
+        @RequestParam(name = "diemCong", defaultValue = "0") BigDecimal diemCong,
+        @RequestParam(name = "dthgxt", defaultValue = "0") BigDecimal dthgxt) {
+
+        ThiSinhDTO thiSinh = new ThiSinhDTO();
+        thiSinh.setDoiTuong(doiTuong);
+        thiSinh.setKhuVuc(khuVuc);
+        
+        BigDecimal ketQua = DatabaseHelper.tinhDiemUuTien(thiSinh, diemCong, dthgxt);
+        return ResponseEntity.ok(ketQua);
+    }
+
+    @GetMapping("/quydoidiemvsatvadgnl")
+    public ResponseEntity<BigDecimal> quyDoiDiemVSATVaDGNL(
+        @RequestParam(name = "diem") BigDecimal diem,
+        @RequestParam(name = "diemA") BigDecimal diemA,
+        @RequestParam(name = "diemB") BigDecimal diemB,
+        @RequestParam(name = "diemC") BigDecimal diemC,
+        @RequestParam(name = "diemD") BigDecimal diemD ) {
+        
+        BangQuyDoiDTO bangQuyDoi = new BangQuyDoiDTO();
+        bangQuyDoi.setDiemA(diemA);
+        bangQuyDoi.setDiemB(diemB);
+        bangQuyDoi.setDiemC(diemC);
+        bangQuyDoi.setDiemD(diemD);
+        BigDecimal ketQua = DatabaseHelper.quyDoiDiemVSATVaDGNL(diem, bangQuyDoi);
+        return ResponseEntity.ok(ketQua);
     }
 }

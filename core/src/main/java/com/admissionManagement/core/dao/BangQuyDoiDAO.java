@@ -100,4 +100,34 @@ public class BangQuyDoiDAO {
 
         return query.uniqueResult();
     }
+
+    public BangQuyDoi getMocCaoNhat(Session session, String phuongThuc, String mon, String toHop) {
+        String hql = "FROM BangQuyDoi b " +
+                "WHERE b.phuongThuc = :phuongThuc " +
+                "AND (b.mon = :mon OR (:mon IS NULL AND b.mon IS NULL)) " +
+                "AND (b.toHop = :toHop OR (:toHop IS NULL AND b.toHop IS NULL)) " +
+                "ORDER BY b.diemB DESC";
+
+        Query<BangQuyDoi> query = session.createQuery(hql, BangQuyDoi.class);
+        query.setParameter("phuongThuc", phuongThuc);
+        query.setParameter("mon", mon);
+        query.setParameter("toHop", toHop);
+
+        return query.setMaxResults(1).uniqueResult();
+    }
+
+    public BangQuyDoi getMocThapNhat(Session session, String phuongThuc, String mon, String toHop) {
+        String hql = "FROM BangQuyDoi b " +
+                "WHERE b.phuongThuc = :phuongThuc " +
+                "AND (b.mon = :mon OR (:mon IS NULL AND b.mon IS NULL)) " +
+                "AND (b.toHop = :toHop OR (:toHop IS NULL AND b.toHop IS NULL)) " +
+                "ORDER BY b.diemA ASC";
+
+        Query<BangQuyDoi> query = session.createQuery(hql, BangQuyDoi.class);
+        query.setParameter("phuongThuc", phuongThuc);
+        query.setParameter("mon", mon);
+        query.setParameter("toHop", toHop);
+
+        return query.setMaxResults(1).uniqueResult();
+    }
 }

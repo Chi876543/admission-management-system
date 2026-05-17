@@ -276,7 +276,7 @@ public class NguyenVongXetTuyenBUS {
         }
 
         NganhBUS nganhBus = new NganhBUS();
-        List<NganhDTO> dsNganh = nganhBus.getAllNganh();
+        List<NganhDTO> dsNganh = nganhBus.getAllNganh(0,0);
 
         List<NguyenVongXetTuyenDTO> dsNguyenVong = this.getDanhSachTrungTuyenHopNhat();
 

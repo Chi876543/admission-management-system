@@ -22,6 +22,17 @@ export const authApi = {
 export const traCuuApi = {
     traCuu: (sbd, ngaySinh) => request(`/tra-cuu?sbd=${sbd}&ngaySinh=${ngaySinh}`),
     getAllNganh: () => request("/tra-cuu/nganh"),
+    tinhDiemUuTien: (doiTuong, khuVuc, diemCong, dthgxt) => 
+        request(`/tra-cuu/tinhdiemuutien?doiTuong=${doiTuong || ""}&khuVuc=${khuVuc || ""}&diemCong=${diemCong || 0}&dthgxt=${dthgxt || 0}`),
+    quyDoiDiemVSATVaDGNL: (diem, diemA, diemB, diemC, diemD) => {
+        const params = new URLSearchParams();
+        params.append("diem", diem);
+        params.append("diemA", diemA);
+        params.append("diemB", diemB);
+        params.append("diemC", diemC);
+        params.append("diemD", diemD);
+        return request(`/tra-cuu/quydoidiemvsatvadgnl?${params.toString()}`);
+    }
 };
 
 export const nganhApi = {
@@ -56,4 +67,15 @@ export const studentApi = {
 export const toHopApi = {
     getAll: () => request("/to-hop"),
     getByNganh: (maNganh) => request(`/nganh-to-hop?maNganh=${maNganh}`),
+};
+
+export const bangQuyDoiApi = {
+    traCuuDiemQuyDoi: (phuongThuc, diem, mon, toHop) => {
+        const params = new URLSearchParams();
+        params.append("phuongThuc", phuongThuc);
+        params.append("diem", diem);
+        if (mon) params.append("mon", mon);
+        if (toHop) params.append("toHop", toHop);
+        return request(`/bangquydoi/tra-cuu?${params.toString()}`);
+    }
 };

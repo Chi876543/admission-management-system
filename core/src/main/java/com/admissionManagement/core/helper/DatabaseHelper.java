@@ -85,7 +85,7 @@ public class DatabaseHelper {
             }
 
             return tuSo.multiply(mucDiemUuTienTong)
-                    .divide(new BigDecimal("7.5"), 5, RoundingMode.HALF_UP);
+                    .divide(new BigDecimal("7.5"), 2, RoundingMode.HALF_UP);
         }
     }
 

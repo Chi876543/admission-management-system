@@ -248,11 +248,26 @@ public class BangQuyDoiBUS {
 
             BangQuyDoi entity = dao.getLuatQuyDoiWithSession(session, phuongThuc, diem, mon, toHop);
 
-            if (entity == null) {
-                return null;
+            if (entity != null) {
+                return toDTO(entity);
             }
 
-            return toDTO(entity);
+            BangQuyDoi mocCaoNhat = dao.getMocCaoNhat(session, phuongThuc, mon, toHop);
+            if (mocCaoNhat != null && diem.compareTo(mocCaoNhat.getDiemB()) > 0) {
+                return toDTO(mocCaoNhat);
+            }
+
+            BangQuyDoi mocThapNhat = dao.getMocThapNhat(session, phuongThuc, mon, toHop);
+            if (mocThapNhat != null && diem.compareTo(mocThapNhat.getDiemA()) < 0) {
+                BangQuyDoiDTO diemKhong = new BangQuyDoiDTO();
+                diemKhong.setDiemA(BigDecimal.ZERO);
+                diemKhong.setDiemB(BigDecimal.ZERO);
+                diemKhong.setDiemC(BigDecimal.ZERO);
+                diemKhong.setDiemD(BigDecimal.ZERO);
+                return diemKhong;
+            }
+
+            return null;
         }
     }
 }
