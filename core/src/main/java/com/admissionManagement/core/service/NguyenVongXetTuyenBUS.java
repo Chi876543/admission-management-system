@@ -15,8 +15,8 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class NguyenVongXetTuyenBUS {
@@ -268,10 +268,26 @@ public class NguyenVongXetTuyenBUS {
                     if (successCount % 50 == 0) {
                         session.clear();
                     }
+
                 }
             }
         } catch (Exception e) {
             return "Lỗi hệ thống khi đọc file: " + e.getMessage();
+        }
+
+        NganhBUS nganhBus = new NganhBUS();
+        List<NganhDTO> dsNganh = nganhBus.getAllNganh();
+
+        List<NguyenVongXetTuyenDTO> dsNguyenVong = this.getDanhSachTrungTuyenHopNhat();
+
+        thucHienLocAoVaLayChiTieu(dsNguyenVong, dsNganh);
+
+        for (NganhDTO nganh : dsNganh) {
+//                        String updateResult = nganhBus.updateNganh(nganh.getIdNganh(), nganh);
+//                        if (!"Updated successfully".equals(updateResult)) {
+//                            System.err.println("Lỗi khi cập nhật điểm chuẩn ngành " + nganh.getMaNganh() + ": " + updateResult);
+//                        }
+            System.err.println(nganh);
         }
         return String.format("Hoàn thành! Thành công: %d, Thất bại: %d", successCount, errorCount);
     }
@@ -535,7 +551,8 @@ public class NguyenVongXetTuyenBUS {
         BigDecimal m1 = layDiemTheoMon(diem, th.getThMon1(), phuongThuc, bangQuyDoiBUS);
         BigDecimal m2 = layDiemTheoMon(diem, th.getThMon2(), phuongThuc, bangQuyDoiBUS);
         BigDecimal m3 = layDiemTheoMon(diem, th.getThMon3(), phuongThuc, bangQuyDoiBUS);
-        if (m1 == null || m2 == null || m3 == null) {
+        if (m1 == null || m2 == null || m3 == null ||
+                (m1.compareTo(BigDecimal.ZERO) == 0) || (m2.compareTo(BigDecimal.ZERO) == 0) || (m3.compareTo(BigDecimal.ZERO) == 0)) {
             return null;
         }
         // Tinh diem
@@ -557,19 +574,19 @@ public class NguyenVongXetTuyenBUS {
             return switch (maMonUpper) {
                 case "TO" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
                         bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemToanVSAT(), "TO", null));
-                case "VA" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                case "VA" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemVanVSAT(),
                         bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemVanVSAT(), "VA", null));
-                case "LI" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                case "LI" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemLyVSAT(),
                         bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemLyVSAT(), "LI", null));
-                case "HO" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                case "HO" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemHoaVSAT(),
                         bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemHoaVSAT(), "HO", null));
-                case "SI" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                case "SI" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemSinhVSAT(),
                         bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemSinhVSAT(), "SI", null));
-                case "SU" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                case "SU" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemSuVSAT(),
                         bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemSuVSAT(), "SU", null));
-                case "DI" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                case "DI" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemDiaVSAT(),
                         bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getDiemDiaVSAT(), "DI", null));
-                case "N1" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getDiemToanVSAT(),
+                case "N1" -> DatabaseHelper.quyDoiDiemVSATVaDGNL(d.getN1Thi(),
                         bangQuyDoiBUS.getBangQuyDoiWithScore("VSAT", d.getN1Thi(), "N1", null));
                 default -> null;
             };
@@ -649,45 +666,179 @@ public class NguyenVongXetTuyenBUS {
                 d.getDiemKtpl()  != null;
     }
 
+    // Lấy danh sách nguyên vọng mỗi nguyện vọng chỉ lấy 1 phương thức xét tuyển có điểm xét tuyển cao nhất và sắp xếp từ cao đến thấp
+    public List<NguyenVongXetTuyenDTO> getDanhSachTrungTuyenHopNhat() {
+        try (Session session = factory.openSession()) {
+            List<NguyenVongXetTuyen> entities = dao.getByKetQuaYesWithSession(session);
+            if (entities == null || entities.isEmpty()) {
+                return new ArrayList<>();
+            }
 
-//    public static void main(String[] args) {
-//        // 1. Khởi tạo BUS (Constructor này đã khởi tạo Factory và DAO bên trong)
-//        NguyenVongXetTuyenBUS bus = new NguyenVongXetTuyenBUS();
-//
-//        Transaction tx = null;
-//        // 2. Sử dụng try-with-resources để đảm bảo session luôn được đóng
-//        try (Session session = bus.factory.openSession()) {
-//            tx = session.beginTransaction();
-//
-//            // 3. Gọi DAO thông qua đối tượng đã khởi tạo trong BUS
-//            // Giả sử bạn đã khai báo nganhToHopDao là một field trong BUS
-//            String maNganhTest = "7480201";
-//            List<NganhToHop> dsTohop = bus.nganhToHopDAO.getAllByMaNganhWithSession(session, maNganhTest);
-//
-//            // 4. Kiểm tra và in kết quả
-//            if (dsTohop == null || dsTohop.isEmpty()) {
-//                System.out.println(">>> Không tìm thấy tổ hợp nào cho ngành: " + maNganhTest);
-//            } else {
-//                System.out.println(">>> Tìm thấy " + dsTohop.size() + " tổ hợp:");
-//                for (NganhToHop nth : dsTohop) {
-//                    System.out.println("  + Mã tổ hợp: " + nth.getToHopMonThi().getMaToHop());
-//                    System.out.println("    Môn: " + nth.getThMon1() + ", " + nth.getThMon2() + ", " + nth.getThMon3());
-//                    System.out.println("    Môn: " + nth.getHsMon1() + ", " + nth.getHsMon2() + ", " + nth.getHsMon3());
-//                }
-//            }
-//
-//            tx.commit();
-//        } catch (Exception e) {
-//            if (tx != null) tx.rollback();
-//            e.printStackTrace();
-//        } finally {
-//            // Đóng factory để kết thúc chương trình (chỉ dùng khi chạy main test)
-//            if (bus.factory != null) {
-//                bus.factory.close();
-//            }
-//        }
-//    }
+            List<NguyenVongXetTuyenDTO> dsDayDu = filterPhuongThucCaoNhat(mapListEntityToListDTO(entities));
 
+            // Gọi hàm lọc để mỗi NV chỉ còn 1 phương thức điểm cao nhất
+            return sortDanhSachTheoDiem(dsDayDu);
+        }
+    }
+
+    private List<NguyenVongXetTuyenDTO> filterPhuongThucCaoNhat(List<NguyenVongXetTuyenDTO> ds) {
+        if (ds == null || ds.isEmpty()) {
+            return List.of();
+        }
+
+        return ds.stream()
+                .collect(Collectors.toMap(
+                        // Khóa duy nhất: Kết hợp CCCD và Thứ tự nguyện vọng
+                        dto -> dto.getCccd() + "-" + dto.getThuTu(),
+                        // Giá trị là chính đối tượng DTO đó
+                        dto -> dto,
+                        // Hàm xử lý khi trùng Khóa: Chọn DTO có điểm xét tuyển cao nhất
+                        (existing, replacement) -> {
+                            // Kiểm tra null cho điểm để tránh lỗi so sánh
+                            if (replacement.getDiemXetTuyen() == null) return existing;
+                            if (existing.getDiemXetTuyen() == null) return replacement;
+
+                            // So sánh BigDecimal: nếu replacement > existing thì lấy replacement
+                            return replacement.getDiemXetTuyen().compareTo(existing.getDiemXetTuyen()) > 0
+                                    ? replacement : existing;
+                        }
+                ))
+                .values() // Lấy tập hợp các giá trị đã lọc
+                .stream()
+                .collect(Collectors.toList()); // Trả về List
+    }
+
+    private List<NguyenVongXetTuyenDTO> sortDanhSachTheoDiem(List<NguyenVongXetTuyenDTO> ds) {
+        if (ds == null || ds.isEmpty()) {
+            return List.of();
+        }
+        return ds.stream()
+                .sorted((nv1, nv2) -> {
+                    if (nv1.getDiemXetTuyen() == null && nv2.getDiemXetTuyen() == null) return 0;
+                    if (nv1.getDiemXetTuyen() == null) return 1;
+                    if (nv2.getDiemXetTuyen() == null) return -1;
+
+                    return nv2.getDiemXetTuyen().compareTo(nv1.getDiemXetTuyen());
+                })
+                .collect(Collectors.toList());
+    }
+
+    public void thucHienLocAoVaLayChiTieu(List<NguyenVongXetTuyenDTO> dsNvGoc, List<NganhDTO> danhSachNganh) {
+
+        // 1. Khởi tạo cấu trúc quản lý ngành và phòng chờ
+        Map<String, NganhDTO> mapNganh = danhSachNganh.stream()
+                .collect(Collectors.toMap(NganhDTO::getMaNganh, n -> n));
+
+        Map<String, PriorityQueue<NguyenVongXetTuyenDTO>> phongChoCacNganh = khoiTaoPhongCho(danhSachNganh);
+
+        // 2. Gom nguyện vọng theo từng thí sinh (vẫn giữ nguyên thứ tự sắp xếp điểm gốc)
+        Map<String, List<NguyenVongXetTuyenDTO>> hoSoThidinh = dsNvGoc.stream()
+                .collect(Collectors.groupingBy(NguyenVongXetTuyenDTO::getCccd, LinkedHashMap::new, Collectors.toList()));
+
+        // Hàng đợi điều phối: Duyệt thí sinh dựa trên việc ai xuất hiện trước trong list điểm gốc
+        Queue<String> danhSachChoCCCD = new LinkedList<>(hoSoThidinh.keySet());
+
+        // Con trỏ theo dõi xem thí sinh đang xét ở NV thứ mấy trong list cá nhân (bắt đầu từ index 0)
+        Map<String, Integer> conTroNguyenVong = hoSoThidinh.keySet().stream()
+                .collect(Collectors.toMap(cccd -> cccd, cccd -> 0));
+
+        // 3. Chạy vòng lặp cốt lõi điều phối vị trí
+        while (!danhSachChoCCCD.isEmpty()) {
+            String cccdHienTai = danhSachChoCCCD.poll();
+            List<NguyenVongXetTuyenDTO> dsNvCuaTs = hoSoThidinh.get(cccdHienTai);
+            int indexNv = conTroNguyenVong.get(cccdHienTai);
+
+            // Thí sinh đã bị đẩy ở mọi nguyện vọng đăng ký
+            if (indexNv >= dsNvCuaTs.size()) {
+                continue;
+            }
+
+            NguyenVongXetTuyenDTO nvDangXet = dsNvCuaTs.get(indexNv);
+            NganhDTO nganhTarget = mapNganh.get(nvDangXet.getMaNganh());
+
+            if (nganhTarget != null) {
+                PriorityQueue<NguyenVongXetTuyenDTO> phongCho = phongChoCacNganh.get(nvDangXet.getMaNganh());
+                thucHienXepHangVaDayNguoi(nvDangXet, nganhTarget, phongCho, conTroNguyenVong, danhSachChoCCCD);
+            } else {
+                tiepTucXetNguyenVongSau(cccdHienTai, indexNv, conTroNguyenVong, danhSachChoCCCD);
+            }
+        }
+
+        // 4. Tính toán và chốt điểm trúng tuyển cuối cùng của các ngành
+        capNhatDiemTrungTuyen(danhSachNganh, phongChoCacNganh);
+
+    }
+
+    // ==========================================
+    // CÁC HÀM XỬ LÝ LOGIC CHI TIẾT
+    // ==========================================
+
+    private Map<String, PriorityQueue<NguyenVongXetTuyenDTO>> khoiTaoPhongCho(List<NganhDTO> danhSachNganh) {
+        Map<String, PriorityQueue<NguyenVongXetTuyenDTO>> phongChoCacNganh = new HashMap<>();
+        for (NganhDTO nganh : danhSachNganh) {
+            // PriorityQueue giữ người điểm cao lên đầu, người điểm thấp ở cuối hàng đợi
+            phongChoCacNganh.put(nganh.getMaNganh(), new PriorityQueue<>((nv1, nv2) -> {
+                int compareDiem = nv2.getDiemXetTuyen().compareTo(nv1.getDiemXetTuyen());
+                if (compareDiem != 0) return compareDiem;
+                return Integer.compare(nv1.getThuTu(), nv2.getThuTu());
+            }));
+        }
+        return phongChoCacNganh;
+    }
+
+    private void thucHienXepHangVaDayNguoi(NguyenVongXetTuyenDTO nvDangXet,
+                                           NganhDTO nganhTarget,
+                                           PriorityQueue<NguyenVongXetTuyenDTO> phongCho,
+                                           Map<String, Integer> conTroNguyenVong,
+                                           Queue<String> danhSachChoCCCD) {
+        // Cho thí sinh vào phòng chờ xếp hàng
+        phongCho.add(nvDangXet);
+
+        // Nếu vượt quá chỉ tiêu của ngành, đẩy người tệ nhất ra ngoài
+        if (phongCho.size() > nganhTarget.getChiTieu()) {
+            NguyenVongXetTuyenDTO nvBiLoai = xacDinhVaXoaNguoiThapNhat(phongCho);
+
+            // Đưa người bị loại trở lại hàng đợi tổng để vòng sau đi xét tiếp NV sau của họ
+            String cccdBiLoai = nvBiLoai.getCccd();
+            int indexHienTai = conTroNguyenVong.get(cccdBiLoai);
+            tiepTucXetNguyenVongSau(cccdBiLoai, indexHienTai, conTroNguyenVong, danhSachChoCCCD);
+        }
+    }
+
+    private NguyenVongXetTuyenDTO xacDinhVaXoaNguoiThapNhat(PriorityQueue<NguyenVongXetTuyenDTO> phongCho) {
+        List<NguyenVongXetTuyenDTO> listTam = new ArrayList<>(phongCho);
+        listTam.sort((nv1, nv2) -> {
+            int compareDiem = nv2.getDiemXetTuyen().compareTo(nv1.getDiemXetTuyen());
+            if (compareDiem != 0) return compareDiem;
+            return Integer.compare(nv1.getThuTu(), nv2.getThuTu());
+        });
+
+        // Bốc người ở vị trí cuối cùng của phòng ra (điểm thấp nhất)
+        NguyenVongXetTuyenDTO nvBiLoai = listTam.get(listTam.size() - 1);
+        phongCho.remove(nvBiLoai);
+        return nvBiLoai;
+    }
+
+    private void tiepTucXetNguyenVongSau(String cccd, int indexHienTai, Map<String, Integer> conTroNguyenVong, Queue<String> danhSachChoCCCD) {
+        conTroNguyenVong.put(cccd, indexHienTai + 1);
+        danhSachChoCCCD.add(cccd);
+    }
+
+    private void capNhatDiemTrungTuyen(List<NganhDTO> danhSachNganh, Map<String, PriorityQueue<NguyenVongXetTuyenDTO>> phongChoCacNganh) {
+        for (NganhDTO nganh : danhSachNganh) {
+            PriorityQueue<NguyenVongXetTuyenDTO> phongCho = phongChoCacNganh.get(nganh.getMaNganh());
+            if (phongCho != null && !phongCho.isEmpty()) {
+                // Điểm chuẩn chính là điểm của người có điểm thấp nhất còn trụ lại trong phòng
+                BigDecimal diemChuan = phongCho.stream()
+                        .map(NguyenVongXetTuyenDTO::getDiemXetTuyen)
+                        .min(BigDecimal::compareTo)
+                        .orElse(nganh.getDiemSan());
+                nganh.setDiemTrungTuyen(diemChuan);
+            } else {
+                nganh.setDiemTrungTuyen(nganh.getDiemSan());
+            }
+        }
+    }
 
 
 }
